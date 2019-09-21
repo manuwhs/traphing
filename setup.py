@@ -7,7 +7,7 @@ requirements = ["ipython>=6", "nbformat>=4", "nbconvert>=5", "requests>=2"]
 
 setup(
     name="traphing",
-    version="0.0.1",
+    version="0.0.3",
     author="Manuel Montoya",
     author_email="manuwhs@gmail.com",
     description="A package to make trading in python easier",
