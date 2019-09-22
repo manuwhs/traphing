@@ -8,7 +8,7 @@ from . import database_functions as dbf
 from . import indicators as ind
 
 from ... import utils
-
+from ...utils import Timeframes
 """ A container to store prices for a symbol:
 This Class will contain for a given symbol:
   - Daily Data.
@@ -45,7 +45,7 @@ included in this library.
 
 class Velas:
     
-    def __init__(self, symbol_name: str = None, timeframe: int = None):
+    def __init__(self, symbol_name: str, timeframe: Timeframes):
         self.symbol_name = symbol_name    # Symbol of the Security (GLD, AAPL, IDX...)
         self.timeframe = timeframe        # It is the number of minutes of the period: 1 5 15....
         
@@ -88,7 +88,11 @@ class Velas:
     @dates.setter
     def dates(self, value: pd.DatetimeIndex ):
         ValueError("Dates cannot be set externally")
-
+        
+    def __getitem__(self, key):
+        val = self.series(key)
+        return val
+    
     """
     Core function methods
     """

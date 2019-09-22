@@ -6,6 +6,7 @@ The main purpose of this file is to link the
 """
 
 from .Velas.Velas import Velas
+from .Symbol.Symbol import Symbol
 
 __all__ = [
     'Velas',

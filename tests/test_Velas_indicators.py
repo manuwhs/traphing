@@ -1,6 +1,7 @@
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 import traphing.data_classes.Velas as Velas
+from traphing.utils import Timeframes
 import pytest
 import datetime as dt
 import pandas as pd
@@ -9,7 +10,7 @@ import numpy as np
 # @pytest.fixture
 def get_loaded_Vela():
     symbol_name = "AUDCHF"
-    timeframe = 15
+    timeframe = Timeframes.M15
     storage_folder = "./data/storage/"
     
     my_vela = Velas(symbol_name, timeframe)

@@ -1,14 +1,16 @@
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 import traphing.data_classes.Velas as Velas
+from traphing.utils import Timeframes
 import pytest
 import datetime as dt
 import pandas as pd
+import numpy as np
 
 # @pytest.fixture
 def get_loaded_Vela():
     symbol_name = "AUDCHF"
-    timeframe = 15
+    timeframe = Timeframes.M15
     storage_folder = "./data/storage/"
     
     my_vela = Velas(symbol_name, timeframe)
@@ -23,7 +25,7 @@ class TestVelas():
         """ Basic initialization parameters 
         """
         symbol_name = "AUDCHF"
-        timeframe = 15
+        timeframe = Timeframes.M15
         
         my_vela = Velas(symbol_name, timeframe)
         
@@ -80,7 +82,7 @@ class TestVelas():
     
     def test_add_data_from_csv(self):
         symbol_name = "AUDCAD"
-        timeframe = 15
+        timeframe = Timeframes.M15
         storage_folder = "./data/storage/"
         storage2_folder = "./data/storage2/"
         
@@ -104,8 +106,9 @@ class TestVelas():
         
         for name in options:
             time_series_data = my_vela.series(name)
-            
+            time_series_data2 = my_vela[name]
             assert time_series_data.shape == (my_vela.df.shape[0],)
             assert isinstance(time_series_data, pd.Series)
+            assert np.sum(time_series_data.values) == np.sum(time_series_data2.values)
         
         

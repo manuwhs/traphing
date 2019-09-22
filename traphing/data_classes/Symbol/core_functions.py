@@ -3,17 +3,9 @@
 
 import numpy as np
 
-import time
-import pandas as pd
-import graph_lib as gr
-import Intraday_lib as itd
-import utilities_lib as ul
-import indicators_lib as indl
-import get_data_lib as gdl 
-import copy
-import datetime as dt
-from datetime import datetime
-import CTimeData as CTD
+from ...data_classes import Velas
+from ...utils import Timeframes
+
 """
 Library with all the obtaining indicator functions of the market.
 
@@ -27,52 +19,26 @@ Library with all the obtaining indicator functions of the market.
 
 
 ########### Initialization functions ##############
-def init_timeDatas(self,symbolID = None, periods = []):
-    symbolID,periods = self.get_final_SymbolID_periods(symbolID,periods)
-    # Initialize the timeDataObjects if we have the list of period that
-    # we want to have
-    for period in periods:  # Creates emppty Dataframes
-        timeData = CTD.CTimeData(symbolID, period, ul.empty_df);
-        self.add_timeData(period, timeData)
+def _create_velas(self, timeframes_list):
+    for timeframe in timeframes_list:
+        self.add_velas(timeframe)
         
-def get_final_SymbolID_periods(self, symbolID = None, periods = []):
-    # Function to be used to check if we have been given enough information
-    # It also sets the final values of the object as the resulting ones
-    if (type(symbolID) == type(None)):
-        if (type(self.symbolID) == type(None)):
-            raise ValueError('No symbolID specified')
-        else:
-            symbolID = self.symbolID
-    
-    if (len(periods) == 0):
-        if (len(self.get_periods()) == 0):
-            raise ValueError('No periods specified')
-        else:
-            periods = self.get_periods()
-    return symbolID, periods
-    
-###############################################################
-######## Functions regarding info of the symbol #################
-##############################################################
-
-def get_periods (self):
-    return list(self.timeDatas.keys())
 ######################################################################
-######################## Interface functions to timeDatas ###############
+######################## Interface functions to velas ###############
 ######################################################################
-def get_timeData (self, period = 1440):
-    return self.timeDatas[period]
 
-def add_timeData(self, period, timeDataObj):
+def add_velas(self, timeframe: Timeframes, velas: Velas = None):
     # This function adds the timeData object to the Symbol.
     # The timeDataObj is already an intialized timeDataObj.
     # We actually do not need to specify the period as we could
     # get it from the timeDataObj but this is more visual
-    self.timeDatas[period] = timeDataObj
+    if (velas is None):
+        velas = Velas(self.symbol_name, timeframe);
+    self._velas_dict[timeframe] = velas
 
-def del_timeData(self, period):
+def del_velas(self, timeframe: Timeframes):
     # This function deletes the timeData object to the Symbol.
-    del self.timeDatas[period] 
+    del self._velas_dict[timeframe] 
     
 #    CTD.CTimeData(self.symbol, period,timeData);
 
@@ -80,13 +46,9 @@ def del_timeData(self, period):
 ######## Functions to apply to all timeDatas #################
 ######################################################################
 
-def set_interval(self,start_time = [], end_time = [], trim = True):
-    for period in self.get_periods():  # For each available period
-        self.timeDatas[period].set_interval(start_time, end_time, trim = trim)
-        
-def set_seriesNames(self, seriesNames = []):
-    for period in self.get_periods():
-        self.timeDatas[period].set_seriesNames(seriesNames)
+def set_time_interval(self,start_time = None, end_time = None, trim = True):
+    for timeframe in self.timeframes_list:
+        self[timeframe].set_time_interval(start_time, end_time, trim = trim)
 
 ######################################################################
 ######################## Basic Interface to timeDatas ###############

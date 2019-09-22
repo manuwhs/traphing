@@ -9,6 +9,7 @@ import numpy as np
 import datetime as dt
 
 from .. import utils
+from ..utils import Timeframes
 
 def read_NASDAQ_companies(whole_path = "./storage/Google/companylist.csv"):
     # Function that reads the companies from the info file from NASDAQ
@@ -60,10 +61,11 @@ def download_and_add(list_symbols, sdate = "01-01-1996",
 ############## CSV related functions ################################
 """
 
-def get_csv_file_path(symbol_name, timeframe):
+def get_csv_file_path(symbol_name: str, timeframe: Timeframes):
     """ Generates the filename convention of the csv"""
-    file_path =  utils.period_dic[timeframe] + "/" + \
-            symbol_name + "_" + utils.period_dic[timeframe] + ".csv"
+    timeframe_name = timeframe.name
+    file_path =  timeframe_name + "/" + \
+            symbol_name + "_" + timeframe_name + ".csv"
     return file_path
 
 def load_data_from_csv(symbol_name, timeframe, storage_folder = "./storage/"):

@@ -1,14 +1,18 @@
-import Portfolio_DDBB as Pdb
-import Portfolio_core as CPc
-import Portfolio_operations as CPop
-import Portfolio_interface as CPin
+# -*- coding: utf-8 -*-
+import pandas as pd
+from typing import List
+from ... import utils
+from ...utils import Timeframes
 
-import Portfolio_indicators as Poind
+## Symbol methods written in other files
+from . import core_functions as cf
+from . import database_functions as dbf
+from . import indicators as ind
 
 class Portfolio:
-    def __init__(self, portfolioID = None, symbolIDs = [], periods = [], symbols = []):
-        portfolioID = portfolioID
-        self.symbols = dict()
+    def __init__(self, portfolio_id: str, symbol_names_list: List[str], timeframes_list: List[Timeframes]):
+        portfolio_id = portfolio_id
+        self._symbols_dict = dict()
         # Loop over the symbol_names so loop over all the symbols in the Portfolio
         self.init_symbols(symbolIDs, periods,symbols)  # Create the symbol objects from the periods and names
             
@@ -64,22 +68,3 @@ class Portfolio:
     get_intra_by_days = CPin.get_intra_by_days
 
 
-    #######################################################################
-    ############## Indicators from pandas  ###########################################
-    #######################################################################
-
-    SMA = Poind.SMA
-    EMA = Poind.EMA
-    PPSR  = Poind.PPSR
-    BBANDS = Poind.BBANDS
-    ATR = Poind.ATR
-    MOM  = Poind.MOM
-    ROC = Poind.ROC
-    STO = Poind.STO
-    RSI = Poind.RSI
-    
-    ADX = Poind.ADX
-    ACCDIST = Poind.ACCDIST
-    MACD = Poind.MACD
-    TRIX = Poind.TRIX
-    
