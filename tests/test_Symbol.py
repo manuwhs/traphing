@@ -30,7 +30,6 @@ class TestSymbol():
         
         assert symbol_name == my_symbol.symbol_name
         assert timeframes_list == my_symbol.timeframes_list
-    
 
     def test_add_del_velas(self):
         """ Basic initialization parameters 

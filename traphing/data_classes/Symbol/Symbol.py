@@ -16,7 +16,7 @@ class Symbol:
         
         self.properties = SymbolProperties(symbol_name)
     
-        self._create_velas(timeframes_list)
+        self._init_velas(timeframes_list)
     
     @classmethod
     def load_symbols_info_from_csv( file_dir = "./storage/"):
@@ -47,7 +47,7 @@ class Symbol:
     """
     Core methods
     """
-    _create_velas = cf._create_velas
+    _init_velas = cf._init_velas
     add_velas = cf.add_velas
     del_velas = cf.del_velas
     set_time_interval =  cf.set_time_interval

@@ -7,8 +7,9 @@ The main purpose of this file is to link the
 
 from .Velas.Velas import Velas
 from .Symbol.Symbol import Symbol
+from .Portfolio.Portfolio import Portfolio
 
 __all__ = [
-    'Velas',
+    'Velas',"Symbol","Portfolio"
 ]
 #__all__.extend(transforms.__all__)

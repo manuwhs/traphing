@@ -1,4 +1,4 @@
-class CEntrySignal:
+class EntryTrigger:
     # This class is the one that characterizes the event of getting into the market
     # Triggered by a certain class
 

@@ -19,7 +19,7 @@ Library with all the obtaining indicator functions of the market.
 
 
 ########### Initialization functions ##############
-def _create_velas(self, timeframes_list):
+def _init_velas(self, timeframes_list):
     for timeframe in timeframes_list:
         self.add_velas(timeframe)
         
