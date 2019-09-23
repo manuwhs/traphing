@@ -39,6 +39,18 @@ class TestVelas():
         assert isinstance(my_vela.dates,pd.DatetimeIndex)
         assert isinstance(my_vela.df,pd.DataFrame) 
     
+    def test_loaded_empty_df(self):
+        symbol_name = "AUDCHF"
+        timeframe = Timeframes.M15
+        storage_folder = "./data/false_storage"
+        
+        my_vela = Velas(symbol_name, timeframe)
+        my_vela.load_data_from_csv(storage_folder)
+        start_time = dt.datetime(2019,7,20); end_time = dt.datetime(2019,8,20)
+        my_vela.set_time_interval(start_time, end_time)
+        
+        assert True == True
+    
     def test_set_time_interval_trimming(self):
         start_time = dt.datetime(2019,7,20); end_time = dt.datetime(2019,8,20)
         my_vela = get_loaded_Vela()

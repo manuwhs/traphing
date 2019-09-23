@@ -28,7 +28,7 @@ class socketserver:
             pass 
         return response
     
-    def request_csv_data_signal(self,symbol, period, sdate):
+    def request_csv_data_signal(self,symbol_name: str, timeframe, sdate):
         """
         Request the historical data of a given signal:
         
@@ -40,7 +40,7 @@ class socketserver:
         """
 
         command = "CSV_DATA_REQUEST"
-        message = command +" "+ symbol + " " + str(period)+" " + sdate
+        message = command +" "+ symbol_name + " " + timeframe.name +" " + sdate
         print ("Requesting csv with symbol information: ", message)
         self.send_all(message);
         

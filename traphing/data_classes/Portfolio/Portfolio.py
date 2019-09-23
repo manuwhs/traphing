@@ -3,7 +3,7 @@ import pandas as pd
 from typing import List
 from ... import utils
 from ...utils import Timeframes
-
+from ...data_classes import Symbol
 ## Symbol methods written in other files
 from . import core_functions as cf
 from . import database_functions as dbf

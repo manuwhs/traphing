@@ -33,6 +33,9 @@ def set_time_interval(self, start_time = None, end_time = None, trim = True):
     """
     dates = self._df.index
     
+    if(dates.size == 0):
+        return False    #We cannot do anything
+    
     if (start_time is None):   # Case of nothing given
         start_time = dates[0]
     if (end_time is None):
@@ -46,6 +49,7 @@ def set_time_interval(self, start_time = None, end_time = None, trim = True):
     if (trim):
         self._trim_df(self._time_mask)
     
+    return True
 
 ################# TableData FUNCTIONS ##########################
 

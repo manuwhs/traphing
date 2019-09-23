@@ -2,6 +2,7 @@
 
 """
 import pandas as pd
+from enum import Enum
 
 # Define the empty dataframe structure
 keys = ['Open', 'High', 'Low', 'Close', 'Volume']
@@ -41,9 +42,6 @@ def cmp_to_key(mycmp):
             return mycmp(self.obj, other.obj) != 0
     return K
 
-
-from enum import Enum
-
 class Timeframes(Enum):
     M1 = 0
     M5 = 1
@@ -55,7 +53,33 @@ class Timeframes(Enum):
     W1 = 7
     W4 = 8
     Y1 = 9
-    
+
+def get_foldersData(source = "FxPro", rrf = "../" ):
+    # Returns the folders where we can find the previously stored data,
+    # new data to download and the info about the symbols we have or 
+    # want to download.
+#    rrf = "../" # relative_root_folder
+
+    if (source == "Hanseatic"):
+        storage_folder = rrf + "./storage/Hanseatic/"
+        updates_folder = rrf +"../Hanseatic/MQL4/Files/"
+            
+    elif (source == "MQL5"):
+        storage_folder = rrf + "./storage/MQL5/"
+        updates_folder = rrf +"./MT5/MQL5/MQL5/Files/"
+            
+    elif (source == "Yahoo"):
+        storage_folder = rrf +"./storage/Yahoo/"
+        updates_folder = rrf +"internet"
+        
+    elif (source == "Google"):
+        storage_folder = rrf +"./storage/Google/"
+        updates_folder = rrf +"internet"
+
+    else:
+        print ("Not recognized")
+    return storage_folder, updates_folder
+
 
 
 

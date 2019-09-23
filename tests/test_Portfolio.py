@@ -57,8 +57,11 @@ class TestPortfolio():
     def test_load_data_from_csv(self):
         my_portfolio = get_loaded_Portfolio()
         for symbol_name in my_portfolio.symbol_names_list:
-            assert my_portfolio[symbol_name][Timeframes.M15].df.shape == (100400,5)
-            assert my_portfolio[symbol_name][Timeframes.D1].df.shape  == (4894,5)
-        
+            if (symbol_name == "AUDCHF"):
+                assert my_portfolio[symbol_name][Timeframes.M15].df.shape == (100400,5)
+                assert my_portfolio[symbol_name][Timeframes.D1].df.shape  == (4894,5)
+            elif(symbol_name == "AUDCAD"):
+                assert my_portfolio[symbol_name][Timeframes.M15].df.shape == (99483,5)
+                assert my_portfolio[symbol_name][Timeframes.D1].df.shape  == (4963,5)
         
         

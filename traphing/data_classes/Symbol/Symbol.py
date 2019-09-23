@@ -19,13 +19,26 @@ class Symbol:
         self._init_velas(timeframes_list)
     
     @classmethod
-    def load_symbols_info_from_csv( file_dir = "./storage/"):
+    def load_symbols_info_from_csv(cls, file_dir: str):
         # This functions loads the symbol info file, and gets the
         # information about this symbol and puts it into the structure
         whole_path = file_dir + "Symbol_info.csv"
         try:
             infoCSV = pd.read_csv(whole_path,
                                   sep = ',')
+        except IOError:
+            error_msg = "Empty file: " + whole_path 
+            print (error_msg)
+        
+        return infoCSV
+    
+    @classmethod
+    def save_symbols_info_to_csv(cls, file_dir: str, df: pd.DataFrame):
+        # This functions loads the symbol info file, and gets the
+        # information about this symbol and puts it into the structure
+        whole_path = file_dir + "Symbol_info.csv"
+        try:
+            infoCSV = df.to_csv(whole_path)
         except IOError:
             error_msg = "Empty file: " + whole_path 
             print (error_msg)
