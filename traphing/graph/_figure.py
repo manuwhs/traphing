@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
-import utilities_lib as ul
-import copy
-from trapyngColors import cd
-#####  BUILDING FUNCTIONS #####
+from .. import utils as ul
+from .trapyngColors import cd
 
-def init_variables(self,w = 20, h = 12, lw = 2):
+
+def init_variables(self, w = 20, h = 12, lw = 2):
+        """ Initialize all the internal variables to do all the cool stuff later.
+        It handles the intuitive logic later
+        """
         self.w = w;    # X-width
         self.h = h;    # Y-height
         self.lw = lw   # line width
@@ -53,57 +55,25 @@ def init_variables(self,w = 20, h = 12, lw = 2):
         # A plot in plot_list can be composed by different plots if when the functions where called
         # more signals where given.)
 
-def init_figure(self, projection = "2d", position = [], subplotting = 0):
-    # This function initializes the data structures of the new figure
-#    print "FR"
-    # Copy the previous self if any and reinit variables
-
-#    the_class = self.__class__
-#    a2 = k2()
-
-    # If we are really creating a new figure
-    self.prev_fig.append(copy.copy(self))
-    ## Reinit everything
-    self.init_variables(self.w, self.h, self.lw)
-
-    fig = plt.figure()  
-    self.fig = fig
-    
-    return fig
-#    fig.set_facecolor("w")
-
-def figure_management(self, nf, na, ax = None, sharex = None, sharey = None, 
-                      projection = "2d", position = []):
-    # This function si suposed to deal with everything that
-    # has to do with initializating figure, axis, subplots...
-#    if (self.fig == None):
-#        self.init_figure()
-    
-    # If we want a new figure or we advance to the next subplotting.
-    if (nf == 1):   
-        self.colorIndex = 0 # Restart colors again
-        # If we want to create a new figure
-        if (self.subplotting == 1):
-           # print ("XXXXXXXXXXXXXXXXX")
-            # If we are subploting so it will be plotted into another axes
-            ax = self.next_subplot(projection = projection, sharex = sharex, sharey = sharey) # We plot in a new subplot !
-        else:
-            self.init_figure(projection = projection)  # We create a new figure !!
-        
-    # If we want to create a new axis and how
-    ax = self.manage_axes(na = na, position = position,
-                          ax = ax, projection = projection)
-    return ax
+def figure_management(self, axes = None, sharex = None, sharey = None, 
+                      position = [], projection = "2d"):
+    """
+    This function si suposed to deal with everything that has to do with initializating figure, axis, subplots...
+    """
+    axes = self.manage_axes(position = position, projection = projection)
+    return axes
 
 def close(self,  *args, **kwargs):
     return  plt.close( *args, **kwargs)
     
-def savefig(self,file_dir = "./image.png", 
-            bbox_inches = 'tight',
-            sizeInches = [],  # The size in inches as a list
-            close = False,   # If we close the figure once saved
-            dpi = 100):      # Density of pixels !! Same image but more cuality ! Pixels
-    
+def savefig(self,file_dir = "./image.png", bbox_inches = 'tight',
+            size_inches = [],  close = False, dpi = 100):
+    """ Function to save the current figure in the desired format
+    Important !! Both dpi and sizeInches affect the number of pixels of the image
+    - dpi: It is just for quality, same graph but more quality.
+    - size_inches: The size in inches as a list You change the proportions of the window. The fontsize and 
+    - thickness of lines is the same. So as the graph grows, they look smaller.
+    """
     try:
         folders = file_dir.split("/")
         folders.pop(-1)
@@ -111,28 +81,19 @@ def savefig(self,file_dir = "./image.png",
         ul.create_folder_if_needed(path);
     except:
         pass
-    ## Function to save the current figure in the desired format
-    ## Important !! Both dpi and sizeInches affect the number of pixels of the image
-    # dpi: It is just for quality, same graph but more quality.
-    # sizeInches: You change the proportions of the window. The fontsize and 
-    # thickness of lines is the same. So as the graph grows, they look smaller.
-    F = self.fig  # ?? NO work ? 
-#    F = pylab.gcf()
-    Winches, Hinches = F.get_size_inches()  # 8,6
-#    print Winches, Hinches 
-    if (len(sizeInches) > 0):
-        F.set_size_inches( (sizeInches[0], sizeInches[1]) )
+
+    Winches, Hinches = self.figure.get_size_inches()  
+    if (len(size_inches) > 0):
+        self.figure.set_size_inches( (size_inches[0], size_inches[1]) )
         
-    self.fig.savefig(file_dir,
-            bbox_inches = bbox_inches,
-            dpi = dpi
-            )
-    # Transform back
-    F.set_size_inches((Winches, Hinches) )  
+    self.figure.savefig(file_dir,bbox_inches = bbox_inches, dpi = dpi )
 
     if (close == True):
         plt.close()
-        
+    else:
+        # Transform back to keep displaying it
+        self.figure.set_size_inches((Winches, Hinches) )  
+    
 #    gl.savefig('foodpi50.png', bbox_inches='tight',  dpi = 50)
 #    gl.savefig('foodpi100.png', bbox_inches='tight',  dpi = 100)
 #    gl.savefig('foodpi150.png', bbox_inches='tight',  dpi = 150)

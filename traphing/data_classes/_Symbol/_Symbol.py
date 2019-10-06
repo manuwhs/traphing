@@ -5,9 +5,9 @@ from ... import utils
 from ...utils import Timeframes
 
 ## Symbol methods written in other files
-from . import core_functions as cf
-from . import database_functions as dbf
-from . import indicators as ind
+from . import _core_functions as cf
+from . import _database_functions as dbf
+from . import _indicators as ind
 
 class Symbol:
     def __init__(self, symbol_name: str, timeframes_list: List[Timeframes]):

@@ -1,32 +1,43 @@
+from . import _figure as grba
+from . import _plots as grpl
+from . import _advanced as grad
+from . import _3D as gr3D
+from . import _setting as grset
+from . import _axes as graxes
+from . import _axis as graxis
+from . import _subplots as grsp
+from . import _zoom as grzo
 
-import graph_basic as grba
-import graph_plots as grpl
-import graph_advanced as grad
-import graph_3D as gr3D
-
-import graph_GUI as grGUI
-import trading_graphs as trgr
-
-
-
-import graph_setting as grset
-import graph_axes as graxes
-import graph_axis as graxis
-import graph_subplots as grsp
+from .GUI import _GUI as grGUI
+from .specific import trading_graphs as trgr
 
 
-class CGraph ():
+import matplotlib.pyplot as plt
+
+class GraphicalLibraryFigure ():
     
     def __init__(self,w = 20, h = 12, lw = 2):
         self.init_variables(w = w, h = h, lw = lw)
+    
+    @classmethod
+    def init_figure(self,w = 20, h = 12, lw = 2):
+        """
+        Creates a new figure 
+        """
+        ## Reinit everything
+    
+        figure = plt.figure()  
+        self.figure = figure
         
-    ####################### Basic functions  #######################
+        return figure
+
+    ####################### Figure functions  #######################
     figure_management = grba.figure_management
     init_variables = grba.init_variables
     savefig = grba.savefig
-    init_figure = grba.init_figure
+#    init_figure = grba.init_figure
     close = grba.close
-    
+
     update_legend = grset.update_legend
     
     ####################### Axis functions #######################
@@ -46,18 +57,19 @@ class CGraph ():
     get_color = grset.get_color
     set_labels = grset.set_labels
     
-    store_WidgetData = grset.store_WidgetData
-    init_WidgetData = grset.init_WidgetData
     get_barwidth = grset.get_barwidth
     add_text = grset.add_text
+    
     ######################## Axes functions #######################
     manage_axes = graxes.manage_axes
     create_axes = graxes.create_axes
     twin_axes = graxes.twin_axes
     get_axes = graxes.get_axes
-    set_xlim = graxes.set_xlim
-    set_ylim = graxes.set_ylim
-    set_zoom = graxes.set_zoom
+    
+    ####################### Zoom functions #########################
+    set_xlim = grzo.set_xlim
+    set_ylim = grzo.set_ylim
+    set_zoom = grzo.set_zoom
 
  
     ####################### Subplots functions #######################
@@ -108,14 +120,9 @@ class CGraph ():
     plot_wid = grGUI.plot_wid
     add_selector = grGUI.add_selector
     add_onKeyPress = grGUI.add_onKeyPress
+    store_WidgetData = grGUI.store_WidgetData
+    init_WidgetData = grGUI.init_WidgetData
     
-    ####################### Trading #######################
-    tradingLineChart = trgr.tradingLineChart
-    tradingVolume =  trgr.tradingVolume
-    
-    tradingBarChart = trgr.tradingBarChart
-    tradingBarChart = trgr.tradingBarChart
-    tradingCandleStickChart = trgr.tradingCandleStickChart
     
     tradingPlatform = trgr.tradingPlatform
     tradingPV = trgr.tradingPV
@@ -124,7 +131,7 @@ class CGraph ():
     plot_indicator = trgr.plot_indicator
     add_indicator = trgr.add_indicator
 
-gl = CGraph()
+gl = GraphicalLibraryFigure()
 
 #import numpy as np
 #import matplotlib.pyplot as plt

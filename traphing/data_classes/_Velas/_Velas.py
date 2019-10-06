@@ -3,9 +3,10 @@
 #### IMPORT the methods
 import pandas as pd
 
-from . import core_functions as cf
-from . import database_functions as dbf
-from . import indicators as ind
+from . import _core_functions as cf
+from . import _database_functions as dbf
+from . import _indicators as ind
+from . import _plotting as pl
 
 from ... import utils
 from ...utils import Timeframes
@@ -55,7 +56,6 @@ class Velas:
         self._time_mask = None
         
         ## Related to the dataFrame with the data
-        self._dates = None
         self._df = None
         
         ## State variables
@@ -79,14 +79,14 @@ class Velas:
         self.set_time_interval(trim = False)  # Set the interval to the maximum possible
         
     @property
-    def dates(self):
+    def timestamps(self):
         if (self._time_mask is None):
             return self._df.index
         else:
             return self._df.index[self._time_mask]
 
-    @dates.setter
-    def dates(self, value: pd.DatetimeIndex ):
+    @timestamps.setter
+    def timestamps(self, value: pd.DatetimeIndex ):
         ValueError("Dates cannot be set externally")
         
     def __getitem__(self, key):
@@ -121,7 +121,9 @@ class Velas:
     """
     Plotting
     """
-    
+    plot_barchart = pl.plot_barchart
+    plot_series = pl.plot_series
+    plot_candlesticks = pl.plot_candlesticks
     
 if(0):
 

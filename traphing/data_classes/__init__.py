@@ -5,10 +5,14 @@ The main purpose of this file is to link the
 
 """
 
-from .Velas.Velas import Velas
-from .Symbol.Symbol import Symbol
-from .Portfolio.Portfolio import Portfolio
+from ._Velas._Velas import Velas
+from ._Symbol._Symbol import Symbol
+from ._Portfolio._Portfolio import Portfolio
 
+"""
+the __all__ list overrides the import * that hides all the functions that start
+with _. 
+"""
 __all__ = [
     'Velas',"Symbol","Portfolio"
 ]

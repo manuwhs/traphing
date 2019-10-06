@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
-import traphing.data_classes.Velas as Velas
+from traphing.data_classes import Velas
 from traphing.utils import Timeframes
 import pytest
 import datetime as dt

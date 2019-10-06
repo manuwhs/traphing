@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
-import utilities_lib as ul
-import basicMathlib as bMl
+from .. import utils as ul
+from ..math import basicMathlib as bMl
 import copy
 from collections import OrderedDict
+import pandas as pd
 
-from trapyngColors import cd
+from .trapyngColors import cd
 #####  BUILDING FUNCTIONS #####
 
 def format_legend(self, ax = None, handlelength=None, # Length of handle
@@ -68,7 +69,7 @@ def set_textRotations(self, ax = None, title = None, xlabel = None, ylabel = Non
         for label in ax.yaxis.get_ticklabels():
             label.set_rotation(yticks)
             
-def set_labels(self, labels):
+def set_labels(self, labels = ["title","x_label","y_label"]):
     # This function sets the labels of the graph when created
     # labels: If new figure, we expect 3 strings.
     # Set the main labels !!
@@ -125,9 +126,15 @@ def convert_dates_str(X):
 def detect_AxisFormat(values):
     # This function automatically detects the formating that should be given
     # to the information when plotting.
-#    print (type(values))
-#    print (values.shape)
-    V_type = type(values[0,0]).__name__ 
+    # If we are given values to X, these could be of 3 types:
+    # - Numerical: Then we do nothing 
+    # - String: Then it is categorical and we set the ticklabels to it
+    # - Datetimes: We set the formatter ?
+    
+    if(isinstance(values, pd.Series)):
+        V_type = type(values[0]).__name__
+    else:
+        V_type = type(values[0,0]).__name__ 
     
 #    print (V_type)
     if ( V_type == "str" or V_type == "string_" or  V_type == 'numpy.string_' or  V_type =="str_"):
@@ -143,28 +150,15 @@ def detect_AxisFormat(values):
 
     
 def preprocess_data(self,X,Y, dataTransform = None ):
-   # Preprocess the variables X and Y
    ### First we transform everything to python format
-    X = ul.fnp(X)
-    Y = ul.fnp(Y)
+    X = ul.format_data_to_plotting_type(X)
+    Y = ul.format_data_to_plotting_type(Y)
     # Whe can plot several Y over same X. So NcY >= 1, NcX = 0,1
     NpX, NcX = X.shape
     NpY, NcY = Y.shape
-    
-    if (X.size == 0):  # If the X given is empty
-        if (Y.size == 0):          # If we are also given an empty Y
-            Y = ul.fnp([])
-        else:  
-            X = ul.fnp(range(NpY)) # Create X axis with sample values
-            
     self.X = X; self.Y = Y
     
-# Get the automatic formatting of the X and Y axes !! 
-
-    # If we are given values to X, these could be of 3 types:
-    # - Numerical: Then we do nothing 
-    # - String: Then it is categorical and we set the ticklabels to it
-    # - Datetimes: We set the formatter ?
+    # Get the automatic formatting of the X and Y axes !! 
     self.formatXaxis = detect_AxisFormat(X)
     self.formatYaxis = detect_AxisFormat(Y)
 #        print X,Y, self.formatXaxis, self.formatYaxis
@@ -255,25 +249,3 @@ def get_barwidth(self,X, width = None):
     return width
     
 
-def store_WidgetData(self, plots_typ, plots):
-    # This funciton will store the data needed to later use the widgets
-    self.plots_type.append(plots_typ)
-    self.plots_list.append(plots) # We store the pointers to the plots
-    data_i = [copy.deepcopy(self.X),copy.deepcopy(self.Y)]
-    self.Data_list.append(data_i)
-    
-def init_WidgetData(self, initX = None, ws =  None):
-    ## TODO. Second case where NcY = NcX !!
-    if (type(initX) == type(None)):
-        initX = 0
-    if (type(ws) == type(None)):  # We only show the last ws samples
-        NpX = self.Y.shape[0]
-        ws = NpX - initX
-    self.ws = ws
-    self.start_indx = initX
-    self.end_indx = initX + ws
-    
-    plots = []
-    plots_typ = []
-    
-    return plots,plots_typ

@@ -46,7 +46,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import pylab
 import datetime as dt
-import utilities_lib as ul
+from ... import utils as ul
 from matplotlib import collections  as mc
 #from graph_lib import gl
 # We will say that gl = self
@@ -55,41 +55,8 @@ from matplotlib import collections  as mc
 import warnings
 
 # TODO: Add legend somehow
-def tradingLineChart(self, timeData, seriesName = "Close", *args, **kwargs):         
-    gl = self
-    price = timeData.get_timeSeries([seriesName]);
-    dates = timeData.get_dates()
-    ax = gl.plot(dates,price, *args, **kwargs)
-    return ax
 
-def tradingVolume(self, timeData, seriesName = "Volume", # X-Y points in the graph.
-      *args, **kwargs):         
-    gl = self
-    volume = timeData.get_timeSeries(["Volume"]);
-    dates = timeData.get_dates()
-    ax = gl.stem(dates,volume, *args, **kwargs)
-    return ax
 
-# TODO: Add legend somehow
-def tradingBarChart(self, timeData, # X-Y points in the graph.
-              *args, **kwargs):         
-    gl = self
-    dataHLOC = timeData.get_timeSeries(["High","Low","Open","Close"])
-    dates = timeData.get_dates()
-    ax = gl.barchart(dates, dataHLOC,*args, **kwargs)
-
-    return ax
-
-def tradingCandleStickChart(self, timeData, # X-Y points in the graph.
-              *args, **kwargs):         
-    gl = self
-    dataOCHL = timeData.get_timeSeries(["Open","Close","High","Low"])
-    dates = timeData.get_dates()
-    
-    ax = gl.candlestick(dates, dataOCHL,*args, **kwargs)
-#    ax = gl.barchart(dates, dataHLOC,*args, **kwargs)
-
-    return ax
     
     
 def tradingPV(self, timeData, ax = None,

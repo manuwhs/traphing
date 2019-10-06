@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import utilities_lib as ul
+from .. import utils as ul
 
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter

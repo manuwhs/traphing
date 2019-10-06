@@ -19,8 +19,8 @@ def MA(df, seriesNames = ["Close"], n = 20):
     
 # The values is already a correct [Nsam, Nsig] numpy matrix
 #Moving Average  
-def SMA(df, seriesNames = ["Close"], n = 20):  
-    SMA = df[seriesNames].rolling(n).mean()
+def SMA(df, series_name = "Close", n = 20):  
+    SMA = df[series_name].rolling(n).mean()
     return SMA.values
 
 #Exponential Moving Average  

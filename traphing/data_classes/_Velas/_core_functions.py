@@ -7,7 +7,7 @@ import numpy as np
 import copy
 import time
 import pandas as pd
-
+import datetime as dt
 """
 Library with all the obtaining indicator functions of the market.
 
@@ -24,7 +24,7 @@ def _get_time_mask(start_time, end_time, dates):
     
     return time_mask
 
-def set_time_interval(self, start_time = None, end_time = None, trim = True):
+def set_time_interval(self, start_time = None, end_time = None, trim = False):
     """
     Set the time interval of the velas.
     If trim == True then, the velas outside of the interval will be removed.
@@ -38,9 +38,13 @@ def set_time_interval(self, start_time = None, end_time = None, trim = True):
     
     if (start_time is None):   # Case of nothing given
         start_time = dates[0]
+        
     if (end_time is None):
         end_time = dates[-1]
-        
+    
+    start_time = pd.to_datetime(start_time)
+    end_time = pd.to_datetime(end_time)
+    
     self._time_mask = _get_time_mask(start_time, end_time, dates )
     
     self.start_time = start_time

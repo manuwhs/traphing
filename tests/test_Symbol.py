@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
-import traphing.data_classes.Symbol as Symbol
+from traphing.data_classes import Symbol
 from traphing.utils import Timeframes
 import pytest
 import datetime as dt
@@ -69,11 +69,11 @@ class TestSymbol():
         
         assert my_symbol[Timeframes.M15].df.shape == (2112,5)
         assert my_symbol[Timeframes.M15]._df.shape == (100400,5)
-        assert my_symbol[Timeframes.M15].dates.shape == (2112,)
+        assert my_symbol[Timeframes.M15].timestamps.shape == (2112,)
 
         assert my_symbol[Timeframes.D1].df.shape == (22,5)
         assert my_symbol[Timeframes.D1]._df.shape == (4894,5)
-        assert my_symbol[Timeframes.D1].dates.shape == (22,)
+        assert my_symbol[Timeframes.D1].timestamps.shape == (22,)
         
         
         

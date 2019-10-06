@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
-import traphing.data_classes.Velas as Velas
+from traphing.data_classes import Velas
 from traphing.utils import Timeframes
 import pytest
 import datetime as dt
@@ -35,8 +35,8 @@ class TestVelas():
     def test_load_data_from_csv(self):
         my_vela = get_loaded_Vela()
         assert my_vela.df.shape == (100400,5)
-        assert my_vela.dates.shape == (100400,)
-        assert isinstance(my_vela.dates,pd.DatetimeIndex)
+        assert my_vela.timestamps.shape == (100400,)
+        assert isinstance(my_vela.timestamps,pd.DatetimeIndex)
         assert isinstance(my_vela.df,pd.DataFrame) 
     
     def test_loaded_empty_df(self):
@@ -55,11 +55,11 @@ class TestVelas():
         start_time = dt.datetime(2019,7,20); end_time = dt.datetime(2019,8,20)
         my_vela = get_loaded_Vela()
         
-        my_vela.set_time_interval(start_time, end_time)
+        my_vela.set_time_interval(start_time, end_time, trim = True)
         
         assert my_vela.df.shape == (2112,5)
         assert my_vela._df.shape == (2112,5)
-        assert my_vela.dates.shape == (2112,)
+        assert my_vela.timestamps.shape == (2112,)
 
     def test_set_time_interval_no_trimming(self):
         start_time = dt.datetime(2019,7,20); end_time = dt.datetime(2019,8,20)
@@ -69,7 +69,7 @@ class TestVelas():
         
         assert my_vela.df.shape == (2112,5)
         assert my_vela._df.shape == (100400,5)
-        assert my_vela.dates.shape == (2112,)
+        assert my_vela.timestamps.shape == (2112,)
     
     def test_set_time_interval_complex(self):
         """ We test several succesive scenarios"""
@@ -81,7 +81,7 @@ class TestVelas():
         
         assert my_vela.df.shape == (2112,5)
         assert my_vela._df.shape == (100400,5)
-        assert my_vela.dates.shape == (2112,)
+        assert my_vela.timestamps.shape == (2112,)
         
     def test_save_to_csv(self):
         my_vela = get_loaded_Vela()

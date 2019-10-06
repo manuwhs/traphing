@@ -2,17 +2,40 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import pylab
-import utilities_lib as ul
+from ... import utils as ul
+
 import matplotlib.gridspec as gridspec
-import graph_basic as grba
 #import tasks_lib as tal
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import CheckButtons,Slider, Button, SpanSelector
 from matplotlib.widgets import AxesWidget
 import sys
-
+import copy
 #from matplotlib.finance import candlestick_ohlc
+
+def store_WidgetData(self, plots_typ, plots):
+    # This funciton will store the data needed to later use the widgets
+    self.plots_type.append(plots_typ)
+    self.plots_list.append(plots) # We store the pointers to the plots
+    data_i = [copy.deepcopy(self.X),copy.deepcopy(self.Y)]
+    self.Data_list.append(data_i)
+    
+def init_WidgetData(self, initX = None, ws =  None):
+    ## TODO. Second case where NcY = NcX !!
+    if (type(initX) == type(None)):
+        initX = 0
+    if (type(ws) == type(None)):  # We only show the last ws samples
+        NpX = self.Y.shape[0]
+        ws = NpX - initX
+    self.ws = ws
+    self.start_indx = initX
+    self.end_indx = initX + ws
+    
+    plots = []
+    plots_typ = []
+    
+    return plots,plots_typ
 
 def add_hidebox(self, plots_affected = [], 
                names = [],

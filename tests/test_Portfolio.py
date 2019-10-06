@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..") # Adds higher directory to python modules path.
-import traphing.data_classes.Portfolio as Portfolio
+from traphing.data_classes import Portfolio
 from traphing.utils import Timeframes
 import pytest
 import datetime as dt
@@ -19,6 +19,7 @@ def get_loaded_Portfolio():
     my_portfolio.load_data_from_csv(storage_folder)
     return my_portfolio
     
+    70703070
     
 class TestPortfolio():
     

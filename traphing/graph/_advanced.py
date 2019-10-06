@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import utilities_lib as ul
+from .. import utils as ul
 import copy
 
 from matplotlib.patches import Rectangle
@@ -24,7 +24,7 @@ def barchart(self, X = [],Y = [],  # X-Y points in the graph.
            
     
     # Management of the figure and properties
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
+    ax = self.figure_management(axes = axes, sharex = sharex, sharey = sharey,
                       projection = projection, position = position)
     ## Preprocess the data given so that it meets the right format
     X, Y = self.preprocess_data(X,Y,dataTransform)
@@ -366,67 +366,3 @@ def plot_timeRegression(self,Xval, Yval, sigma,
     else:
         gl.scatter(Xtr, Ytr, legend = ["Training Points"], color = "k")
         
-def putamadere(wd):
-    ## Previous velero plotting
-    # The width of the bowes is the same for all and the x position is given by
-    # the position 
-
-    ## Obtain the 4 parameters of the square
-    ## Box parameters
-
-    """ WE are gonna plot the Velas in one axis and the volume in others """
-
-    ####### Plot all the cubes !!!!
-    fig, ax = plt.subplots()
-    
-    fig.facecolor = colorBg
-    
-    for i in range(Ns):
-        # Calculate upper and lowe value of the box and the sign
-        diff = r_close[i] - r_open[i]
-#        print diff
-        if (diff >= 0):
-            low_box = r_open[i]
-            sign = colorInc
-        else:
-            low_box = r_close[i]
-            sign = colorDec
-        
-        # Create the box
-        ax.broken_barh([(date_indx[i] + 0.05, 1 - 0.1)],
-                        (low_box, abs(diff)),
-                         facecolors=sign)
-                         
-        # Create the box upper line                
-        ax.broken_barh([(date_indx[i] + 0.45, 0.1)],
-                        (low_box + abs(diff), r_max[i] - low_box + abs(diff)),
-                         facecolors= "red")
-                         
-        # Create the box lower line                
-        ax.broken_barh([(date_indx[i] + 0.45, 0.1)],
-                        (r_min[i] , low_box - r_min[i]),
-                         facecolors= "red")
-    
-    """ PLOT VOLUME """ 
-    ax1_2 = ax.twinx()
-    
-    #ax1_2.plot(date, (ask-bid))
-#    print volume.shape
-#    print len(date)
-    ax1_2.bar(date, volume, facecolor= colorFill,alpha=.5)
-#    ax1_2.fill_between(date, 0, volume, facecolor= colorFill,alpha=.5)
-    
-#    broken_barh ( xranges, yrange, **kwargs)
-#        xranges	sequence of (xmin, xwidth)
-#        yrange	 sequence of (ymin, ywidth)
-        
-    plt.title(labels[0])
-    plt.xlabel(labels[1])
-    plt.ylabel(labels[2])
-    
-    if (len(labels) >3 ):
-        plt.legend(labels[3])
-    
-#    plt.grid()
-    plt.show()
-    
