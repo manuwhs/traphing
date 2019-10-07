@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jan 31 03:04:26 2016
-
-@author: montoya
-"""
-
-
 import numpy as np
 import datetime as dt
 

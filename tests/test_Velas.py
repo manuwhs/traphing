@@ -2,6 +2,8 @@ import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 from traphing.data_classes import Velas
 from traphing.utils import Timeframes
+import traphing.utils as utils
+
 import pytest
 import datetime as dt
 import pandas as pd
@@ -26,14 +28,15 @@ class TestVelas():
         """
         symbol_name = "AUDCHF"
         timeframe = Timeframes.M15
-        
         my_vela = Velas(symbol_name, timeframe)
         
         assert symbol_name == my_vela.symbol_name
-        assert timeframe == timeframe
-    
+        assert timeframe == my_vela.timeframe
+        assert utils.is_velas_df(my_vela.df)
+        
     def test_load_data_from_csv(self):
         my_vela = get_loaded_Vela()
+        
         assert my_vela.df.shape == (100400,5)
         assert my_vela.timestamps.shape == (100400,)
         assert isinstance(my_vela.timestamps,pd.DatetimeIndex)

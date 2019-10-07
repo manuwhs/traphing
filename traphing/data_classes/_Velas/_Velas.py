@@ -56,11 +56,12 @@ class Velas:
         self._time_mask = None
         
         ## Related to the dataFrame with the data
-        self._df = None
+        self._df = utils.get_empty_df()
         
         ## State variables
         self._trimmed = False
 
+    
     ## Pandas dataframe with the dates.
     @property
     def df(self):
@@ -73,6 +74,10 @@ class Velas:
     def df(self, value: pd.DataFrame):
         if value is None:
             value = utils.get_empty_df()
+        elif(utils.is_velas_df(value) == False):
+            print (value)
+            raise Warning("Setting a df dataframe with incorrect format")
+            
         self._df = value
         ## Extra operations to perform
         self._df.sort_index(inplace=True)

@@ -82,14 +82,18 @@ def load_data_from_csv(symbol_name, timeframe, storage_folder = "./storage/"):
     whole_path = storage_folder + get_csv_file_path(symbol_name, timeframe)
     
     try:
-        dataCSV = pd.read_csv(whole_path, sep = ',', index_col = 0, header = 0)
-        processed_dates = pd.to_datetime(dataCSV.index)
-        dataCSV.index = processed_dates
+        data_csv = pd.read_csv(whole_path, sep = ',', index_col = 0, header = 0)
+        processed_dates = pd.to_datetime(data_csv.index)
+        data_csv.index = processed_dates
+        
+        # Dealing with legacy when we named the index as Dates
+        if (data_csv.index.name == "Date"):
+            data_csv.index.name = "Timestamp"
+            
     except IOError:
         error_msg = "File does not exist: " + whole_path 
         print (error_msg)
-        dataCSV = utils.get_empty_df()
+        data_csv = utils.get_empty_df()
     
-    print ("Size " + whole_path +": ",dataCSV.shape[0], " rows")
-    df = dataCSV
-    return df
+    print ("Size " + whole_path +": ",data_csv.shape[0], " rows")
+    return data_csv

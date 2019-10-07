@@ -10,8 +10,21 @@ import numpy as np
 keys = ['Open', 'High', 'Low', 'Close', 'Volume']
 
 def get_empty_df():
-    return pd.DataFrame(None,columns = keys )
+    df = pd.DataFrame(None,columns = keys)
+    df.index.name = "Timestamp"
+    return df
 
+def is_velas_df(df):
+    """ Checks if the given DataFrame follows the convention of Velas.df
+    """
+    empty_df = get_empty_df()
+    
+    if sorted(list(empty_df.columns)) != sorted(list(df.columns)):
+        return False
+    if empty_df.index.name != df.index.name:
+        return False
+    return True
+    
 keys_col = ['Symbol','Type','Size','TimeOpen','PriceOpen', 'Comision','CurrentPrice','Profit']
 empty_coliseum = pd.DataFrame(None,columns = keys_col )
 
@@ -23,6 +36,18 @@ periods_names = ["M1","M5","M15","M30","H1","H4","D1","W1","W4","Y1"]
 
 period_dic = dict(zip(periods,periods_names))
 names_dic = dict(zip(periods_names, periods))
+
+class Timeframes(Enum):
+    M1 = 0
+    M5 = 1
+    M15 = 2
+    M30 = 3
+    H1 = 4
+    H4 = 5
+    D1 = 6
+    W1 = 7
+    W4 = 8
+    Y1 = 9
 
 
 def cmp_to_key(mycmp):
@@ -44,17 +69,6 @@ def cmp_to_key(mycmp):
             return mycmp(self.obj, other.obj) != 0
     return K
 
-class Timeframes(Enum):
-    M1 = 0
-    M5 = 1
-    M15 = 2
-    M30 = 3
-    H1 = 4
-    H4 = 5
-    D1 = 6
-    W1 = 7
-    W4 = 8
-    Y1 = 9
 
 def get_foldersData(source = "FxPro", rrf = "../" ):
     # Returns the folders where we can find the previously stored data,

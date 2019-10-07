@@ -44,37 +44,40 @@ print("TCP Server listening on port ", port, ", mode = ", mode)
 serv.listen();
 
 # Ask for the list of symbols! 
-success = serv.request_csv_symbol_info();
-
-if (success):
-    symbol_info = Symbol.load_symbols_info_from_csv(updates_folder)
-    Symbol.save_symbols_info_to_csv(storage_folder, Symbol_info)
-    print(symbol_info)
+try:
+    success = serv.request_csv_symbol_info();
     
-    ## Now we download data from the first 10 symbols and mix it with previous one.
-    timeframes_list = [Timeframes.M15] # [1, 5, 15, 1440]
-    symbol_names_list = Symbol_info["Symbol"].tolist()
-    N_symbols = len(symbol_names_list)
-    
-    ## Download the last week ofsome symbols
-    start_date = dt.date.today() - dt.timedelta(days=7000)
-    start_date = start_date.strftime("%d %m %Y")
-    
-    for i in range(N_symbols):
-        print ("------ Downloading symbol %i/%i ----------"%(i+1,N_symbols) )
-        for p in range(len(timeframes_list)):
-            symbol_name = symbol_names_list[i]
-            timeframe = timeframes_list[p]
-            success = serv.request_csv_data_signal(symbol_name, timeframe,start_date);
-            
-            if (success):
-                ## Load the local and new data and save it !!
-                timeData = Velas(symbol_name,timeframe)
-                timeData.update_csv (storage_folder, updates_folder)
-                print ("Updated database")
-                  
-serv.sock.close()
-
+    if (success):
+        symbol_info = Symbol.load_symbols_info_from_csv(updates_folder)
+        Symbol.save_symbols_info_to_csv(storage_folder, Symbol_info)
+        print(symbol_info)
+        
+        ## Now we download data from the first 10 symbols and mix it with previous one.
+        timeframes_list = [Timeframes.M15] # [1, 5, 15, 1440]
+        symbol_names_list = Symbol_info["Symbol"].tolist()
+        N_symbols = len(symbol_names_list)
+        
+        ## Download the last week ofsome symbols
+        start_date = dt.date.today() - dt.timedelta(days=7000)
+        start_date = start_date.strftime("%d %m %Y")
+        
+        for i in range(N_symbols):
+            print ("------ Downloading symbol %i/%i ----------"%(i+1,N_symbols) )
+            for p in range(len(timeframes_list)):
+                symbol_name = symbol_names_list[i]
+                timeframe = timeframes_list[p]
+                success = serv.request_csv_data_signal(symbol_name, timeframe,start_date);
+                
+                if (success):
+                    ## Load the local and new data and save it !!
+                    timeData = Velas(symbol_name,timeframe)
+                    timeData.update_csv (storage_folder, updates_folder)
+                    print ("Updated database")
+                      
+    serv.sock.close()
+except:
+    print ("Forced closing due to interroption")
+    serv.sock.close()
 #if(0):
 #    # Listening to the data
 #    while True:  
