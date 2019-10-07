@@ -1,5 +1,8 @@
 import os
 import shutil
+from os import listdir
+from os.path import isfile, join
+from distutils.dir_util import copy_tree
 
 def create_folder_if_needed (folder):
     if not os.path.exists(folder):
@@ -84,3 +87,43 @@ def remove_files(folder, remove_subdirectories = False):
                 if os.path.isdir(file_path): shutil.rmtree(file_path)
         except Exception as e:
             print(e)
+            
+
+def export_MQL5_files(MT5_folder):
+    """
+    Exports the MQL5 file codes into the corresponding MLQ5 folder so that MT5 can execute them.
+    """
+    src_files_folder = "../traphing/MQL5/"
+    MT5_folder = MT5_folder + "MQL5/"
+    create_folder_if_needed(MT5_folder+"Include/traphing/")
+    create_folder_if_needed(MT5_folder+"Scripts/traphing/")
+    
+    copied_files = copy_tree(src_files_folder, MT5_folder, update = False)
+    print("Copied files from " + src_files_folder + " to " + MT5_folder)
+    print("  "+ "\n  ".join(copied_files) )
+
+def import_MQL5_files_for_library_update(MT5_folder):
+    """
+    Imports the modified files in the MT5 folder into the library codes for commiting changes.
+    This is necessary because the MQL5 code files should be modified in the MT5 folder.
+    """
+    des_files_folder_include = "../traphing/MQL5/Include/traphing/"
+    des_files_folder_scripts = "../traphing/MQL5/Scripts/traphing/"
+    create_folder_if_needed(des_files_folder_include)
+    create_folder_if_needed(des_files_folder_scripts)
+    
+    MT5_folder +=  "MQL5/"
+    include_folder = MT5_folder + "Include/traphing/"
+    scripts_folder = MT5_folder + "Scripts/traphing/"
+    
+    MT5_Include_files = [f for f in listdir(include_folder) if isfile(join(include_folder, f))]
+    for filename in MT5_Include_files:
+        if filename[-3:] == "mqh":
+            shutil.copy(include_folder + filename, des_files_folder_include + filename)
+            print(des_files_folder_include + filename)
+
+    MT5_Script_files = [f for f in listdir(scripts_folder) if isfile(join(scripts_folder, f))]
+    for filename in MT5_Script_files:
+        if filename[-3:] == "mq5":
+            shutil.copy(scripts_folder + filename, des_files_folder_scripts + filename)
+            print(des_files_folder_scripts + filename)
