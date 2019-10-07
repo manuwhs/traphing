@@ -19,19 +19,8 @@ class GraphicalLibraryFigure ():
     def __init__(self,w = 20, h = 12, lw = 2):
         self.init_variables(w = w, h = h, lw = lw)
     
-    @classmethod
-    def init_figure(self,w = 20, h = 12, lw = 2):
-        """
-        Creates a new figure 
-        """
-        ## Reinit everything
-    
-        figure = plt.figure()  
-        self.figure = figure
-        
-        return figure
-
     ####################### Figure functions  #######################
+    init_figure = grba.init_figure
     figure_management = grba.figure_management
     init_variables = grba.init_variables
     savefig = grba.savefig
@@ -50,6 +39,9 @@ class GraphicalLibraryFigure ():
     hide_yaxis =  graxis.hide_yaxis
     
     ####################### Setting functions #######################
+    predrawing_settings = grset.predrawing_settings
+    postdrawing_settings = grset.postdrawing_settings
+    
     format_legend = grset.format_legend
     set_textRotations = grset.set_textRotations
     set_fontSizes = grset.set_fontSizes
@@ -61,6 +53,7 @@ class GraphicalLibraryFigure ():
     add_text = grset.add_text
     
     ######################## Axes functions #######################
+    add_axes = graxes.add_axes
     manage_axes = graxes.manage_axes
     create_axes = graxes.create_axes
     twin_axes = graxes.twin_axes

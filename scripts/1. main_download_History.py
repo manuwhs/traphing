@@ -53,7 +53,7 @@ try:
         print(symbol_info)
         
         ## Now we download data from the first 10 symbols and mix it with previous one.
-        timeframes_list = [Timeframes.M15] # [1, 5, 15, 1440]
+        timeframes_list = [Timeframes.M15,Timeframes.M1,Timeframes.M5, Timeframes.D1] # [1, 5, 15, 1440]
         symbol_names_list = Symbol_info["Symbol"].tolist()
         N_symbols = len(symbol_names_list)
         
@@ -76,7 +76,7 @@ try:
                       
     serv.sock.close()
 except:
-    print ("Forced closing due to interroption")
+    print ("Forced closing due to interruption")
     serv.sock.close()
 #if(0):
 #    # Listening to the data

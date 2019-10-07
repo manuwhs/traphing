@@ -3,23 +3,43 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 #####  BUILDING FUNCTIONS #####
 
+def subplots_adjust(self, left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0, hide_xaxis = True):
+    # Adjusting the properties of the subplots
+    plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
+    if (hide_xaxis):
+        all_axes = self.get_axes()
+        for i in range(len(all_axes)-2):
+            ax = all_axes[i]
+            self.hide_xaxis(ax)
+            
+
 def subplot2grid(self, *args, **kwargs): #divisions, selection):
-    # Usar **kwargs to get the dictionary ? 
-    # Same as the original :) ! But we put the new axis into the array
+    
+    """
+    Same as the original :) ! But we put the new axis into the array
     # It creates an axes with the desired dimensions by dividing 
     # the axes in "divisions" and then subselecting the desired ones.
     if (self.fig == None):       # If there is no figure
         self.init_figure()
-    ax = plt.subplot2grid(*args,**kwargs)
-    self.axes = ax
-    self.axes_list.append(ax)
-    return ax
+    """
+    
+    axes = plt.subplot2grid(*args,**kwargs)
+    self.add_axes(axes)
+    return axes
+    
+#######################################################################
+############## Legacy land ############################################
+#######################################################################
+# TODO: Think if it is worth refactoring functionality.
     
 def set_subplots(self, nr, nc, projection = "2d", sharex=False):
+    """
+    State a subplot partitition of a new figure.
+    nr is the number of rows of the partition
+    nc is the numbel of columns
+    """
     self.init_figure()
-    # State a subplot partitition of a new figure.
-    # nr is the number of rows of the partition
-    # nc is the numbel of columns
+
     
     self.sharex_aux = sharex
     self.subplotting = 1  
@@ -41,15 +61,8 @@ def set_subplots(self, nr, nc, projection = "2d", sharex=False):
         
     self.nci = 0
     self.nri = 0
-    
-    # We can select the subplot with  plt.subplot(G[r, c])
 
     self.first_subplot = 1
-
-    ## Set the space of the things
-#    self.G.update(wspace=0.025, hspace=0.05) # set the spacing between axes. 
-
-#    print self.subplotting
 
 def next_subplot(self, projection = "2d", sharex = None, sharey = None):
     # Moves to the next subpot to plot.
@@ -100,73 +113,4 @@ def next_subplot(self, projection = "2d", sharex = None, sharey = None):
     
     return ax
     
-def subplots_adjust(self, hide_xaxis = False, left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0):
-    # Adjusting the properties of the subplots
-    plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
-    if (hide_xaxis):
-        all_axes = self.get_axes()
-        #Hides all of the Xaxis exept the last one.
-        #TODO: the -2 is only if the last element has shared axes, we should detect that
-        for i in range(len(all_axes)-2):
-            ax = all_axes[i]
-            self.hide_xaxis(ax)
     
-def apply_style(self, nf,na, AxesStyle = None):
-    # This function applies standard specfied formattings :)
-
-    self.axes.grid(True)
-    
-    ax = self.axes
-    # TODO, should it be if nf == 1
-    if (type(AxesStyle) != type(None)):
-        options = AxesStyle.split(" - ")
-        style = options[0]
-        if (style == "Normal"):
-            self.set_fontSizes(title = 20, xlabel = 20, ylabel = 20, 
-                  legend = 20, xticks = 11, yticks = 13)
-            self.set_textRotations(xticks = 60)
-            self.color_axis(color_spines = "k", color_axis = "k")
-            self.format_xaxis (Nticks = 20,formatting = None)
-            self.format_legend(handlelength=1.5, borderpad=0.5,labelspacing=0.3, ncol = 2)
-            
-            if (type( self.axes.get_legend()) != type(None)):     
-                self.axes.get_legend().get_title().set_fontsize(25)
-#            self.axes.legend(fontsize=25)    
-        elif (style == "Normal2"):
-            self.set_fontSizes(title = 20, xlabel = 20, ylabel = 20, 
-                  legend = 20, xticks = 15, yticks = 15)
-            self.format_xaxis (Nticks = 10,formatting = None)
-            self.format_legend(handlelength=1.5, borderpad=0.5,labelspacing=0.3, ncol = 2)
-            if (type( self.axes.get_legend()) != type(None)):     
-                self.axes.get_legend().get_title().set_fontsize(25)
-            
-            ax.axhline(linewidth=1.7, color="black",marker = ">",ms = 6)
-            ax.axhline(linewidth=1.7, color="black",marker = "<")
-            ax.axvline(linewidth=1.7, color="black",marker = "^")
-            ax.axvline(linewidth=1.7, color="black",marker = "v")
-            if (0):
-                # A way to draw the axes
-                ax.spines['left'].set_position('zero')
-                ax.spines['right'].set_color('none')
-                ax.spines['bottom'].set_position('zero')
-                ax.spines['top'].set_color('none')
-                # remove the ticks from the top and right edges
-                ax.xaxis.set_ticks_position('bottom')
-                ax.yaxis.set_ticks_position('left')
-
-        if (len(options) > 1):
-            for i in range (1,len(options)):
-                otherOption = options[i]
-                if (otherOption == "No xaxis"):
-                    self.hide_xaxis()
-                elif (otherOption == "No yaxis"):
-                    self.hide_yaxis()
-                
-                # See if it tries to set any other param
-                suboptions = options[i].split(":")
-                if (suboptions[0] == "Ny"):
-                    self.format_yaxis (Nticks = int(suboptions[1]),formatting = None)
-    try:
-        plt.show(block = False)
-    except:
-        print ("Error plt.show()")

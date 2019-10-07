@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 from .. import utils as ul
 from .trapyngColors import cd
 
+def init_figure(self,w = 20, h = 12, lw = 2):
+        self.figure = plt.figure()  
+        return self.figure
 
 def init_variables(self, w = 20, h = 12, lw = 2):
         """ Initialize all the internal variables to do all the cool stuff later.
@@ -15,7 +18,7 @@ def init_variables(self, w = 20, h = 12, lw = 2):
         # When a new figure is done, we put the current one here and
         # create a new variable. Silly way to do it though
         
-        self.fig = None
+        self.figure = None
         self.axes = None
         
         self.nplots = 0;  # Number of plots
@@ -50,22 +53,23 @@ def init_variables(self, w = 20, h = 12, lw = 2):
         self.Data_list = []  # We need to store a pointer of the data in the graph
         self.widget_list = []  # We need to store reference to widget so that
         self.num_hidders = 0
-        # TODO Data_list is different than plots_list, data list containes only one pos with all the Y, the other does it separately
-        # it does not dissapear.
-        # A plot in plot_list can be composed by different plots if when the functions where called
-        # more signals where given.)
+
 
 def figure_management(self, axes = None, sharex = None, sharey = None, 
                       position = [], projection = "2d"):
     """
-    This function si suposed to deal with everything that has to do with initializating figure, axis, subplots...
+    This function is suposed to deal with everything that has to do with initializating figure, axis, subplots...
     """
+    if(self.figure is None):
+        self.init_figure()
     axes = self.manage_axes(position = position, projection = projection)
     return axes
+
 
 def close(self,  *args, **kwargs):
     return  plt.close( *args, **kwargs)
     
+
 def savefig(self,file_dir = "./image.png", bbox_inches = 'tight',
             size_inches = [],  close = False, dpi = 100):
     """ Function to save the current figure in the desired format

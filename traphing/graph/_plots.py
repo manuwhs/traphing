@@ -4,104 +4,72 @@ import datetime as dt
 
 from matplotlib import collections  as mc
 # The common properties will be explained here once and shortened in the rest
-def plot(self, X = [],Y = [],           # X-Y points in the graph.
+def plot(self, X = None,Y = None,           # X-Y points in the graph.
         labels = [], legend = [],       # Basic Labelling
         color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        # Figure and axes management 
-        nf = 0,          # New figure. If 1 it will either create new fig or go to next subplot
-        na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
         
-        ax = None,      # Axes where this will be plotted. If none, it will be the last one.
-        position = [],   # If given it will create a new axes [x,y,w,h]
+        ## Axes options
+        axes = None,      # Axes where this will be plotted. If none, it will be the last one.
+        position = None,   # If given it will create a new axes [x,y,w,h]
         sharex = None, sharey = None, # When nf = 1, we are creating a new figure and we can choose
                                      # that new axes share the same x axis or yaxis than another one.
         projection = "2d", # Type of plot
         
         # Advanced fonts
-        fontsizes = [None, None, None],   # This is the fontsizes of [tittle, xlabel and ylabel, xticks and yticks]
+        font_sizes = [None, None, None],   # This is the fontsizes of [tittle, xlabel and ylabel, xticks and yticks]
         
         # Layout options
-        xlimPad = None, ylimPad = None, # Padding in percentage of the plotting, it has preference
+        xpadding = None, ypadding = None, # Padding in percentage of the plotting, it has preference
         xlim = None, ylim = None, # Limits of vision
         
-        # Widgets options
-        ws = None,      # Only plotting the last window of the data.
-        initX = None,   # Initial point to plot
-        # Basic parameters that we can usually find in a plot
-        loc = "best",    # Position of the legend
-        
         ### Special options 
-        fill = 0,  #  0 = No fill, 1 = Fill and line, 2 = Only fill
+        fill_between = 0,  #  0 = No fill, 1 = Fill and line, 2 = Only fill
         alpha_line = 1, # Alpha of the line when we do fillbetween
         fill_offset = 0,  # The 0 of the fill
         ls = "-",
         marker = [None, None, None], # [".", 2, "k"],
         
-        # Formatting options
+        # Axis options
         xaxis_mode = None,# Perfect for a few good ones :)
         yaxis_mode = None, # Perfect for a few good ones :)
         AxesStyle = None,   # Automatically do some formatting :)
         dataTransform = None,   # Specify if we are gonna format somehow the data. 
                             # for intraday for example.
-        ## Return more output !!!
-        return_drawing_elements = False
-        ):         
-    # Management of the figure and properties
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
-                      projection = projection, position = position)
+
+        ## Widget options
+        ws = None,      # Only plotting the last window of the data.
+        initX = None,   # Initial point to plot
+        # Basic parameters that we can usually find in a plot
+        loc = "best",    # Position of the legend
+        ):       
     
-    ## Sometimes we just want an empty plot with the graph, so we just return the axes.
-    if (type(Y) == type([])):
-        if (len(Y) == 0):
-            return ax;
+    axes, X,Y, drawings,drawings_type = self.predrawing_settings(axes, sharex, sharey,
+                 position,  projection, X,Y, dataTransform, ws)
+    
+    for i in range(Y.shape[0]):  
+        self.zorder+= 1  # 
+        colorFinal = self.get_color(color)
+        legend_i = None if i >= len(legend) else legend[i]
+        alpha_line = alpha if fill_between == 0 else alpha_line
         
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y, dataTransform = dataTransform)
-#    print (X,Y)
-    
-    NpY, NcY = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
-    
-    if (Y.size != 0):  # This would be just to create the axes
-    ############### CALL PLOTTING FUNCTION ###########################
-        for i in range(NcY):  # We plot once for every line to plot
-            self.zorder = self.zorder + 1  # Setting the properties
-            colorFinal = self.get_color(color)
-            legend_i = None if i >= len(legend) else legend[i]
-            alpha_line = alpha if fill == 0 else alpha_line
-            plot_i, = ax.plot(X[self.start_indx:self.end_indx],Y[self.start_indx:self.end_indx:,i], 
-                     lw = lw, alpha = alpha_line, color = colorFinal,
-                     label = legend_i, zorder = self.zorder,
-                     ls = ls, marker = marker[0], markersize = marker[1], markerfacecolor = marker[2])
-            plots.append(plot_i)
-            plots_typ.append("plot")
-            # Filling if needed
-            if (fill == 1):  
-                self.fill_between(x = X[self.start_indx:self.end_indx],
-                                  y1 = Y[self.start_indx:self.end_indx,i],
-                                    y2 = fill_offset, color = colorFinal,alpha = alpha)
+        plot_i, = axes.plot(X[self.start_indx:self.end_indx],Y[self.start_indx:self.end_indx:,i], 
+                 lw = lw, alpha = alpha_line, color = colorFinal,
+                 label = legend_i, zorder = self.zorder,
+                 ls = ls, marker = marker[0], markersize = marker[1], markerfacecolor = marker[2])
+        drawings.append(plot_i); drawings_type.append("plot")
 
-    ############### Last setting functions ###########################
-    self.store_WidgetData(plots_typ, plots)     # Store pointers to variables for interaction
-    
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
-    
-    if (return_drawing_elements):
-        return ax, plots
-    
-    return ax
+        if (fill_between == 1):  
+            plot_i = self.fill_between(x = X[self.start_indx:self.end_indx],
+                              y1 = Y[self.start_indx:self.end_indx,i],
+                                y2 = fill_offset, color = colorFinal,alpha = alpha)
+            drawings.append(plot_i); drawings_type.append("fill_between")
+            
+    self.postdrawing_settings(axes, legend, loc, labels, font_sizes, 
+                         xlim, ylim,xpadding,ypadding,X,Y)
+    return drawings
 
-def stem(self, X = [],Y = [],  # X-Y points in the graph.
-        labels = [], legend = [],       # Basic Labelling
-        color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        nf = 0, na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
-        ax = None, position = [], projection = "2d", # Type of plot
-        sharex = None, sharey = None,
+def stem(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, alpha = 1.0,  # Basic line properties
+        ax = None, position = [], projection = "2d", sharex = None, sharey = None,
         fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
         xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
         ws = None, Ninit = 0,     

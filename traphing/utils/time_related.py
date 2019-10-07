@@ -1,12 +1,9 @@
-
 import numpy as np
 import pandas as pd
 import datetime as dt
 import time
+import matplotlib.dates as mdates
 
-#########################################################
-#################### TIME FUNC ##########################
-#########################################################
 
 def get_dates(dates_list):
     # Gets only the date from a timestapm. For a list
@@ -15,6 +12,7 @@ def get_dates(dates_list):
         only_day.append(date.date())
     return np.array(only_day)
 
+
 def get_times(dates_list):
     # Gets only the time from a timestapm. For a list
     only_time = []
@@ -22,6 +20,7 @@ def get_times(dates_list):
         only_time.append(date.time())
     return np.array(only_time)
     
+
 def str_to_datetime(dateStr):
     # This function converts a str with format YYYY-MM-DD HH:MM:SS to datetime
     dates_datetime = []
@@ -38,8 +37,10 @@ def str_to_datetime(dateStr):
         dates_datetime.append(datetim)
     return dates_datetime
 
+
 def get_timeStamp(date):
     return time.mktime(date.timetuple())
+
 
 def transform_time(time_formated):
     # This function accepts time in the format 2016-01-12 09:03:00
@@ -60,7 +61,7 @@ def transform_time(time_formated):
         
     return data_normalized 
     
-import matplotlib.dates as mdates
+
 def preprocess_dates(X):
     # Dealing with dates !
     ## Format of time in plot [736203.87313988095, 736204.3325892858]
@@ -83,6 +84,7 @@ def convert_dates_str(X):
         Xdates_str.append(name)
     return Xdates_str
 
+
 def diff_dates(dates):
     # This function fucking computes the delta difference between the samples
     dates = convert2dt(dates)
@@ -92,6 +94,7 @@ def diff_dates(dates):
         diffs.append(dates[i] - dates[i-1])
     return diffs
     
+
 def convert2dt(dates):
     # Finally a function to convert an array of shit to datetime
     
@@ -104,6 +107,7 @@ def convert2dt(dates):
         caca.append(date_new)
     return caca
     
+
 def transformDatesOpenHours(dates, opentime, closetime, minuts_sep = 60):
     """
     This funciton transform the dates to a scale where the intraday 
@@ -146,6 +150,7 @@ def transformDatesOpenHours(dates, opentime, closetime, minuts_sep = 60):
 #        transformed_seconds[i,0] = ndays_past * (nseconds_open + 60*minuts_sep)
     return transformed_seconds
 
+
 def detransformDatesOpenHours(transformed_dates,opentime, closetime, minuts_sep = None):
     """
     This function detransforms the date so we can know what time they actually are
@@ -179,11 +184,13 @@ def detransformDatesOpenHours(transformed_dates,opentime, closetime, minuts_sep 
         dates.append(date)
     return dates
 
+
 class deformatter_data:
     def __init__(self, opentime, closetime, minuts_sep):
         self.opentime = opentime    # Symbol of the Security (GLD, AAPL, IDX...)
         self.closetime = closetime
         self.minuts_sep = minuts_sep
+
 
 def detransformer_Formatter(x,pos):
     # This function will use 
@@ -194,6 +201,7 @@ def detransformer_Formatter(x,pos):
     date = dates[0] # We actually only receive one date
     return date.strftime('%Y-%m-%d %H:%M')
     
+
 def matlab2datetime(matlab_datenum):
     day = dt.datetime.fromordinal(int(matlab_datenum))
     dayfrac = dt.timedelta(days=matlab_datenum%1) - dt.timedelta(days = 366)

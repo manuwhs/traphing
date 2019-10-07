@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import datetime as dt
 
 def to_numpy_2d(data):
     data = np.array(data)
@@ -9,35 +10,19 @@ def to_numpy_2d(data):
         raise Warning("shape wrong")
     return data
 
-def format_data_to_plotting_type(data):
-    """
-    Format X data for the being printed by the matplotlib library.
-    The data generated should be easily digestable by the matplotlib library functions
-    
-    If the data is simply numeric:
-        - It returns a number 2 numpy dimensional array (Nsamples, Nsignals)
-    
-    If the data is categorical:
-        -
-    If the data are datetimes (matplotlib, pandas, numpy, datetime, time)
-        - It transforms them to...
-    """
-    
-    to_numpy_array_types = [(),[],range(0,1), np.array(1), pd.Series]
-    to_date_types = [pd.DatetimeIndex]
-    
-    if type(data) == type(None):
-        return None
-    
-    elif type(data) in to_numpy_array_types:
-        data = to_numpy_2d(data)
-    
-    elif type(data) in to_date_types:
-        data = pd.to_datetime(data)
-        data = to_numpy_2d(data)
-    
-    return data
-    
+def is_numerical_array(value):
+    to_numpy_array_types = [(),[],range(0,1), np.array(1), pd.Series, pd.DataFrame]
+    data_types = [type(x) for x in to_numpy_array_types]
+    if (type(value) in data_types):
+        return True
+    return False
+
+def is_timestamp_array(value):
+    to_numpy_array_types = [pd.DatetimeIndex, pd.datetime, dt.date, dt.datetime]
+    data_types = [type(x) for x in to_numpy_array_types]
+    if (type(value) in data_types):
+        return True
+    return False
 
 def fnp(ds):
     # This function takes some numpy element or list and transforms it

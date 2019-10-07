@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime as dt
 
-def set_zoom(self, axes = None, xlim = None ,X = None, Y = None, ylim = None, xlimPad = None ,ylimPad = None):
+def set_zoom(self, axes = None, xlim = None ,X = None, Y = None, ylim = None, xpadding = None ,ypadding = None):
     """
     Function to allows to play with the zooming more easily. It allows sevral modes at the same time
     """
@@ -12,35 +12,18 @@ def set_zoom(self, axes = None, xlim = None ,X = None, Y = None, ylim = None, xl
         Y = self.Y[self.start_indx:self.end_indx]
     if (type(X) == type(None)):
         X = self.X[self.start_indx:self.end_indx]
-    
-
-    elif (type(ylim) != type(None)):
-        self.set_ylim(ax = ax, ymin = ylim[0], ymax = ylim[1])
         
-    if (type(xlimPad) != type(None)):
-        try:
-            max_signal = np.max(X[~np.isnan(X)])
-            min_signal = np.min(X[~np.isnan(X)])
-        except:
-            ## This will work for dates !
-            max_signal = X[-1]
-            min_signal = X[0]
-        signal_range = max_signal - min_signal
-        if (signal_range == 0):
-            signal_range = max_signal
-            if ( signal_range > 0):
-                min_signal = 0
-            else:
-                max_signal = 0
-                
-        if (type(X[0]) == type(dt.datetime.now())):
-             self.set_xlim(ax = ax, xmin = min_signal, xmax = max_signal)
-        else:
-            self.set_xlim(ax = ax, xmin = min_signal - signal_range* xlimPad[0] ,xmax = max_signal + signal_range*xlimPad[1])
+    if ypadding is None:
+        self.set_ylim(axes = axes, ymin = ylim[0], ymax = ylim[1])
+    else:
+        self.set_ylim_padding(axes = axes, Y = Y, padding = ypadding)
 
-    elif (type(xlim) != type(None)):
-        self.set_xlim(ax = ax, xmin = xlim[0], xmax =xlim[1])
- 
+    if xpadding is None:
+        self.set_xlim(axes = axes, xmin = xlim[0], xmax = xlim[1])
+    else:
+        self.set_xlim_padding(axes = axes, X = X, padding = xpadding)
+        
+
 
 def set_ylim_padding(self, axes = None, X = None, padding = [0.1, 0,1]):
         max_signal = np.max(X[~np.isnan(X)])

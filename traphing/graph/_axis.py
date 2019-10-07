@@ -7,152 +7,108 @@ from matplotlib.ticker import FuncFormatter
 
 #from matplotlib.ticker import FuncFormatter
 
-def format_xaxis (self, ax = None, 
-                  Nticks = 10,    # Number of ticks we would like
-                  formatting = None,  # Specified formatting 
-                  xaxis_mode = None): # Several automatic modes 
-
-#    print (self.formatXaxis, xaxis_mode, formatting )
-    if (type(ax) == type(None)):    # Select the axes to plot on
-        ax = self.axes
-
-    ### Already configurated modes #####
-    if (type(xaxis_mode) != type(None)):
-        # If we have some profile of axis that we want
-        # We can automatically format them according to them.
-        if (xaxis_mode == "hidden"):
-            return self.hide_xaxis(ax)
-                 # TODO: also maybe delete the last ytick so that they do not overlap
-        if (xaxis_mode == "dayly"):
-            self.set_textRotations(xticks = 45)
-            return self.format_xaxis(formatting = '%Y-%m-%d:%h')
-        if (xaxis_mode == "intraday"):
-            self.set_textRotations(xticks = 45)
-            ## Makes a call to itself !! 
-            return self.format_xaxis(formatting = '%H:%M:%S')
-    else:
-        # If we had set ticklabels already when preprocessing the X values
-        # We already automatically detected the type of data that we had and here
-        # we set the options to format it properly.
-        if (self.formatXaxis == "categorical"):
-            ## If categorital data, we already set X to be Natural numbers 0 1 2 3...
-            ## so we set those as the tick values and put the categories as the labels
-    #        ax.set_xticklabels(self.ticklabels[val:val + wsize])  # [1::period]
-            ax.set_xticks(self.X[self.start_indx:self.end_indx], minor=False)
-            ax.set_xticklabels( self.Xcategories[self.start_indx:self.end_indx][:,0], minor=False)
-            # plt.xticks(self.X[val:val + wsize], self.ticklabels[val:val + wsize])
-        
-        elif(self.formatXaxis == "numerical"):
-            # If regular numerical we just plot the values
-            ax.xaxis.set_major_locator(mticker.MaxNLocator(nbins = Nticks,  prune='upper'))
-    #        ax.get_xaxis().get_major_formatter().set_useOffset(False)
-            
-        elif(self.formatXaxis == "dates"):
-            print("Now in")
-            # Set the formatting of the numbers, dates or strings.
-            # We could specify the formatting of the dates,if not we use a general one
-            if (type(formatting) == type(None)):
-                formatting = '%Y-%m-%d' # 
-#                formatting = '%Y-%m-%d:%H:%M'
-#                print xaxis_mode
-            ax.xaxis.set_major_formatter(mdates.DateFormatter(formatting))
-            ax.xaxis.set_major_locator(mticker.MaxNLocator(nbins = Nticks,  prune='upper'))
-            ax.xaxis_date()
-          #  ax.xaxis.set_major_formatter(FuncFormatter(self.ticklabels[val:val + wsize]))
-          
-        elif(self.formatXaxis == "intraday"):
-            # If the data is intraday and we want to apply the Gap Remover !!! 
-            gap_remover_flag = 1;
-            if (gap_remover_flag):
-                formatter = FuncFormatter(ul.detransformer_Formatter)
-                ax.xaxis.set_major_formatter(formatter)  
-                # mdates.DateFormatter(formatting)
-                
-            else:
-                ax.xaxis.set_major_formatter(mdates.DateFormatter(formatting))
-            
-            ax.xaxis.set_major_locator(mticker.MaxNLocator(nbins = Nticks,  prune='upper'))
-            
-            
-def format_yaxis (self, ax = None, 
-                  Nticks = 6,    # Number of ticks we would like
-                  formatting = None,  # Specified formatting 
-                  yaxis_mode = None): # Several automatic modes 
-
-    if (type(ax) == type(None)):    # Select the axes to plot on
-        ax = self.axes
-    # If we had set ticklabels already when preprocessing the X values
-    if (self.formatYaxis == "categorical"):
-#        ax.set_xticklabels(self.ticklabels[val:val + wsize])  # [1::period]
-        ax.set_yticks(self.Y[self.start_indx:self.end_indx], minor=False)
-        ax.set_yticklabels( self.Ycategories[self.start_indx:self.end_indx][:,0], minor=False)
-        # plt.xticks(self.X[val:val + wsize], self.ticklabels[val:val + wsize])
+def format_axis(self, axes, xaxis_mode, yaxis_mode, axes_style):
+    self.format_xaxis(axes = axes, xaxis_mode = xaxis_mode)
+    self.format_yaxis(axes = axes, yaxis_mode = yaxis_mode)
+    self.apply_style(axes = axes, axis_style = axis_style)
     
-    elif(self.formatYaxis == "numerical"):
-        # Set the number of levels in X 
-        ax.yaxis.set_major_locator(mticker.MaxNLocator(nbins = Nticks,  prune='upper'))
+def format_xaxis (self, axes, 
+                  n_ticks = 10,    # Number of ticks we would like
+                  timestamp_formatting = '%Y-%m-%d:%H:%M',  # Specified formatting 
+                  xaxis_mode = None): # Several automatic modes 
+    """
+    Handle all possible tailoring of the x_axis
+    """
+    if (self.X_type == "categorical"):
+        axes.set_xticks(self.X[self.start_indx:self.end_indx], minor=False)
+        axes.set_xticklabels(self.Xcategories[self.start_indx:self.end_indx][:,0], minor=False)
+        
+    elif(self.X_type == "numerical"):
+        # If regular numerical we just plot the values
+        axes.xaxis.set_major_locator(mticker.MaxNLocator(nbins = n_ticks,  prune='upper'))
 #        ax.get_xaxis().get_major_formatter().set_useOffset(False)
         
-    elif(self.formatYaxis == "dates"):
-        # Set the formatting of the numbers, dates or strings.
-        if type(formatting) == type(None):
-            formatting = '%Y-%m-%d'
-        ax.yaxis.set_major_formatter(mdates.DateFormatter(formatting))
-        ax.yaxis.set_major_locator(mticker.MaxNLocator(nbins = Nticks,  prune='upper'))
+    elif(self.X_type == "timestamp"):
+        axes.xaxis.set_major_formatter(mdates.DateFormatter(timestamp_formatting))
+        axes.xaxis.set_major_locator(mticker.MaxNLocator(nbins = n_ticks,  prune='upper'))
+        axes.xaxis_date()
       #  ax.xaxis.set_major_formatter(FuncFormatter(self.ticklabels[val:val + wsize]))
-
-    ### Already configurated modes #####
-    if (type(yaxis_mode) != type(None)):
-        # If we have some profile of axis that we want
-        if (yaxis_mode == 0):
-            return self.hide_yaxis(ax)
-                 # TODO: also maybe delete the last ytick so that they do not overlap
-        if (yaxis_mode == 1):
-            return self.format_yaxis(rotation = 45, yaxis_mode = None)
-                 
-def color_axis(self, ax = None, color_spines = "w", color_axis = "w"):
-    if (type(ax) == type(None)):    # Select the axes to plot on
-        ax = self.axes
-    ax.spines['bottom'].set_color(color_spines)
-    ax.spines['top'].set_color(color_spines)
-    ax.spines['left'].set_color(color_spines)
-    ax.spines['right'].set_color(color_spines)
-    ax.yaxis.label.set_color(color_axis)
-    ax.tick_params(axis='y', colors=color_axis)
-    ax.tick_params(axis='x', colors=color_axis)
-    pass
-
-def format_axis2(self,ax, Nx = 10, Ny = 5, 
-                 fontsize = None, rotation = None, hideXaxis = False, 
-                 X = None, val = 0, wsize = 20):
-    
-    # Set the ticks
-    if (type(X) != type(None)):
-        ax.set_xticks(self.X[val:val + wsize][0::period], minor=False)
-        ax.set_xticklabels( self.ticklabels[val:val + wsize][0::period], minor=False)
-                   
-#    ax.get_yaxis().get_major_formatter().set_useOffset(False). It does not allow for offset in the scale, like 3000 + 0.2, 0.4
-
-def subplots_adjust(self, hide_xaxis = True, left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0):
-    # Adjusting the properties of the subplots
-    plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
-    if (hide_xaxis):
-        all_axes = self.get_axes()
-        #Hides all of the Xaxis exept the last one.
-        #TODO: the -2 is only if the last element has shared axes, we should detect that
-        for i in range(len(all_axes)-2):
-            ax = all_axes[i]
-            self.hide_xaxis(ax)
+      
+    elif(self.formatXaxis == "intraday"):
+        # If the data is intraday and we want to apply the Gap Remover !!! 
+        gap_remover_flag = 1;
+        if (gap_remover_flag):
+            formatter = FuncFormatter(ul.detransformer_Formatter)
+            axes.xaxis.set_major_formatter(formatter)  
+            # mdates.DateFormatter(formatting)
             
-def hide_xaxis(self, ax = None):
-    # This function hides the axes of the funct
-    if (type(ax) == type(None)):
-        ax = self.get_axes()[-1]
-    plt.setp(ax.get_xticklabels(), visible=False)
-
-def hide_yaxis(self, ax = None):
-    # This function hides the axes of the funct
-    if (type(ax) == type(None)):
-        ax = self.get_axes()[-1]
-    plt.setp(ax.get_yticklabels(), visible=False)
+        else:
+            axes.xaxis.set_major_formatter(mdates.DateFormatter(formatting))
+        
+        axes.xaxis.set_major_locator(mticker.MaxNLocator(nbins = n_ticks,  prune='upper'))
+        
+        
+def apply_style_axis(self, axes, axis_style = None):
+    """
+    This function applies standard specfied formattings :)
+      - Normal: Normal colors, texts, sizes...
+      - Educational: Big arrow in the center for X and Y axis
     
+    """
+#    self.axes.grid(True)
+    
+    if axis_style == "Normal":
+        self.set_fontSizes(title = 20, xlabel = 20, ylabel = 20, 
+              legend = 20, xticks = 11, yticks = 13)
+        self.set_textRotations(xticks = 60)
+        self.color_axis(color_spines = "k", color_axis = "k")
+        self.format_xaxis (Nticks = 20,formatting = None)
+        self.format_legend(handlelength=1.5, borderpad=0.5,labelspacing=0.3, ncol = 2)
+        
+        if axes.get_legend() is not None:     
+            self.axes.get_legend().get_title().set_fontsize(25)
+
+    elif axis_style == "Educational":
+        self.set_fontSizes(title = 20, xlabel = 20, ylabel = 20, 
+                  legend = 20, xticks = 15, yticks = 15)
+        self.format_xaxis (Nticks = 10,formatting = None)
+        self.format_legend(handlelength=1.5, borderpad=0.5,labelspacing=0.3, ncol = 2)
+        if (type( self.axes.get_legend()) != type(None)):     
+            self.axes.get_legend().get_title().set_fontsize(25)
+        
+        axes.axhline(linewidth=1.7, color="black",marker = ">",ms = 6)
+        axes.axhline(linewidth=1.7, color="black",marker = "<")
+        axes.axvline(linewidth=1.7, color="black",marker = "^")
+        axes.axvline(linewidth=1.7, color="black",marker = "v")
+
+        
+def color_axis(self, axes, color_spines = "w", color_axis = "w"):
+    axes.spines['bottom'].set_color(color_spines)
+    axes.spines['top'].set_color(color_spines)
+    axes.spines['left'].set_color(color_spines)
+    axes.spines['right'].set_color(color_spines)
+    axes.yaxis.label.set_color(color_axis)
+    axes.tick_params(axis='y', colors=color_axis)
+    axes.tick_params(axis='x', colors=color_axis)
+
+
+def hide_xaxis(self, axes):
+    plt.setp(axes.get_xticklabels(), visible=False)
+
+
+def hide_yaxis(self, axes):
+    plt.setp(axes.get_yticklabels(), visible=False)
+    
+
+def set_xticks_rotation(self, axes, degree = None):
+    if (degree is not None):
+        for label in axes.xaxis.get_ticklabels():
+            label.set_rotation(degree)
+            
+            
+def set_yticks_rotation(self, axes, degree = None):
+    if (degree is not None):
+        for label in axes.yaxis.get_ticklabels():
+            label.set_rotation(degree)
+            
+            
