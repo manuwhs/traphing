@@ -1,12 +1,19 @@
-from . import _figure as grba
-from . import _plots as grpl
-from . import _advanced as grad
+from . import _figure 
+from . import _axes 
+
+
+from . import _advanced
 from . import _3D as gr3D
-from . import _setting as grset
-from . import _axes as graxes
-from . import _axis as graxis
-from . import _subplots as grsp
-from . import _zoom as grzo
+from . import _setting
+
+from . import _axis 
+from . import _subplots
+from . import _zoom 
+
+from . import _plots
+from . import _texts
+from . import _data_preprocessing
+from . import _dates_formatting
 
 from .GUI import _GUI as grGUI
 from .specific import trading_graphs as trgr
@@ -17,112 +24,119 @@ import matplotlib.pyplot as plt
 class GraphicalLibraryFigure ():
     
     def __init__(self,w = 20, h = 12, lw = 2):
-        self.init_variables(w = w, h = h, lw = lw)
+        self._init_variables(w = w, h = h, lw = lw)
     
     ####################### Figure functions  #######################
-    init_figure = grba.init_figure
-    figure_management = grba.figure_management
-    init_variables = grba.init_variables
-    savefig = grba.savefig
-#    init_figure = grba.init_figure
-    close = grba.close
+    _figure_management = _figure._figure_management
+    _init_variables = _figure._init_variables
 
-    update_legend = grset.update_legend
-    
+    init_figure = _figure.init_figure    
+    save_figure = _figure.save_figure
+    close_figure = _figure.close_figure
+
     ####################### Axis functions #######################
-    format_xaxis = graxis.format_xaxis
-    format_yaxis = graxis.format_yaxis
+    format_axis = _axis.format_axis
+    format_xaxis = _axis.format_xaxis
+    format_yaxis = _axis.format_yaxis
     
-    format_axis2 = graxis.format_axis2
-    color_axis = graxis.color_axis
-    hide_xaxis =  graxis.hide_xaxis
-    hide_yaxis =  graxis.hide_yaxis
+    apply_axis_style = _axis.apply_axis_style
+    set_xticks_rotation = _axis.set_xticks_rotation
+    set_yticks_rotation = _axis.set_yticks_rotation
+    
+    color_axis = _axis.color_axis
+    hide_xaxis =  _axis.hide_xaxis
+    hide_yaxis =  _axis.hide_yaxis
     
     ####################### Setting functions #######################
-    predrawing_settings = grset.predrawing_settings
-    postdrawing_settings = grset.postdrawing_settings
-    
-    format_legend = grset.format_legend
-    set_textRotations = grset.set_textRotations
-    set_fontSizes = grset.set_fontSizes
-    preprocess_data = grset.preprocess_data
-    get_color = grset.get_color
-    set_labels = grset.set_labels
-    
-    get_barwidth = grset.get_barwidth
-    add_text = grset.add_text
+    _predrawing_settings = _setting._predrawing_settings
+    _postdrawing_settings = _setting._postdrawing_settings
+
+    ##################### Text functions ############################
+    update_legend = _texts._update_legend
+    format_legend = _texts.format_legend
+ 
+    set_font_sizes = _texts.set_font_sizes
+    set_labels = _texts.set_labels
+    add_text = _texts.add_text
     
     ######################## Axes functions #######################
-    add_axes = graxes.add_axes
-    manage_axes = graxes.manage_axes
-    create_axes = graxes.create_axes
-    twin_axes = graxes.twin_axes
-    get_axes = graxes.get_axes
+    _add_axes = _axes._add_axes
+    _manage_axes = _axes._manage_axes
+    _twin_axes = _axes._twin_axes
+    
+    create_axes = _axes.create_axes
+    get_axes = _axes.get_axes
     
     ####################### Zoom functions #########################
-    set_xlim = grzo.set_xlim
-    set_ylim = grzo.set_ylim
-    set_zoom = grzo.set_zoom
+    set_xlim = _zoom.set_xlim
+    set_ylim = _zoom.set_ylim
+    set_zoom = _zoom.set_zoom
+    set_ylim_padding = _zoom.set_ylim_padding
+    set_xlim_padding = _zoom.set_xlim_padding
 
  
     ####################### Subplots functions #######################
-    set_subplots = grsp.set_subplots
-    next_subplot = grsp.next_subplot
-    subplots_adjust =  grsp.subplots_adjust
-    subplot2grid = grsp.subplot2grid
-    apply_style = grsp.apply_style
+    set_subplots = _subplots.set_subplots
+    next_subplot = _subplots.next_subplot
+    subplots_adjust =  _subplots.subplots_adjust
+    subplot2grid = _subplots.subplot2grid
 
+    #################### data preprocessing #########################
+    _preprocess_data = _data_preprocessing._preprocess_data
+    _dates_formatting
+    
     ####################### Basic graph functions #######################
-    plot = grpl.plot
-    scatter = grpl.scatter
-    stem = grpl.stem
+    plot = _plots.plot
+    if(0):
+        scatter = grpl.scatter
+        stem = grpl.stem
+        
+        bar = grpl.bar
+        step = grpl.step
+        
+        plot_filled = grpl.plot_filled
+        fill_between = grpl.fill_between
+        
+        add_hlines = grpl.add_hlines
+        add_vlines = grpl.add_vlines
     
-    bar = grpl.bar
-    step = grpl.step
+        ####################### 3D functions #######################
+        preproces_data_3D = gr3D.preproces_data_3D
+        format_axis_3D = gr3D.format_axis_3D
+        plot_3D = gr3D.plot_3D
+        bar_3D = gr3D.bar_3D
+        scatter_3D = gr3D.scatter_3D
     
-    plot_filled = grpl.plot_filled
-    fill_between = grpl.fill_between
+        
+        ####################### Advanced  #######################
+        barchart = grad.barchart
+        candlestick = grad.candlestick
     
-    add_hlines = grpl.add_hlines
-    add_vlines = grpl.add_vlines
-
-    ####################### 3D functions #######################
-    preproces_data_3D = gr3D.preproces_data_3D
-    format_axis_3D = gr3D.format_axis_3D
-    plot_3D = gr3D.plot_3D
-    bar_3D = gr3D.bar_3D
-    scatter_3D = gr3D.scatter_3D
-
+        Velero_graph = grad.Velero_graph
+        Heiken_Ashi_graph = grad.Heiken_Ashi_graph
+        plot_timeSeriesRange = grad.plot_timeSeriesRange
     
-    ####################### Advanced  #######################
-    barchart = grad.barchart
-    candlestick = grad.candlestick
-
-    Velero_graph = grad.Velero_graph
-    Heiken_Ashi_graph = grad.Heiken_Ashi_graph
-    plot_timeSeriesRange = grad.plot_timeSeriesRange
-
-    
-    ####################### Specific Math graphs #######################
-    plot_timeRegression = grad.plot_timeRegression
-    histogram = grad.histogram
-    
-    ####################### Widgets #######################
-    add_slider = grGUI.add_slider
-    add_hidebox = grGUI.add_hidebox
-    plot_wid = grGUI.plot_wid
-    add_selector = grGUI.add_selector
-    add_onKeyPress = grGUI.add_onKeyPress
-    store_WidgetData = grGUI.store_WidgetData
-    init_WidgetData = grGUI.init_WidgetData
-    
-    
-    tradingPlatform = trgr.tradingPlatform
-    tradingPV = trgr.tradingPV
-    tradingOcillator = trgr.tradingOcillator
-    plotMACD = trgr.plotMACD
-    plot_indicator = trgr.plot_indicator
-    add_indicator = trgr.add_indicator
+        
+        ####################### Specific Math graphs #######################
+        plot_timeRegression = grad.plot_timeRegression
+        histogram = grad.histogram
+        
+        ####################### Widgets #######################
+        add_slider = grGUI.add_slider
+        add_hidebox = grGUI.add_hidebox
+        plot_wid = grGUI.plot_wid
+        add_selector = grGUI.add_selector
+        add_onKeyPress = grGUI.add_onKeyPress
+        store_WidgetData = grGUI.store_WidgetData
+        init_WidgetData = grGUI.init_WidgetData
+        
+        
+        tradingPlatform = trgr.tradingPlatform
+        tradingPV = trgr.tradingPV
+        tradingOcillator = trgr.tradingOcillator
+        plotMACD = trgr.plotMACD
+        plot_indicator = trgr.plot_indicator
+        add_indicator = trgr.add_indicator
 
 gl = GraphicalLibraryFigure()
 

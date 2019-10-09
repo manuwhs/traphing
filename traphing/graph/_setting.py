@@ -8,28 +8,29 @@ import pandas as pd
 from .trapyngColors import cd
 #####  BUILDING FUNCTIONS #####
 
-def predrawing_settings(self, axes, sharex, sharey,
+def _predrawing_settings(self, axes, sharex, sharey,
                  position,  projection, X,Y, dataTransform, ws):
-    axes = self.figure_management(axes = axes, sharex = sharex, sharey = sharey,
+    axes = self._figure_management(axes = axes, sharex = sharex, sharey = sharey,
                      position = position,  projection = projection)
-    X, Y = self.preprocess_data(X,Y, dataTransform = dataTransform)
-    drawings,drawings_type =  self.init_WidgetData(ws)
+    X, Y = self._preprocess_data(X,Y, dataTransform = dataTransform)
+    drawings,drawings_type =  self._init_WidgetData(ws)
 
     return axes, X,Y, drawings,drawings_type
 
-def postdrawing_settings(self,axes, legend, loc, labels, font_sizes, 
+def _postdrawing_settings(self,axes, legend, loc, labels, font_sizes, 
                          xlim, ylim,xpadding,ypadding,X,Y):
     
-    self.update_legend(legend,axes = axes, loc = loc)    # Update the legend 
+    self._update_legend(legend,axes = axes, loc = loc)
     self.set_labels(labels)
-    self.set_font()
+    self.set_font_sizes(font_sizes)
     self.format_axis()
     self.set_zoom(axes,xlim,X,Y,ylim,xpadding,ypadding)
         
 def get_color(self, color = None):
-    # This function outputs the final color to print for a given
-    # plotting
-
+    """
+    This function outputs the final color to print for a given plotting
+    """
+    
     if (type(color) == type(None)):
         # If no color specified. We use one of the list
         colorFinal = self.colors[self.colorIndex]

@@ -38,16 +38,16 @@ period_dic = dict(zip(periods,periods_names))
 names_dic = dict(zip(periods_names, periods))
 
 class Timeframes(Enum):
-    M1 = 0
-    M5 = 1
-    M15 = 2
-    M30 = 3
-    H1 = 4
-    H4 = 5
-    D1 = 6
-    W1 = 7
-    W4 = 8
-    Y1 = 9
+    M1 = 1
+    M5 = 5
+    M15 = 15
+    M30 = 30
+    H1 = 60
+    H4 = 240
+    D1 = 1440
+    W1 = 10080
+    W4 = 43200
+    Y1 = 43200*12
 
 def cmp_to_key(mycmp):
     'Convert a cmp= function into a key= function'

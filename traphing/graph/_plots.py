@@ -43,7 +43,7 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
         loc = "best",    # Position of the legend
         ):       
     
-    axes, X,Y, drawings,drawings_type = self.predrawing_settings(axes, sharex, sharey,
+    axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
                  position,  projection, X,Y, dataTransform, ws)
     
     for i in range(Y.shape[0]):  
@@ -64,7 +64,7 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
                                 y2 = fill_offset, color = colorFinal,alpha = alpha)
             drawings.append(plot_i); drawings_type.append("fill_between")
             
-    self.postdrawing_settings(axes, legend, loc, labels, font_sizes, 
+    self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
                          xlim, ylim,xpadding,ypadding,X,Y)
     return drawings
 

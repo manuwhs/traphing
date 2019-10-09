@@ -8,6 +8,26 @@ import pandas as pd
 from .trapyngColors import cd
 #####  BUILDING FUNCTIONS #####
 
+def _update_legend(self, axes, n_drawings, legend = [], loc = "best"):
+    # TODO: make something so that the legends do not overlap when we have shared axes.
+
+    if(len(legend) > 0):
+        self.legend.extend(legend)
+    else:
+        self.legend.extend(["Line"]*n_drawings)
+        
+#    self.axes.legend(self.legend, loc=loc)
+#    l = plt.legend()
+    if(len(legend) > 0):   
+        if (axes.legend()):
+#            ax.legend().set_zorder(0) # Set legend on top
+            axes.legend(loc=loc)
+    else:
+        handles, labels = axes.get_legend_handles_labels()
+        by_label = OrderedDict(zip(labels, handles))
+        axes.legend(by_label.values(), by_label.keys())
+        
+
 def format_legend(self, axes, handlelength=None, # Length of handle
                   handletextpad= None,   # Distance between handle and text
                   borderpad=None,        # Distance between border legend and content
@@ -67,25 +87,7 @@ def set_labels(self, axes, labels = ["title","x_label","y_label"]):
         ylabel = labels[2]
         axes.set_ylabel(ylabel)
 
-def update_legend(self, axes, n_drawings, legend = [], loc = "best"):
-    # TODO: make something so that the legends do not overlap when we have shared axes.
 
-    if(len(legend) > 0):
-        self.legend.extend(legend)
-    else:
-        self.legend.extend(["Line"]*n_drawings)
-        
-#    self.axes.legend(self.legend, loc=loc)
-#    l = plt.legend()
-    if(len(legend) > 0):   
-        if (axes.legend()):
-#            ax.legend().set_zorder(0) # Set legend on top
-            axes.legend(loc=loc)
-    else:
-        handles, labels = axes.get_legend_handles_labels()
-        by_label = OrderedDict(zip(labels, handles))
-        axes.legend(by_label.values(), by_label.keys())
-        
 
 def add_text(self, axes, x,y, text = r'an equation: $E=mc^2$',fontsize = 15):
     return axes.text(x, y, text, fontsize=fontsize)

@@ -9,7 +9,7 @@ import datetime as dt
 
 from .trapyngColors import cd
     
-def preprocess_data(self,X,Y, dataTransform = None ):
+def _preprocess_data(self,X,Y, dataTransform = None ):
     """
     Function that processes X and Y  into a format that matplotlib can understand.
     For each axis (x and y) we have 2 vectors:
@@ -23,32 +23,11 @@ def preprocess_data(self,X,Y, dataTransform = None ):
             X_ticks and Y_ticks are the tags of each of the values in X and Y 
             respectively. This is mainly for categorical values, it will contain them.
     """
-    self.X, self.X_ticks, self.X_type = format_data_to_plotting_type(X)
-    self.Y, self.Y_ticks, self.Y_type  = format_data_to_plotting_type(X)
+    self.X, self.X_ticks, self.X_type = _format_data_to_plotting_type(X)
+    self.Y, self.Y_ticks, self.Y_type  = _format_data_to_plotting_type(X)
 
-
-
-def format_data_axis(dataTransform):
-    """
-    Function to format the data to show
-    """
-    if (type(dataTransform) != type(None)):
-        if (dataTransform[0] == "intraday"):
-            # In this case we are going to need to transform the dates.
-            openhour = dataTransform[1] 
-            closehour = dataTransform[2]
-            self.formatXaxis = "intraday"
-            # Virtual transformation of the dates !
-            self.Xcategories = self.X
             
-            transfomedTimes = ul.transformDatesOpenHours(X,openhour, closehour )
-            Mydetransfromdata = ul.deformatter_data(openhour, closehour, None)
-            # Setting the static object of the function
-            ul.detransformer_Formatter.format_data = Mydetransfromdata
-            self.X = ul.fnp(transfomedTimes) 
-            
-            
-def format_data_to_plotting_type(data):
+def _format_data_to_plotting_type(data):
     """
     Format X data for the being printed by the matplotlib library.
     The data generated should be easily digestable by the matplotlib library functions
@@ -80,17 +59,8 @@ def format_data_to_plotting_type(data):
         raise Warning("Not handled data type: " + str(type(data)))
     return data, data_ticks, data_type
     
-def convert_dates_str(X):
-    # We want to convert the dates into an array of char so that we can plot 
-    # this shit better, and continuous
 
-    Xdates_str = []
-    for date_i in X:
-        name = date_i.strftime("%Y %M %D")
-        Xdates_str.append(name)
-    return Xdates_str
-
-def detect_AxisFormat(values):
+def _detect_AxisFormat(values):
     # This function automatically detects the formating that should be given
     # to the information when plotting.
     # If we are given values to X, these could be of 3 types:
@@ -116,7 +86,7 @@ def detect_AxisFormat(values):
     return V_format
 
 
-def get_barwidth(self,X, width = None):
+def _get_barwidth(self,X, width = None):
     # The Xaxis could be dates and so on, so we want to calculate
     # the with of this bastard independently of that
 
@@ -143,4 +113,24 @@ def get_barwidth(self,X, width = None):
     print("width is: ", width)
     return width
     
+
+def _format_data_axis(dataTransform):
+    """
+    Function to format the data to show
+    """
+    if (type(dataTransform) != type(None)):
+        if (dataTransform[0] == "intraday"):
+            # In this case we are going to need to transform the dates.
+            openhour = dataTransform[1] 
+            closehour = dataTransform[2]
+            self.formatXaxis = "intraday"
+            # Virtual transformation of the dates !
+            self.Xcategories = self.X
+            
+            transfomedTimes = ul.transformDatesOpenHours(X,openhour, closehour )
+            Mydetransfromdata = ul.deformatter_data(openhour, closehour, None)
+            # Setting the static object of the function
+            ul.detransformer_Formatter.format_data = Mydetransfromdata
+            self.X = ul.fnp(transfomedTimes) 
+            
 

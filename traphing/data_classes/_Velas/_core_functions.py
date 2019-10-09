@@ -130,34 +130,6 @@ if(0):
             return 0
         return 1
         
-    def get_indexDictByDay(self, TD = None):
-        """ 
-        This function gets the index of the dates, divided by days.
-        It returns a dictinary where every key is a day and the value is the list of index
-        This function works with bult in pandas dataframe functions.
-        
-        It returns the list of days ordered and the dictionary with the indexes associated
-        to each of the days
-        """
-    #    dates = self.get_dates()
-    
-        if (type(TD) == type(None)):
-            TD = self.TD
-        dates = TD.index.date
-        caca = TD.groupby(dates)
-        groups_of_index_dict = caca.groups # This is a dictionary with the dates as keys and the indexes of the TD as values
-        
-        days_dict = caca.indices # This is a dictionary with the dates as keys and the indexes of the TD as valu
-        days_keys = list(days_dict.keys())# list of datetime.date objects
-        days_keys.sort() 
-        
-        if(0):
-            # Not needed if the sequence was already ordered
-            for k in days_keys:
-               days_dict[k].sort()
-    #        set_indexes = days_dict[keys[0]].sort()
-        
-        return days_keys, days_dict
         
     
     ######################   GUESSING PROPERTIES OF THE DATA   ######################

@@ -92,6 +92,14 @@ class Velas:
 
     @timestamps.setter
     def timestamps(self, value: pd.DatetimeIndex ):
+        ValueError("Timestamps cannot be set externally")
+
+    @property
+    def dates(self):
+        return self.timestamps.map(pd.Timestamp.date)
+
+    @dates.setter
+    def dates(self, value: pd.DatetimeIndex ):
         ValueError("Dates cannot be set externally")
         
     def __getitem__(self, key):

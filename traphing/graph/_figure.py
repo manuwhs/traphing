@@ -2,11 +2,7 @@ import matplotlib.pyplot as plt
 from .. import utils as ul
 from .trapyngColors import cd
 
-def init_figure(self,w = 20, h = 12, lw = 2):
-        self.figure = plt.figure()  
-        return self.figure
-
-def init_variables(self, w = 20, h = 12, lw = 2):
+def _init_variables(self, w = 20, h = 12, lw = 2):
         """ Initialize all the internal variables to do all the cool stuff later.
         It handles the intuitive logic later
         """
@@ -55,22 +51,25 @@ def init_variables(self, w = 20, h = 12, lw = 2):
         self.num_hidders = 0
 
 
-def figure_management(self, axes = None, sharex = None, sharey = None, 
+def _figure_management(self, axes = None, sharex = None, sharey = None, 
                       position = [], projection = "2d"):
     """
     This function is suposed to deal with everything that has to do with initializating figure, axis, subplots...
     """
     if(self.figure is None):
         self.init_figure()
-    axes = self.manage_axes(position = position, projection = projection)
+    axes = self._manage_axes(position = position, projection = projection)
     return axes
 
-
-def close(self,  *args, **kwargs):
+def init_figure(self,w = 20, h = 12, lw = 2):
+        self.figure = plt.figure()  
+        return self.figure
+    
+def close_figure(self,  *args, **kwargs):
     return  plt.close( *args, **kwargs)
     
 
-def savefig(self,file_dir = "./image.png", bbox_inches = 'tight',
+def save_figure(self,file_dir = "./image.png", bbox_inches = 'tight',
             size_inches = [],  close = False, dpi = 100):
     """ Function to save the current figure in the desired format
     Important !! Both dpi and sizeInches affect the number of pixels of the image

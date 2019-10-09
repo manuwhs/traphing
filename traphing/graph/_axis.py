@@ -47,8 +47,10 @@ def format_xaxis (self, axes,
         
         axes.xaxis.set_major_locator(mticker.MaxNLocator(nbins = n_ticks,  prune='upper'))
         
-        
-def apply_style_axis(self, axes, axis_style = None):
+def format_yaxis(self):
+    pass
+
+def apply_axis_style(self, axes, axis_style = None):
     """
     This function applies standard specfied formattings :)
       - Normal: Normal colors, texts, sizes...

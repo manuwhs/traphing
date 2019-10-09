@@ -64,6 +64,9 @@ class TestVelas():
         assert my_vela._df.shape == (2112,5)
         assert my_vela.timestamps.shape == (2112,)
 
+        assert isinstance(my_vela.timestamps,pd.DatetimeIndex)
+        assert isinstance(my_vela.df,pd.DataFrame) 
+    
     def test_set_time_interval_no_trimming(self):
         start_time = dt.datetime(2019,7,20); end_time = dt.datetime(2019,8,20)
         my_vela = get_loaded_Vela()
