@@ -5,14 +5,18 @@ from ...graph.Gl import gl
 
 ############# BASIC PLOTS #####################################
 
-def plot_series(self, series_name = "Close", *args, **kwargs):         
+def plot_series(self, axes = None, series_name = "Close", *args, **kwargs):         
     time_series = self[series_name];
     timestamps = self.timestamps
+    
+    # TODO: Merge of dictionaries to be able to add properties externally
+    labels = ["Price", "", ""]
+    legend = [series_name]
     
     if (series_name == "Volume"):
         ax =  gl.scatter(timestamps,time_series, *args, **kwargs)
     else:
-        ax = gl.plot(timestamps,time_series, *args, **kwargs)
+        ax = gl.plot(timestamps,time_series, axes = axes, legend = legend, labels = labels, *args, **kwargs)
     return ax
 
 def plot_barchart(self,*args, **kwargs):         

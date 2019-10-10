@@ -11,15 +11,33 @@ def to_numpy_2d(data):
     return data
 
 def is_numerical_array(value):
-    to_numpy_array_types = [(),[],range(0,1), np.array(1), pd.Series, pd.DataFrame]
+    to_numpy_array_types = [(),[],range(0,1), np.array(1), pd.Series([1]), pd.DataFrame()]
+    data_types = [type(x) for x in to_numpy_array_types]
+    if (type(value) in data_types):
+        return True
+    return False
+
+def is_timestamp_object(value):
+    """
+    It detects any of the common types of date or datetime objects
+    """
+    to_numpy_array_types = [pd.datetime.now(), pd.datetime.today(), 
+                            dt.date.today(), dt.datetime.now()]
     data_types = [type(x) for x in to_numpy_array_types]
     if (type(value) in data_types):
         return True
     return False
 
 def is_timestamp_array(value):
-    to_numpy_array_types = [pd.DatetimeIndex, pd.datetime, dt.date, dt.datetime]
+    to_numpy_array_types = [pd.DatetimeIndex([0,1])]
     data_types = [type(x) for x in to_numpy_array_types]
+    if (type(value) in data_types):
+        return True
+    return False
+
+def is_categorical(value): 
+    objects = ["a", np.array(["a"])[0]]
+    data_types = [type(x) for x in objects]
     if (type(value) in data_types):
         return True
     return False

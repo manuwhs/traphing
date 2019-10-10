@@ -32,7 +32,7 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
         # Axis options
         xaxis_mode = None,# Perfect for a few good ones :)
         yaxis_mode = None, # Perfect for a few good ones :)
-        AxesStyle = None,   # Automatically do some formatting :)
+        axis_style = None,   # Automatically do some formatting :)
         dataTransform = None,   # Specify if we are gonna format somehow the data. 
                             # for intraday for example.
 
@@ -46,7 +46,8 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
     axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
                  position,  projection, X,Y, dataTransform, ws)
     
-    for i in range(Y.shape[0]):  
+    print(X.shape)
+    for i in range(Y.shape[1]):  
         self.zorder+= 1  # 
         colorFinal = self.get_color(color)
         legend_i = None if i >= len(legend) else legend[i]
@@ -65,7 +66,7 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
             drawings.append(plot_i); drawings_type.append("fill_between")
             
     self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
-                         xlim, ylim,xpadding,ypadding,X,Y)
+                         xlim, ylim,xpadding,ypadding,axis_style,X,Y)
     return drawings
 
 def stem(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, alpha = 1.0,  # Basic line properties

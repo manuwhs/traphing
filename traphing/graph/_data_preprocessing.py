@@ -24,9 +24,10 @@ def _preprocess_data(self,X,Y, dataTransform = None ):
             respectively. This is mainly for categorical values, it will contain them.
     """
     self.X, self.X_ticks, self.X_type = _format_data_to_plotting_type(X)
-    self.Y, self.Y_ticks, self.Y_type  = _format_data_to_plotting_type(X)
+    self.Y, self.Y_ticks, self.Y_type  = _format_data_to_plotting_type(Y)
 
-            
+    return self.X, self.Y
+
 def _format_data_to_plotting_type(data):
     """
     Format X data for the being printed by the matplotlib library.

@@ -7,10 +7,10 @@ from matplotlib.ticker import FuncFormatter
 
 #from matplotlib.ticker import FuncFormatter
 
-def format_axis(self, axes, xaxis_mode, yaxis_mode, axes_style):
-    self.format_xaxis(axes = axes, xaxis_mode = xaxis_mode)
-    self.format_yaxis(axes = axes, yaxis_mode = yaxis_mode)
-    self.apply_style(axes = axes, axis_style = axis_style)
+def format_axis(self, axes, axis_style):
+    self.format_xaxis(axes)
+    self.format_yaxis(axes)
+    self.apply_style(axes, axis_style)
     
 def format_xaxis (self, axes, 
                   n_ticks = 10,    # Number of ticks we would like
@@ -47,7 +47,7 @@ def format_xaxis (self, axes,
         
         axes.xaxis.set_major_locator(mticker.MaxNLocator(nbins = n_ticks,  prune='upper'))
         
-def format_yaxis(self):
+def format_yaxis(self, axes):
     pass
 
 def apply_axis_style(self, axes, axis_style = None):

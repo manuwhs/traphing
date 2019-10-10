@@ -3,7 +3,7 @@ from . import _axes
 
 
 from . import _advanced
-from . import _3D as gr3D
+from . import _3D 
 from . import _setting
 
 from . import _axis 
@@ -15,11 +15,14 @@ from . import _texts
 from . import _data_preprocessing
 from . import _dates_formatting
 
-from .GUI import _GUI as grGUI
+from .GUI import _GUI 
 from .specific import trading_graphs as trgr
 
 
 import matplotlib.pyplot as plt
+
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 
 class GraphicalLibraryFigure ():
     
@@ -50,9 +53,10 @@ class GraphicalLibraryFigure ():
     ####################### Setting functions #######################
     _predrawing_settings = _setting._predrawing_settings
     _postdrawing_settings = _setting._postdrawing_settings
-
+    get_color = _setting.get_color
+    
     ##################### Text functions ############################
-    update_legend = _texts._update_legend
+    _update_legend = _texts._update_legend
     format_legend = _texts.format_legend
  
     set_font_sizes = _texts.set_font_sizes
@@ -87,6 +91,10 @@ class GraphicalLibraryFigure ():
     
     ####################### Basic graph functions #######################
     plot = _plots.plot
+    
+    
+    
+    _init_WidgetData = _GUI._init_WidgetData
     if(0):
         scatter = grpl.scatter
         stem = grpl.stem

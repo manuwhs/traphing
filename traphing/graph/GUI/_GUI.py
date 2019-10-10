@@ -14,14 +14,7 @@ import sys
 import copy
 #from matplotlib.finance import candlestick_ohlc
 
-def store_WidgetData(self, plots_typ, plots):
-    # This funciton will store the data needed to later use the widgets
-    self.plots_type.append(plots_typ)
-    self.plots_list.append(plots) # We store the pointers to the plots
-    data_i = [copy.deepcopy(self.X),copy.deepcopy(self.Y)]
-    self.Data_list.append(data_i)
-    
-def init_WidgetData(self, initX = None, ws =  None):
+def _init_WidgetData(self, initX = None, ws =  None):
     ## TODO. Second case where NcY = NcX !!
     if (type(initX) == type(None)):
         initX = 0
@@ -36,6 +29,15 @@ def init_WidgetData(self, initX = None, ws =  None):
     plots_typ = []
     
     return plots,plots_typ
+
+def store_WidgetData(self, plots_typ, plots):
+    # This funciton will store the data needed to later use the widgets
+    self.plots_type.append(plots_typ)
+    self.plots_list.append(plots) # We store the pointers to the plots
+    data_i = [copy.deepcopy(self.X),copy.deepcopy(self.Y)]
+    self.Data_list.append(data_i)
+    
+
 
 def add_hidebox(self, plots_affected = [], 
                names = [],

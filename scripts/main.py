@@ -34,7 +34,7 @@ timestamps = my_vela.timestamps
 close_values = my_vela["Close"]
 
 from traphing.graph.Gl import gl
-gl.plot(timestamps,close_values)
+gl.plot(timestamps,close_values, legend = ["Hello"])
 #gl.init_figure()
 
 #my_vela.plot_series()

@@ -46,7 +46,7 @@ def set_font_sizes(self, axes = None, title = None, xlabel = None, ylabel = None
                       
     if (type(axes) == type(list())):
         for ax_i in axes:
-            self.set_fontSizes(axes = ax_i, title = title, xlabel = xlabel, ylabel = ylabel, 
+            self.set_font_sizes(axes = ax_i, title = title, xlabel = xlabel, ylabel = ylabel, 
                   legend = legend, xticks = xticks, yticks = yticks)
     else:
         # Set fontsize of the tittle
@@ -86,7 +86,6 @@ def set_labels(self, axes, labels = ["title","x_label","y_label"]):
     if (len(labels) > 2):
         ylabel = labels[2]
         axes.set_ylabel(ylabel)
-
 
 
 def add_text(self, axes, x,y, text = r'an equation: $E=mc^2$',fontsize = 15):

@@ -18,12 +18,13 @@ def _predrawing_settings(self, axes, sharex, sharey,
     return axes, X,Y, drawings,drawings_type
 
 def _postdrawing_settings(self,axes, legend, loc, labels, font_sizes, 
-                         xlim, ylim,xpadding,ypadding,X,Y):
+                         xlim, ylim,xpadding,ypadding,
+                         axis_style, X,Y):
     
-    self._update_legend(legend,axes = axes, loc = loc)
-    self.set_labels(labels)
-    self.set_font_sizes(font_sizes)
-    self.format_axis()
+    self._update_legend(axes = axes, n_drawings = Y.shape[1], legend = legend, loc = loc)
+    self.set_labels(axes, labels)
+#    self.set_font_sizes(axes, font_sizes)
+#    self.format_axis(axes, axis_style)
     self.set_zoom(axes,xlim,X,Y,ylim,xpadding,ypadding)
         
 def get_color(self, color = None):

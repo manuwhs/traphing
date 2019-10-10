@@ -13,14 +13,14 @@ def set_zoom(self, axes = None, xlim = None ,X = None, Y = None, ylim = None, xp
     if (type(X) == type(None)):
         X = self.X[self.start_indx:self.end_indx]
         
-    if ypadding is None:
+    if ylim is not None:
         self.set_ylim(axes = axes, ymin = ylim[0], ymax = ylim[1])
-    else:
+    elif ypadding is not None:
         self.set_ylim_padding(axes = axes, Y = Y, padding = ypadding)
 
-    if xpadding is None:
+    if xlim is not None:
         self.set_xlim(axes = axes, xmin = xlim[0], xmax = xlim[1])
-    else:
+    elif ypadding is not None:
         self.set_xlim_padding(axes = axes, X = X, padding = xpadding)
         
 
