@@ -21,7 +21,7 @@ def is_vector(obj):
 
 def is_basic(obj):
     objects_list = [1,1.0,"a", True, None, 
-                    dt.date.today(), dt.datetime.now(),dt.timedelta(days= 1),
+                    dt.datetime.now(),dt.datetime.now().date(), dt.datetime.now().time(), dt.timedelta(days= 1),
                     pd.to_datetime(dt.datetime.now()),
                     Timeframes.M1, 
                     np.array(1),np.array([1,2]), np.array([[1,2]]),
@@ -59,7 +59,7 @@ class Node():
         return str(self.obj)[:40]
     
     def obj_print(self):
-        text = self.level*"   " + str(self.class_name) + "\t" + self.name 
+        text = self.level*"  " + str(self.class_name) + "\t" + self.name 
         if (is_basic(self.obj)):
             text += ":" +"\t"+ self.get_value()
         return text
@@ -109,7 +109,7 @@ class Node():
     def print_obj_string(self):
         text = self.obj_print() + " has children:" + "\n"
         for child in self.children:
-            text += child.obj_print() + "\n"
+            text += "  " + child.obj_print() + "\n"
         
 #        print (text)
         return text

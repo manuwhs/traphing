@@ -16,13 +16,14 @@ class SpecialMarketHours():
         - There is contnuity in the samples but the open and close time are unusual
         
     """
-    def __init__(self, n_samples, open_time = None, close_time = None):
+    def __init__(self, date, open_time = None, close_time = None,  n_samples = None):
+        self.date = date 
         self.open_time = open_time
         self.close_time = close_time
         self.n_samples = n_samples
         
     def is_non_trading_day(self):
-        if(self.n_samples == 0):
+        if(self.n_samples is None):
             return True
         return False
     
@@ -53,18 +54,17 @@ class MarketHours():
         datetime = dt.datetime.now().replace(minute= time.minute, hour = time.hour, second = time.second, microsecond = 0) + dt.timedelta(minutes = timeframe.value)
         return datetime.time()
     
-    def __init__(self, open_time = None, close_time = None, trading_days_list = [0,1,2,3,4]):
+    def __init__(self, open_time = None, close_time = None, trading_days_list = None, special_days_dict = None):
         self.open_time = open_time
         self.close_time = close_time
         self.trading_days_list = trading_days_list
-    
-        self.special_days_dict = None  # Dictionary with special dates  [start_time, close_time]
+        self.special_days_dict = special_days_dict  # Dictionary with special dates  [start_time, close_time]
         
-    def is_special(self, date = None):
+    def is_special(self, date):
         """
         It returns True if it knows it is a special day with abnormal trading hours
         """
-        if date in self.special_days_dict.keys():
+        if date in list(self.special_days_dict.keys()):
             return True
         
         return False
@@ -92,7 +92,7 @@ class MarketHours():
         """
         Returns true if the market is open for the given timestamp
         """
-        open_time, close_time = self.get_open_close_time(timestamp)
+        open_time, close_time = self.get_open_close_time(timestamp.date())
         
         after_open_bool = timestamp.hour*60 + timestamp.minute >= open_time.hour*60 + open_time.minute
         before_close_bool = timestamp.hour*60 + timestamp.minute <= close_time.hour*60 + close_time.minute
@@ -111,10 +111,10 @@ class MarketHours():
         if date is None:
             return self.open_time, self.close_time
         
-        if (self.is_special(date)):
-            return self.open_time, self.close_time
+        elif (self.is_special(date)):
+            return self.special_days_dict[date].open_time, self.special_days_dict[date].close_time
         else:
-            self.open_time, self.close_time
+            return self.open_time, self.close_time
     
     def get_length_session_in_seconds(self, date = None):
         """
@@ -149,10 +149,11 @@ class MarketHours():
             return True
         return False
             
-    def get_number_of_samples_per_trading_session(self, open_time, close_time, timeframe):
+    def get_number_of_samples_of_trading_session(self, timeframe, date = None):
         """
         It computes the number of samples per normal trading session
         """
+        open_time, close_time = self.get_open_close_time(date) 
         time_difference = get_time_difference(open_time, close_time)
         
         if (time_difference == 0):
@@ -183,8 +184,6 @@ class MarketHours():
         diffs = diff_dates(timestamps)
         minutes_timeframe = min(diffs).total_seconds() / 60
         timeframe = Timeframes(minutes_timeframe)
-        
-        self.timeframe = timeframe
         return timeframe
     
     
@@ -244,7 +243,7 @@ class MarketHours():
         if (trading_days_list is None):
             trading_days_list = self.estimate_normal_trading_days(timestamps, open_time, close_time,  timeframe)
             
-        number_of_samples_per_trading_session = self.get_number_of_samples_per_trading_session (open_time, close_time, timeframe)
+        number_of_samples_per_trading_session = self.get_number_of_samples_of_trading_session (timeframe)
         index_by_days_dict = MarketHours.get_index_by_days_dict(timestamps)
         special_days_dict = dict()        
         
@@ -268,7 +267,7 @@ class MarketHours():
                 special_day_flag = True
             
             if (special_day_flag):
-                special_market_hours = SpecialMarketHours(daily_timestamps.size, special_open_time, special_close_time)
+                special_market_hours = SpecialMarketHours(date, special_open_time, special_close_time, daily_timestamps.size)
                 special_days_dict[date] = special_market_hours
                 
         # Check for missing dates that should be there
