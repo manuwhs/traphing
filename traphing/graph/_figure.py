@@ -58,10 +58,12 @@ def _figure_management(self, axes = None, sharex = None, sharey = None,
     """
     if(self.figure is None):
         self.init_figure()
-    axes = self._manage_axes(position = position, projection = projection)
+    axes = self._manage_axes(axes = axes, sharex = sharex, sharey = sharey,
+                             position = position, projection = projection)
     return axes
 
 def init_figure(self,w = 20, h = 12, lw = 2):
+        self._init_variables()
         self.figure = plt.figure()  
         return self.figure
     

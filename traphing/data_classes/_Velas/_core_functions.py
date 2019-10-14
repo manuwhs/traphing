@@ -8,6 +8,8 @@ import copy
 import time
 import pandas as pd
 import datetime as dt
+from ...import indicators  as ind
+
 """
 Library with all the obtaining indicator functions of the market.
 
@@ -55,7 +57,7 @@ def set_time_interval(self, start_time = None, end_time = None, trim = False):
     
     return True
 
-################# TableData FUNCTIONS ##########################
+################# Dataframe FUNCTIONS ##########################
 
 def is_trimmed(self):
     return self._trimmed
@@ -89,6 +91,7 @@ def preprocess_RAW_TD(self, Raw_TD):
 
 def series(self, name):
     """
+    They do not need 
     options = ["Open","Close","High","Low","Volume","Average", "RangeHL","RangeCO"]
     """
     if (name == "Average"):
@@ -110,32 +113,22 @@ def series(self, name):
         timeSeries = self.df[name]
     
     return timeSeries
-    
-    
+
+def indicator(self, name = "SMA", *args, **kwargs):
+    """
+    This function allows us to apply the indicators by their name.
+    """
+    try:
+        #method_func = getattr(self, method_name)
+        indicator_func = getattr(ind, name)
+    except AttributeError:
+#        raise Warning("method_name: '%s' does not exist in the Velas object"%name)
+        raise Warning("indicator_func: '%s' does not exist in the indicator library"%name)
+#    kwargs["df"] = self.df ## TODO: Maybe this way is better in the future
+    return indicator_func(df = self.df, *args, **kwargs)
+
 if(0):    
-    ##########################################################
-    ################ GETTING FUNCTIONS #######################
-    ##########################################################
-    
 
-    
-    def cmp_indexes(self, indexes):
-        # Outputs 1 if the indexes are the same and 0 otherwise
-        # It only checks the first and last positions.
-        if (len(indexes) == 0): # If empty
-            return 1
-        if (indexes[0] == self.time_mask[0]) and (indexes[-1] == self.time_mask[-1]):
-            return 1
-        else:
-            return 0
-        return 1
-        
-        
-    
-    ######################   GUESSING PROPERTIES OF THE DATA   ######################
-    
-
-    
     ##################################################################
     ######################   DIFERENCES DATA    ######################
     ##################################################################

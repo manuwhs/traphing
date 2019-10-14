@@ -1,16 +1,7 @@
-import matplotlib.pyplot as plt
-from .. import utils as ul
-from ..math import basicMathlib as bMl
-import copy
 from collections import OrderedDict
-import pandas as pd
-
-from .trapyngColors import cd
-#####  BUILDING FUNCTIONS #####
 
 def _update_legend(self, axes, n_drawings, legend = [], loc = "best"):
     # TODO: make something so that the legends do not overlap when we have shared axes.
-
     if(len(legend) > 0):
         self.legend.extend(legend)
     else:
@@ -41,6 +32,16 @@ def format_legend(self, axes, handlelength=None, # Length of handle
               labelspacing=labelspacing, ncol=ncol, borderaxespad = borderaxespad, columnspacing = columnspacing)
 
 
+def _set_font_size_list_inputs(self, axes, list_font_sizes = None):
+    """
+    Just a helper function for the other one
+    """
+    if list_font_sizes is not None:
+        while(len(list_font_sizes) < 6):
+            list_font_sizes.append(None)
+        self.set_font_sizes(axes, list_font_sizes[0], list_font_sizes[1], list_font_sizes[2],
+                       list_font_sizes[3],list_font_sizes[4],list_font_sizes[5])
+        
 def set_font_sizes(self, axes = None, title = None, xlabel = None, ylabel = None, 
                   legend = None, xticks = None, yticks = None):
                       
@@ -50,7 +51,7 @@ def set_font_sizes(self, axes = None, title = None, xlabel = None, ylabel = None
                   legend = legend, xticks = xticks, yticks = yticks)
     else:
         # Set fontsize of the tittle
-        if type(title) is not None:
+        if title is not None:
             axes.title.set_fontsize(fontsize=title)
             
         # Set fontsize of the axis labels
@@ -72,22 +73,28 @@ def set_font_sizes(self, axes = None, title = None, xlabel = None, ylabel = None
             axes.legend(fontsize=legend)    
 
             
-def set_labels(self, axes, labels = ["title","x_label","y_label"]):
-    if (len(labels) > 0):
-        title = labels[0]
+def _set_labels_list_input(self, axes, list_labels = ["title","x_label","y_label"]):
+    """
+    Just a helper function for the other one
+    """
+    if list_labels is not None:
+        while(len(list_labels) < 4):
+            list_labels.append(None)
+        self.set_labels(axes, list_labels[0], list_labels[1], list_labels[2],
+                       list_labels[3])
+
+
+def set_labels(self, axes = None, title = None, xlabel = None, ylabel = None,  subtitle = None):
+    if title is not None:
 #        ax.title.set_text(title)
 #        ax.title(title, y=1.01)
         axes.set_title(title, pad = 20)
-
-    if (len(labels) > 1):
-        xlabel = labels[1]
+    if xlabel is not None:
         axes.set_xlabel(xlabel)
-        
-    if (len(labels) > 2):
-        ylabel = labels[2]
+    if ylabel is not None:
         axes.set_ylabel(ylabel)
-
-
+        
+        
 def add_text(self, axes, x,y, text = r'an equation: $E=mc^2$',fontsize = 15):
     return axes.text(x, y, text, fontsize=fontsize)
 

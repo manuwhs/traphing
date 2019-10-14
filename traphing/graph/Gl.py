@@ -60,6 +60,8 @@ class GraphicalLibraryFigure ():
     format_legend = _texts.format_legend
  
     set_font_sizes = _texts.set_font_sizes
+    _set_font_size_list_inputs = _texts._set_font_size_list_inputs
+    _set_labels_list_input = _texts._set_labels_list_input
     set_labels = _texts.set_labels
     add_text = _texts.add_text
     
@@ -87,14 +89,18 @@ class GraphicalLibraryFigure ():
 
     #################### data preprocessing #########################
     _preprocess_data = _data_preprocessing._preprocess_data
-    _dates_formatting
+#    _dates_formatting = _data_preprocessing._dates_formatting
     
     ####################### Basic graph functions #######################
     plot = _plots.plot
+    scatter = _plots.scatter
+    stem = _plots.stem
     
     
-    
+    ####################### Widgets ######################################
     _init_WidgetData = _GUI._init_WidgetData
+    
+    
     if(0):
         scatter = grpl.scatter
         stem = grpl.stem

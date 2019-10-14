@@ -8,9 +8,10 @@ def subplots_adjust(self, left=.09, bottom=.10, right=.90, top=.95, wspace=.20, 
     plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
     if (hide_xaxis):
         all_axes = self.get_axes()
-        for i in range(len(all_axes)-2):
-            ax = all_axes[i]
-            self.hide_xaxis(ax)
+        for i in range(len(all_axes)-1):
+            axes = all_axes[i]
+            self.hide_xaxis(axes)
+            self.set_labels(axes, title = "", xlabel = "")
             
 
 def subplot2grid(self, *args, **kwargs): #divisions, selection):
@@ -24,7 +25,7 @@ def subplot2grid(self, *args, **kwargs): #divisions, selection):
     """
     
     axes = plt.subplot2grid(*args,**kwargs)
-    self.add_axes(axes)
+    self._add_axes(axes)
     return axes
     
 #######################################################################

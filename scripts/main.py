@@ -29,7 +29,6 @@ for name in options:
 start_time = dt.datetime(2019,7,20); end_time = dt.datetime(2019,8,20)
 my_vela.set_time_interval(start_time, end_time)
         
-
 timestamps = my_vela.timestamps
 close_values = my_vela["Close"]
 

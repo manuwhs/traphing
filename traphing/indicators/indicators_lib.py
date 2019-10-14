@@ -1,10 +1,9 @@
 
 import numpy as np
 import copy
-import utilities_lib as ul
-from graph_lib import gl
+#import utilities_lib as ul
 import pandas as pd
-
+from .. import utils as ul
 ####
 
 def MDD(timeSeries, window):
@@ -77,41 +76,23 @@ def drawdowns(equity_curve):
 # They are not for predicting, they are calculated using also the measurement
 # fot time t, but to get the prediction we just have to shift it once to the right.
 
-def get_convol(signal, window, cval = np.NaN):
+def convolute(signal, window, cval = np.NaN):
         L = window.size
         sM = np.convolve(signal.flatten(),window.flatten(), mode = "full")
-        sM[:L] = sM[:L] * cval
+        sM[:L-1] = sM[:L-1] * cval
         sM = sM[:-L+1]    # Remove the last values since they hare convolved with 0's as well
         sM = sM.reshape ((sM.size,1))
         return sM
         
-def get_SMA(timeSeries, L, cval = np.NaN):
-    """ Outputs the aritmetic mean of the time series using 
-    a rectangular window of size L"""
-    timeSeries = ul.fnp(timeSeries)
-    Nsam, Nsig = timeSeries.shape
-    
-    # Create window
-    window = np.ones((L,1))
-    window = window/np.sum(window) 
-    for si in range(Nsig):
-        ## Convolution for one of the signals
-        signal = timeSeries[:,si]
-        sM = get_convol(signal,window,cval)
-        if (si == 0):
-            total_sM = copy.deepcopy(sM)
-        else:
-            total_sM = np.concatenate((total_sM,sM), axis = 1)
-
-    return total_sM
-
-def get_WMA(timeSeries, L, cval = np.NaN):
+def WMA(timeseries, n, cval = np.NaN):
     """ Outputs the aritmetic mean of the time series using 
     a linearly descendent window of size L"""
-    Nsam, Nsig = timeSeries.shape
+    n = int( n)
+    timeseries = ul.to_numpy_2d(timeseries)
+    Nsam, Nsig = timeseries.shape
     # Create window
-    window = np.cumsum(np.ones((L,1))) / L   
-    inverse_range = -np.sort(-np.array(range(0,int(L))))
+    window = np.cumsum(np.ones((n,1))) / n  
+    inverse_range = -np.sort(-np.array(range(0,int(n))))
     inverse_range = inverse_range.tolist()
 #        print inverse_range
     window = window[inverse_range]
@@ -119,8 +100,8 @@ def get_WMA(timeSeries, L, cval = np.NaN):
         
     for si in range(Nsig):
         ## Convolution for one of the signals
-        signal = timeSeries[:,si]
-        sM = get_convol(signal,window,cval)
+        signal = timeseries[:,si]
+        sM = convolute(signal,window,cval)
         if (si == 0):
             total_sM = copy.deepcopy(sM)
         else:
@@ -128,25 +109,26 @@ def get_WMA(timeSeries, L, cval = np.NaN):
             
     return total_sM
     
-def get_EMA(timeSeries, L, alpha = -1, cval = np.NaN):
-    L = int(L)
-    if (alpha == -1):
-        alpha = 2.0/(L+1)
-        
+def EMA(timeseries, n, alpha = -1, cval = np.NaN):
     """ Outputs the exponential mean of the time series using 
     a linearly descendent window of size L"""
-    Nsam, Nsig = timeSeries.shape
-    window = np.ones((L,1))
+    timeseries = ul.to_numpy_2d(timeseries)
+    n = int( n)
+    if (alpha == -1):
+        alpha = 2.0/(n+1)
+        
+    Nsam, Nsig = timeseries.shape
+    window = np.ones((n,1))
     factor = (1 - alpha)
-    for i in range(L):
+    for i in range(n):
         window[i] *= factor
         factor *= (1 - alpha)
     window = window/np.sum(window) 
     
     for si in range(Nsig):
         ## Convolution for one of the signals
-        signal = timeSeries[:,si]
-        sM = get_convol(signal,window,cval)
+        signal = timeseries[:,si]
+        sM = convolute(signal,window,cval)
         if (si == 0):
             total_sM = copy.deepcopy(sM)
         else:
@@ -154,39 +136,34 @@ def get_EMA(timeSeries, L, alpha = -1, cval = np.NaN):
         
     return total_sM
 
-def get_TrCrMr (time_series, alpha = -1):
+def TrCrMr (time_series, alpha = -1):
     """ Triple Cruce de la Muerte. Busca que las exponenciales 4, 18 y 40 se crucen
     para ver una tendencia en el mercado despues de un tiempo lateral """
     L1 = 4
     L2 = 18
     L3 = 40
     
-    eM1 = get_EMA(time_series, L1, alpha)
-    eM2 = get_EMA(time_series, L2, alpha)
-    eM3 = get_EMA(time_series, L3, alpha)
+    eM1 = EMA(time_series, L1, alpha)
+    eM2 = EMA(time_series, L2, alpha)
+    eM3 = EMA(time_series, L3, alpha)
     
     return np.concatenate((eM1,eM2,eM3), axis = 1)
 
-def get_HMA (time_series, L, cval = np.NaN):
+def HMA (timeseries, n, cval = np.NaN):
     """ Hulls Moving Average !! L = 200 usually"""
-    WMA1 = get_WMA(time_series, int(L/2), cval = cval) * 2
-    WMA2 = get_WMA(time_series, int(L), cval = cval)
-    
-    HMA = get_WMA(WMA1 - WMA2, int(np.sqrt(L)), cval =cval)
-    
+    WMA1 = WMA(timeseries, n/2, cval = cval) * 2
+    WMA2 = WMA(timeseries, n, cval = cval)
+    HMA = WMA(WMA1 - WMA2, np.sqrt(n), cval =cval)
     return HMA
     
-def get_HMAg (time_series, L, alpha = -1,  cval = np.NaN):
+def HMAg (timeseries, n, alpha = -1,  cval = np.NaN):
     """ Generalized Moving Average from Hull"""
     ## Moving Average of 2 moving averages.
     ## It uses Exponential Moving averages
-    EMA1 = get_EMA(time_series, L/2, alpha, cval = cval) * 2
-    EMA2 = get_EMA(time_series, L, alpha, cval = cval)
-    
-    EMA = get_EMA(EMA1 - EMA2, np.sqrt(L), alpha, cval = cval)
-    
-    return EMA
-
+    EMA1 = EMA(timeseries, n/2, alpha, cval = cval) * 2
+    EMA2 = EMA(timeseries, n, alpha, cval = cval)
+    EMA_values = EMA(EMA1 - EMA2, np.sqrt(n), alpha, cval = cval)
+    return EMA_values
 
 def get_TMA(time_series, L):
     """ First it trains the data so that the prediction is maximized"""

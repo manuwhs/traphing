@@ -10,7 +10,7 @@ from matplotlib.ticker import FuncFormatter
 def format_axis(self, axes, axis_style):
     self.format_xaxis(axes)
     self.format_yaxis(axes)
-    self.apply_style(axes, axis_style)
+    self.apply_axis_style(axes, axis_style)
     
 def format_xaxis (self, axes, 
                   n_ticks = 10,    # Number of ticks we would like

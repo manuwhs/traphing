@@ -22,11 +22,12 @@ def _postdrawing_settings(self,axes, legend, loc, labels, font_sizes,
                          axis_style, X,Y):
     
     self._update_legend(axes = axes, n_drawings = Y.shape[1], legend = legend, loc = loc)
-    self.set_labels(axes, labels)
-#    self.set_font_sizes(axes, font_sizes)
-#    self.format_axis(axes, axis_style)
+    self._set_labels_list_input(axes, labels)
+    self._set_font_size_list_inputs(axes, font_sizes)
+    self.format_axis(axes, axis_style)
     self.set_zoom(axes,xlim,X,Y,ylim,xpadding,ypadding)
-        
+    axes.grid(True)
+    
 def get_color(self, color = None):
     """
     This function outputs the final color to print for a given plotting

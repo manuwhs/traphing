@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 
 # @pytest.fixture
-def get_loaded_Vela():
+def get_loaded_Velas():
     symbol_name = "AUDCHF"
     timeframe = Timeframes.M15
     storage_folder = "./data/storage/"
@@ -21,19 +21,30 @@ def get_loaded_Vela():
     
 class TestVelasIndicators():
     
-    def test_SMA(self):
+    def test_MAs(self):
         start_time = dt.datetime(2019,7,20); end_time = dt.datetime(2019,8,20)
-        my_vela = get_loaded_Vela()
+        velas = get_loaded_Velas()
+        velas.set_time_interval(start_time, end_time)
         
-        my_vela.set_time_interval(start_time, end_time)
-        
-        n = 10
-        my_SMA = my_vela.SMA(n = n)
-        
-        assert my_SMA.shape == (2112,)
-        assert isinstance(my_SMA, pd.Series)
-        assert np.mean(np.isnan(my_SMA.values[:n-1])) == 1
-        assert np.mean(np.isnan(my_SMA.values[n:])) == 0
+        indicators_name = ["SMA","EMA","WMA","HMA","HMAg"]
+        indicators_args = [{"n":20, "series_name":"Close"}, {"n":40}, {"n":40},
+                           {"n":40},{"n":40}]
 
-my_test = TestVelasIndicators()
-my_test.test_SMA()
+        for i in range(len(indicators_name)):
+            name = indicators_name[i]
+            args = indicators_args[i]
+            
+            if(name == "HMAg"):
+                n_nan =  args["n"] -1 + int(np.sqrt(args["n"])) -1
+            elif(name == "HMA"):
+                n_nan =  args["n"] -1 + int(np.sqrt(args["n"])) -1
+            else:
+                n_nan = args["n"] - 1
+                
+            indicator_output = velas.indicator(name, **args)
+           
+            assert indicator_output.shape == (velas.df.shape[0],)
+            assert isinstance(indicator_output, pd.Series)
+            assert np.mean(np.isnan(indicator_output.values[:n_nan-1])) == 1
+            assert np.mean(np.isnan(indicator_output.values[n_nan:])) == 0
+            assert indicator_output.index[0] == velas.df.index[0]

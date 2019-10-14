@@ -4,7 +4,6 @@ import datetime as dt
 from ...graph.Gl import gl
 
 ############# BASIC PLOTS #####################################
-
 def plot_series(self, axes = None, series_name = "Close", *args, **kwargs):         
     time_series = self[series_name];
     timestamps = self.timestamps
@@ -14,10 +13,21 @@ def plot_series(self, axes = None, series_name = "Close", *args, **kwargs):
     legend = [series_name]
     
     if (series_name == "Volume"):
-        ax =  gl.scatter(timestamps,time_series, *args, **kwargs)
+        drawings =  gl.stem(timestamps,time_series, *args, **kwargs)
     else:
-        ax = gl.plot(timestamps,time_series, axes = axes, legend = legend, labels = labels, *args, **kwargs)
-    return ax
+        drawings = gl.plot(timestamps,time_series, axes = axes, legend = legend, labels = labels, *args, **kwargs)
+    return drawings
+
+def plot_indicator(self, axes = None, indicator_name = "SMA", *args, **kwargs):         
+    indicator_output = self.indicator(name = indicator_name, *args, **kwargs)
+    timestamps = self.timestamps
+    
+    if indicator_name in ["SMA","EMA","WMA","HMA","HMAg"]:
+        drawings = gl.plot(timestamps, indicator_output, axes = axes, legend = [indicator_output.name])
+    elif indicator_name in ["MOM","ROC","RETURN"]:
+        drawings = gl.stem(timestamps, indicator_output, axes = axes, legend = [indicator_output.name])
+    return drawings
+
 
 def plot_barchart(self,*args, **kwargs):         
     timestamps = self.timestamps

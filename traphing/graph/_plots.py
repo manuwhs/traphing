@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from .. import utils as ul
 import datetime as dt
+import matplotlib.dates as mdates
 
 from matplotlib import collections  as mc
 # The common properties will be explained here once and shortened in the rest
@@ -16,8 +17,8 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
         projection = "2d", # Type of plot
         
         # Advanced fonts
-        font_sizes = [None, None, None],   # This is the fontsizes of [tittle, xlabel and ylabel, xticks and yticks]
-        
+        font_sizes = None,   # This is the fontsizes of [tittle, xlabel and ylabel, xticks and yticks]
+
         # Layout options
         xpadding = None, ypadding = None, # Padding in percentage of the plotting, it has preference
         xlim = None, ylim = None, # Limits of vision
@@ -30,71 +31,86 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
         marker = [None, None, None], # [".", 2, "k"],
         
         # Axis options
-        xaxis_mode = None,# Perfect for a few good ones :)
-        yaxis_mode = None, # Perfect for a few good ones :)
-        axis_style = None,   # Automatically do some formatting :)
-        dataTransform = None,   # Specify if we are gonna format somehow the data. 
-                            # for intraday for example.
+        axis_style = None,  # Automatically do some formatting :)
 
         ## Widget options
         ws = None,      # Only plotting the last window of the data.
-        initX = None,   # Initial point to plot
+        init_x = None,   # Initial point to plot
         # Basic parameters that we can usually find in a plot
         loc = "best",    # Position of the legend
         ):       
-    
+
     axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
-                 position,  projection, X,Y, dataTransform, ws)
+                 position,  projection, X,Y, None, ws)
     
-    print(X.shape)
     for i in range(Y.shape[1]):  
         self.zorder+= 1  # 
         colorFinal = self.get_color(color)
         legend_i = None if i >= len(legend) else legend[i]
         alpha_line = alpha if fill_between == 0 else alpha_line
         
-        plot_i, = axes.plot(X[self.start_indx:self.end_indx],Y[self.start_indx:self.end_indx:,i], 
+        drawing, = axes.plot(X[self.start_indx:self.end_indx],Y[self.start_indx:self.end_indx:,i], 
                  lw = lw, alpha = alpha_line, color = colorFinal,
                  label = legend_i, zorder = self.zorder,
                  ls = ls, marker = marker[0], markersize = marker[1], markerfacecolor = marker[2])
-        drawings.append(plot_i); drawings_type.append("plot")
+        drawings.append(drawing); drawings_type.append("plot")
 
         if (fill_between == 1):  
-            plot_i = self.fill_between(x = X[self.start_indx:self.end_indx],
+            drawing = self.fill_between(x = X[self.start_indx:self.end_indx],
                               y1 = Y[self.start_indx:self.end_indx,i],
                                 y2 = fill_offset, color = colorFinal,alpha = alpha)
-            drawings.append(plot_i); drawings_type.append("fill_between")
+            drawings.append(drawing); drawings_type.append("fill_between")
             
     self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
                          xlim, ylim,xpadding,ypadding,axis_style,X,Y)
     return drawings
 
-def stem(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        ax = None, position = [], projection = "2d", sharex = None, sharey = None,
-        fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
-        xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
-        ws = None, Ninit = 0,     
-        loc = "best",    
-        dataTransform = None,
-        xaxis_mode = None,yaxis_mode = None,AxesStyle = None,   # Automatically do some formatting :)
-        marker = [" ", None, None],
-        bottom = 0
+def scatter(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 1, alpha = 1.0,  # Basic line properties
+        axes = None, position = [], projection = "2d", sharex = None, sharey = None,
+        font_sizes = None,axis_style = None, loc = "best",
+        xlim = None, ylim = None, xpadding = None, ypadding = None, # Limits of vision
+        ws = None,init_x = None,
+        ## Scatter specific
+        marker = "o"
        ):         
-
-    # Management of the figure and properties
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
-                      projection = projection, position = position)
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpY, NcY = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
-
-    ############### CALL PLOTTING FUNCTION ###########################
-    for i in range(NcY):  # We plot once for every line to plot
+    
+    axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
+                 position,  projection, X,Y, None, ws)
+    
+    for i in range(Y.shape[1]):  # We plot once for every line to plot
         self.zorder = self.zorder + 1  # Setting the properties
         colorFinal = self.get_color(color)
         legend_i = None if i >= len(legend) else legend[i]
-        markerline, stemlines, baseline = ax.stem(X,Y[:,i], 
+        drawing =  axes.scatter(X,Y, lw = lw, alpha = alpha, color = colorFinal,
+                    label = legend_i, zorder = self.zorder, marker = marker)
+        # TODO: marker = marker[0], markersize = marker[1], markerfacecolor = marker[2]
+        drawings.append(drawing); drawings_type.append("scatter")
+            
+    self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
+                         xlim, ylim,xpadding,ypadding,axis_style,X,Y)
+    return drawing
+
+
+def stem(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, alpha = 1.0,  # Basic line properties
+        axes = None, position = [], projection = "2d", sharex = None, sharey = None,
+        font_sizes = None,axis_style = None, loc = "best",
+        xlim = None, ylim = None, xpadding = None, ypadding = None, # Limits of vision
+        ws = None,init_x = None,
+        ## Stem specific
+        marker = [" ", None, None], 
+        bottom = 0
+       ):         
+
+    
+    axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
+                 position,  projection, X,Y, None, ws)
+    
+    ############### CALL PLOTTING FUNCTION ###########################
+    for i in range(Y.shape[1]):  # We plot once for every line to plot
+        self.zorder = self.zorder + 1  # Setting the properties
+        colorFinal = self.get_color(color)
+        legend_i = None if i >= len(legend) else legend[i]
+        markerline, stemlines, baseline = axes.stem(X,Y[:,i], 
                 use_line_collection = True,
                  label = legend_i,#marker[2],
                   bottom = bottom)
@@ -111,22 +127,13 @@ def stem(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, 
         plt.setp(stemlines, 'color', colorFinal)
         plt.setp(stemlines, 'alpha', alpha)
 
-     
-    ############### Last setting functions ###########################
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
+        drawings.append([markerline, stemlines, baseline]); drawings_type.append("scatter")
+            
+    self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
+                         xlim, ylim,xpadding,ypadding,axis_style,X,Y)
     
-    return ax
+    return [markerline, stemlines, baseline]
     
-
-#a=np.datetime64('2002-06-28').astype(datetime)
-#plot_date(a,2)
-import matplotlib.dates as mdates
-
 def add_vlines(self, X = [],Y = [],  # X-Y points in the graph.
         labels = [], legend = [],       # Basic Labelling
         color = None,  lw = 2, alpha = 1.0,  # Basic line properties
@@ -231,65 +238,7 @@ def add_hlines(self, X = [],Y = [],  # X-Y points in the graph.
     
     return ax
 
-def scatter(self, X = [],Y = [],  # X-Y points in the graph.
-        labels = [], legend = [],       # Basic Labelling
-        color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        nf = 0, na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
-        ax = None, position = [], projection = "2d", # Type of plot
-        sharex = None, sharey = None,
-        fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
-        xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
-        ws = None, Ninit = 0,     
-        loc = "best",    
-        dataTransform = None,
-        xaxis_mode = None,yaxis_mode = None,AxesStyle = None,   # Automatically do some formatting :)
-        marker = "o"
-       ):         
 
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
-                  projection = projection, position = position)
-        
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpX, NcX = X.shape
-    NpY, NcY = Y.shape
-    
-#    print (X.shape)
-    D = []
-    for i in range(NpX):
-        D.append(X[i,0])
-    self.X = D
-    X = D
-#    print X
-    
-
-    ## Preprocess the data given so that it meets the right format
-    NpY, NcY = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
-
-    ############### CALL SCATTERING FUNCTION ###########################
-    for i in range(NcY):  # We plot once for every line to plot
-        self.zorder = self.zorder + 1  # Setting the properties
-        colorFinal = self.get_color(color)
-        legend_i = None if i >= len(legend) else legend[i]
-        
-        scatter_i =  ax.scatter(X,Y, lw = lw, alpha = alpha, color = colorFinal,
-                    label = legend_i, zorder = self.zorder, marker = marker)
-        # TODO: marker = marker[0], markersize = marker[1], markerfacecolor = marker[2]
-        plots.append(scatter_i)
-        plots_typ.append("scatter")
-
-    ############### Last setting functions ###########################
-    self.store_WidgetData(plots_typ, plots)     # Store pointers to variables for interaction
-    
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
-    
-    return ax
 
 
 def step(self, X = [],Y = [],  # X-Y points in the graph.
