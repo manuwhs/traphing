@@ -1,6 +1,5 @@
 import pandas as pd  
 import numpy as np
-from . import indicators_lib as indl
 
 #Standard Deviation  
 def STD(df, n = 20, series_name = "Close"):  
@@ -31,6 +30,7 @@ def ATR(df, n = 14):
     
     values = pd.Series(TR_l).rolling( n).mean()
     series = pd.Series(values, name = "ATR(%i)"%n)
+    series.index = df.index
     return series
     
 # Volatility Chaikin
@@ -40,4 +40,11 @@ def Chaikin_vol(df, n = 14):
     values = (EMA - EMA.shift(1))/EMA.shift(1)
     series = pd.Series(values, name = "Chaikin_vol(%i)"%n)
     return series
-    
+
+# GAP between samples
+def GAP(df):
+    """ Current Open - Previous Close
+    """
+    values = df["Open"] - df["Close"].shift(1)
+    series = pd.Series(values, name = "GAP")
+    return series

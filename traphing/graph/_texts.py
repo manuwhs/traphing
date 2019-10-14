@@ -2,22 +2,21 @@ from collections import OrderedDict
 
 def _update_legend(self, axes, n_drawings, legend = [], loc = "best"):
     # TODO: make something so that the legends do not overlap when we have shared axes.
-    if(len(legend) > 0):
-        self.legend.extend(legend)
-    else:
-        self.legend.extend(["Line"]*n_drawings)
-        
-#    self.axes.legend(self.legend, loc=loc)
-#    l = plt.legend()
-    if(len(legend) > 0):   
-        if (axes.legend()):
-#            ax.legend().set_zorder(0) # Set legend on top
-            axes.legend(loc=loc)
-    else:
-        handles, labels = axes.get_legend_handles_labels()
-        by_label = OrderedDict(zip(labels, handles))
-        axes.legend(by_label.values(), by_label.keys())
-        
+    
+    if type(legend) == type([]):
+        if(len(legend) > 0):
+            self.legend.extend(legend)
+        else:
+            self.legend.extend(["Line"]*n_drawings)
+        if(len(legend) > 0):   
+            if (axes.legend()):
+    #            ax.legend().set_zorder(0) # Set legend on top
+                axes.legend(loc=loc)
+        else:
+            handles, labels = axes.get_legend_handles_labels()
+            by_label = OrderedDict(zip(labels, handles))
+            axes.legend(by_label.values(), by_label.keys())
+            
 
 def format_legend(self, axes, handlelength=None, # Length of handle
                   handletextpad= None,   # Distance between handle and text
@@ -97,5 +96,22 @@ def set_labels(self, axes = None, title = None, xlabel = None, ylabel = None,  s
         
 def add_text(self, axes, x,y, text = r'an equation: $E=mc^2$',fontsize = 15):
     return axes.text(x, y, text, fontsize=fontsize)
+
+## TODO: Refactor code
+def format_legend_2():
+
+    ## Format the legend !!
+    maLeg = ax1.legend(loc=9, ncol=2, prop={'size':7},
+               fancybox=True, borderaxespad=0.)
+    maLeg.get_frame().set_alpha(0.4)
+    textEd = ax1.get_legend().get_texts()
+    pylab.setp(textEd[0:5], color = 'w')
+        
+    ## Remove the xticklabels of the other axes !!
+    plt.setp(ax0.get_xticklabels(), visible=False)
+    plt.setp(ax1.get_xticklabels(), visible=False)
+    
+    ## Final touches !!! 
+    plt.suptitle("Trasing Station",color='k', fontsize = 20)
 
 

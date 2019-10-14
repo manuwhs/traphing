@@ -1,13 +1,11 @@
 import sys
 import datetime as dt
 import pandas as pd
-import sys
 import matplotlib.pyplot as plt 
 sys.path.append("..") # Adds higher directory to python modules path.
 
 from traphing.data_classes import Velas
 from traphing.utils import Timeframes
-from traphing.indicators import indicators_pandas as indp
 
 from traphing.graph.Gl import gl
 plt.close("all")
@@ -22,7 +20,9 @@ start_time = dt.datetime(2019,8,14); end_time = dt.datetime(2019,8,18)
 velas.set_time_interval(start_time, end_time)
 timestamps = velas.timestamps
 
+#velas.plot_indicator(None, "RSI")
 
+gl.barchart(velas.df)
 """
     Moving averages
 """
@@ -55,7 +55,6 @@ if(0):
     
     gl.subplots_adjust(left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0, hide_xaxis = True)
 
-velas.plot_indicator(axes = None, indicator_name = "MOM")
 
 """
     Supports and Resistances
@@ -121,10 +120,9 @@ if(0):
 """
     Ranges 
 """
-
 if(0):
-    indicators_name = ["STD","AHLR", "ATR", "Chaikin_vol"]
-    indicators_args = [{}, {}, {}, {}]
+    indicators_name = ["STD","AHLR", "ATR", "Chaikin_vol", "GAP"]
+    indicators_args = [{}, {}, {}, {}, {}]
     
     gl.init_figure()
     n_rows = len(indicators_name)

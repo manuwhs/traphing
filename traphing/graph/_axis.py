@@ -85,6 +85,10 @@ def apply_axis_style(self, axes, axis_style = None):
 
         
 def color_axis(self, axes, color_spines = "w", color_axis = "w"):
+    if axes is None:
+        axes = self.axes
+        
+    axes.set_facecolor('k')
     axes.spines['bottom'].set_color(color_spines)
     axes.spines['top'].set_color(color_spines)
     axes.spines['left'].set_color(color_spines)

@@ -8,46 +8,32 @@ import datetime as dt
 from matplotlib import collections  as mc
 from matplotlib.lines import Line2D
 
-def barchart(self, X = [],Y = [],  # X-Y points in the graph.
-        labels = [], legend = [],       # Basic Labelling
-        color = None,  lw = 2, lw2 = 2,alpha = 1.0,  # Basic line properties
-        nf = 0, na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
-        ax = None, position = [], projection = "2d", # Type of plot
-        sharex = None, sharey = None,
-        fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
-        xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
-        ws = None, Ninit = 0,     
-        loc = "best",    
-        dataTransform = None,
-        xaxis_mode = None,yaxis_mode = None,AxesStyle = None   # Automatically do some formatting :)
+def barchart(self, df, labels = [], legend = [],  color = None,  lw = 1, alpha = 1.0,  # Basic line properties
+        axes = None, position = [], projection = "2d", sharex = None, sharey = None,
+        font_sizes = None,axis_style = None, loc = "best",
+        xlim = None, ylim = None, xpadding = None, ypadding = None, # Limits of vision
+        ws = None,init_x = None,
+        
+        ## Specific 
+        lw2 = 2
        ):         
            
     
-    # Management of the figure and properties
-    ax = self.figure_management(axes = axes, sharex = sharex, sharey = sharey,
-                      projection = projection, position = position)
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpY, NcY = Y.shape
-    NpX, NcX = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
+    axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
+                 position,  projection, df.index, df["High"], None, ws)
+    
+    High,Low, Open,Close = df["High"],df["Low"],df["Open"],df["Close"]
+    n_samples = X.size
 
-    ############### CALL PLOTTING FUNCTION ###########################
-
-#    X = X.astype(dt.datetime)
-#    self.X = self.X.astype(dt.datetime)
-#    print X.shape
-    High,Low, Open,Close = Y[:,0], Y[:,1], Y[:,2], Y[:,3]
-
-#    print X
-    width_unit = self.get_barwidth(X)
+    width_unit = self._get_barwidth(X)
     dist = width_unit /2.2
+    
+    print(n_samples, dist, High[0])
     # High-Low
-    linesHL = [[(X[i].astype(dt.datetime),Low[i]),(X[i].astype(dt.datetime), High[i])] for i in range(NpX)]
-    linesO = [[(X[i].astype(dt.datetime) - dist,Open[i]),(X[i].astype(dt.datetime), Open[i])] for i in range(NpX)]
-    linesC = [[(X[i].astype(dt.datetime),Close[i]),(X[i].astype(dt.datetime) + dist, Close[i])] for i in range(NpX)]
+    linesHL = [[(X[i].astype(dt.datetime),Low[i]),(X[i].astype(dt.datetime), High[i])] for i in range(n_samples)]
+    linesO = [[(X[i].astype(dt.datetime) - dist,Open[i]),(X[i].astype(dt.datetime), Open[i])] for i in range(n_samples)]
+    linesC = [[(X[i].astype(dt.datetime),Close[i]),(X[i].astype(dt.datetime) + dist, Close[i])] for i in range(n_samples)]
 
-#    lines = [[(0, 1), (1, 1)], [(2, 3), (3, 3)], [(1, 2), (1, 3)]]
 #    print mdates.date2num(X[i,0].astype(dt.datetime)), type(mdates.date2num(X[i,0].astype(dt.datetime))) 
     self.zorder = self.zorder + 1  # Setting the properties
     colorFinal = self.get_color(color)
@@ -57,31 +43,18 @@ def barchart(self, X = [],Y = [],  # X-Y points in the graph.
         label_legend = legend[0]
     else:
         label_legend = None
+        
     lcHL = mc.LineCollection(linesHL, colors= colorFinal, linewidths=lw, antialiased=True, label = label_legend)
     lcO = mc.LineCollection(linesO, colors= colorFinal, linewidths=lw2, antialiased=True)
     lcC = mc.LineCollection(linesC, colors= colorFinal, linewidths=lw2, antialiased=True)
-    ax.add_collection(lcHL)
-    ax.add_collection(lcO)
-    ax.add_collection(lcC)
-    
-    
-    ax.autoscale()  # TODO: The zoom is not changed if we do not say it !
-#    ax.margins(0.1)
-    ############### Last setting functions ###########################
-    self.store_WidgetData(plots_typ, plots)     # Store pointers to variables for interaction
-    
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
+    axes.add_collection(lcHL)
+    axes.add_collection(lcO)
+    axes.add_collection(lcC)
+    axes.autoscale()  # TODO: The zoom is not changed if we do not say it !
 
-#    xfmt = mdates.DateFormatter('%b %d')
-#    ax.xaxis.set_major_formatter(xfmt)
-    return ax
-
-
+    self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
+                         xlim, ylim,xpadding,ypadding,axis_style,X,Y)
+    
 def candlestick(self, X = [],Y = [],  # X-Y points in the graph.
         labels = [], legend = [],       # Basic Labelling
         color = None,  lw = 2, alpha = 1.0,  # Basic line properties

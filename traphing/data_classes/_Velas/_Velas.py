@@ -124,6 +124,5 @@ class Velas:
     plot_series = pl.plot_series
     plot_indicator = pl.plot_indicator
     plot_barchart = pl.plot_barchart
-
     plot_candlesticks = pl.plot_candlesticks
     

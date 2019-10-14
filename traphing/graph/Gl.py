@@ -89,18 +89,22 @@ class GraphicalLibraryFigure ():
 
     #################### data preprocessing #########################
     _preprocess_data = _data_preprocessing._preprocess_data
+    _get_barwidth = _data_preprocessing._get_barwidth
 #    _dates_formatting = _data_preprocessing._dates_formatting
     
     ####################### Basic graph functions #######################
     plot = _plots.plot
     scatter = _plots.scatter
     stem = _plots.stem
-    
+    fill_between = _plots.fill_between
     
     ####################### Widgets ######################################
     _init_WidgetData = _GUI._init_WidgetData
     
-    
+
+    ####################### Advanced  #######################
+    barchart = _advanced.barchart
+        
     if(0):
         scatter = grpl.scatter
         stem = grpl.stem

@@ -28,5 +28,5 @@ def HMA(df, n = 20, series_name = "Close"):
 # Hull's Moving Average general
 def HMAg(df, n = 20, series_name = "Close"):  
     values = indl.HMAg(df[series_name], n = n).flatten()
-    series = pd.Series(values, name = "HMA(%i)"%n, index = df.index)
+    series = pd.Series(values, name = "HMAg(%i)"%n, index = df.index)
     return series

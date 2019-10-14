@@ -98,7 +98,7 @@ def _get_barwidth(self,X, width = None):
     if (type(width) == type(None)):
         width = 1
 #        print width
-    if (type(X[0]).__name__ == "Timestamp" ): #  or (type(X[0]).__name__ == "datetime64" )
+    if ((type(X[0]).__name__ == "Timestamp" ) or (type(X[0]).__name__ == "datetime64" )):
         width_size = min(bMl.diff(X)[1:])
         width_size = (width_size.total_seconds())/ (24.0*60*60) 
     else:

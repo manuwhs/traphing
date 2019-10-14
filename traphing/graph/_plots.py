@@ -1,9 +1,6 @@
 import matplotlib.pyplot as plt
 from .. import utils as ul
-import datetime as dt
-import matplotlib.dates as mdates
 
-from matplotlib import collections  as mc
 # The common properties will be explained here once and shortened in the rest
 def plot(self, X = None,Y = None,           # X-Y points in the graph.
         labels = [], legend = [],       # Basic Labelling
@@ -24,7 +21,7 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
         xlim = None, ylim = None, # Limits of vision
         
         ### Special options 
-        fill_between = 0,  #  0 = No fill, 1 = Fill and line, 2 = Only fill
+        fill_between = False,  #  0 = No fill, 1 = Fill and line, 2 = Only fill
         alpha_line = 1, # Alpha of the line when we do fillbetween
         fill_offset = 0,  # The 0 of the fill
         ls = "-",
@@ -55,11 +52,10 @@ def plot(self, X = None,Y = None,           # X-Y points in the graph.
                  ls = ls, marker = marker[0], markersize = marker[1], markerfacecolor = marker[2])
         drawings.append(drawing); drawings_type.append("plot")
 
-        if (fill_between == 1):  
+        if (fill_between == True):  
             drawing = self.fill_between(x = X[self.start_indx:self.end_indx],
                               y1 = Y[self.start_indx:self.end_indx,i],
-                                y2 = fill_offset, color = colorFinal,alpha = alpha)
-            drawings.append(drawing); drawings_type.append("fill_between")
+                              y2 = fill_offset, color = colorFinal,alpha = alpha)
             
     self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
                          xlim, ylim,xpadding,ypadding,axis_style,X,Y)
@@ -101,7 +97,6 @@ def stem(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, 
         bottom = 0
        ):         
 
-    
     axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
                  position,  projection, X,Y, None, ws)
     
@@ -133,112 +128,39 @@ def stem(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, 
                          xlim, ylim,xpadding,ypadding,axis_style,X,Y)
     
     return [markerline, stemlines, baseline]
-    
-def add_vlines(self, X = [],Y = [],  # X-Y points in the graph.
-        labels = [], legend = [],       # Basic Labelling
-        color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        nf = 0, na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
-        ax = None, position = [], projection = "2d", # Type of plot
-        sharex = None, sharey = None,
-        fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
-        xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
-        ws = None, Ninit = 0,     
-        loc = "best",    
-        dataTransform = None,
-        xaxis_mode = None,yaxis_mode = None,AxesStyle = None,   # Automatically do some formatting :)
-        marker = [" ", None, None]
-       ):         
 
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpX, NcX = X.shape
-    NpY, NcY = Y.shape
-    
-    # Management of the figure and properties
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
-                      projection = projection, position = position)
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpY, NcY = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
+def fill_between(self, x, y1,  y2 = 0, where = None,
+        labels = [], legend = [],  color = None,  lw = 2, alpha = 1.0,  # Basic line properties
+        axes = None, position = [], projection = "2d", sharex = None, sharey = None,
+        font_sizes = None,axis_style = None, loc = "best",
+        xlim = None, ylim = None, xpadding = None, ypadding = None, # Limits of vision
+        ws = None,init_x = None
+        ):
 
-    ############### CALL PLOTTING FUNCTION ###########################
-#    X = X.astype(dt.datetime)
-#    self.X = self.X.astype(dt.datetime)
-    X = ul.preprocess_dates(X)
-    self.X = X
+    axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
+                 position,  projection, x,y1, None, ws)
     
-    lines = [[(X[i].astype(dt.datetime), Y[i,0]),(X[i].astype(dt.datetime), Y[i,1])] for i in range(NpX)]
-#    lines = [[(0, 1), (1, 1)], [(2, 3), (3, 3)], [(1, 2), (1, 3)]]
-#    print mdates.date2num(X[i,0].astype(dt.datetime)), type(mdates.date2num(X[i,0].astype(dt.datetime))) 
-    
-    lc = mc.LineCollection(lines, colors= "k", linewidths=lw)
-    ax.add_collection(lc)
-    ax.autoscale()
-    ax.margins(0.1)
-    
-    ############### Last setting functions ###########################
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
-    
-    return ax
-    
-def add_hlines(self, X = [],Y = [],  # X-Y points in the graph.
-        labels = [], legend = [],       # Basic Labelling
-        color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        nf = 0, na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
-        ax = None, position = [], projection = "2d", # Type of plot
-        sharex = None, sharey = None,
-        fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
-        xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
-        ws = None, Ninit = 0,     
-        loc = "best",    
-        dataTransform = None,
-        xaxis_mode = None,yaxis_mode = None,AxesStyle = None,   # Automatically do some formatting :)
-        marker = [" ", None, None]
-       ):         
+    y1 = ul.fnp(Y).T.tolist()[0]
 
-    # Management of the figure and properties
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
-                      projection = projection, position = position)
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpY, NcY = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
+    if (where is not None):
+        where = ul.fnp(where)
+#        where = np.nan_to_num(where)
+        where = where.T.tolist()[0]
 
-    ############### CALL PLOTTING FUNCTION ###########################
-#    X = X.astype(dt.datetime)
-#    self.X = self.X.astype(dt.datetime)
-    X = ul.preprocess_dates(X)
-    self.X = X
+    y2 = ul.fnp(y2)
+    if (y2.size == 1):
+        y2 = y2[0,0]
+    else:
+        y2 = y2.T.tolist()[0]
     
-    width_unit = self.get_barwidth(X)
-    width = width_unit * (1 - 0.8)/2
-    # TODO: might be wrong to use Npx due to subselection
-    lines = [[(X[i].astype(dt.datetime)- width, Y[i,0]),(X[i].astype(dt.datetime) +width, Y[i,0])] for i in range(NpY)]
-#    lines = [[(0, 1), (1, 1)], [(2, 3), (3, 3)], [(1, 2), (1, 3)]]
-#    print mdates.date2num(X[i,0].astype(dt.datetime)), type(mdates.date2num(X[i,0].astype(dt.datetime))) 
-    
-    lc = mc.LineCollection(lines, colors= "k", linewidths=lw)
-    ax.add_collection(lc)
-    ax.autoscale()
-    ax.margins(0.1)
-    
-    ############### Last setting functions ###########################
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
-    
-    return ax
+    drawing = axes.fill_between(x = X.flatten(), y1 = y1, y2 = y2, where = where,
+                     color = color, alpha = alpha, zorder = self.zorder, label = legend) #  *args, **kwargs) 
 
-
+    drawings.append(drawing); drawings_type.append("fill_between")
+            
+    self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
+                         xlim, ylim,xpadding,ypadding,axis_style,X,Y)
+    return drawing
 
 
 def step(self, X = [],Y = [],  # X-Y points in the graph.
@@ -306,33 +228,7 @@ def step(self, X = [],Y = [],  # X-Y points in the graph.
     
     return ax
 
-def plot_filled(self, X = [],Y = [],  # X-Y points in the graph.
-        labels = [], legend = [],       # Basic Labelling
-        color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        nf = 0, na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
-        ax = None, position = [], projection = "2d", # Type of plot
-        sharex = None, sharey = None,
-        fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
-        xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
-        ws = None, Ninit = 0,     
-        loc = "best",    
-        dataTransform = None,
-        xaxis_mode = None,yaxis_mode = None,AxesStyle = None,   # Automatically do some formatting :)
-        marker = [" ", None, None],
-        fill_mode =  "independent", # "between", "stacked","independent"
-        step_mode = "no",
-        where = "pre"
-        
-       ):         
-
-    # Management of the figure and properties
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
-                      projection = projection, position = position)
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpY, NcY = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
-
+def plot_filled(self, X = [],Y = []):
     x = X[self.start_indx:self.end_indx]
     ############### CALL PLOTTING FUNCTION ###########################
     for i in range(0,NcY):  # We plot once for every line to plot
@@ -371,76 +267,6 @@ def plot_filled(self, X = [],Y = [],  # X-Y points in the graph.
         else:
             fill_i = self.fill_between(x = x,y1 = y1 ,y2 = y2, color = colorFinal,alpha = alpha, legend = [legend_i])
         
-        plots.append(fill_i)
-        plots_typ.append("plot")
-    ############### Last setting functions ###########################
-    self.store_WidgetData(plots_typ, plots)     # Store pointers to variables for interaction
-    
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
-
-    return ax
-
-
-def fill_between(self, x, y1,  y2 = 0, 
-                 ax = None, where = None, alpha = 1.0 , color = "#888888", 
-                 legend = [],
-                 *args, **kwargs):
-    # This function fills a unique plot.
-    ## We have to fucking deal with dates !!
-    # The fill function does not work properly with datetime64
-                 
-    x = ul.fnp(x)
-    y1 = ul.fnp(y1)
-    if (type(ax) == type(None)):
-        ax = self.axes
-    x =  ul.preprocess_dates(x)
-    x = ul.fnp(x)
-#    print len(X), len(ul.fnp(Yi).T.tolist()[0])
-#    print type(X), type(ul.fnp(Yi).T.tolist()[0])
-#    print X.shape
-#    print len(X.T.tolist()), len(ul.fnp(Yi).T.tolist()[0])
-    x = x.T.tolist()[0]
-    
-#    print x
-    y1 = ul.fnp(y1).T.tolist()[0]
-
-    
-    if (where is not None):
-#        print len(x), len(y1), len(where)
-        
-        where = ul.fnp(where)
-#        where = np.nan_to_num(where)
-        where = where.T.tolist()[0]
-        
-    y2 = ul.fnp(y2)
-    if (y2.size == 1):
-        y2 = y2[0,0]
-    else:
-        y2 = y2.T.tolist()[0]
-#        print where[0:20]
-#        print y2
-#    print len(where)
-#    print x[0:5], y1[0:5]
-    
-    if (len(legend) == 0):
-        legend = None
-    else:
-        legend = legend[0]
-    ln = ax.fill_between(x = x, y1 = y1, y2 = y2, where = where,
-                     color = color, alpha = alpha, zorder = self.zorder, label = legend) #  *args, **kwargs) 
-
-    self.plots_type.append(["fill"])
-    self.plots_list.append([ln]) # We store the pointers to the plots
-    
-    data_i = [x,y1,y2, where, ax, alpha,color, args, kwargs]
-    self.Data_list.append(data_i)
-            
-    return ln
 
 def bar(self, X = [],Y = [],  # X-Y points in the graph.
         labels = [], legend = [],       # Basic Labelling
@@ -519,12 +345,3 @@ def bar(self, X = [],Y = [],  # X-Y points in the graph.
     self.apply_style(nf,na,AxesStyle)
     return ax
     
-
-
-
-#fig, ax_list = plt. subplots(3, 1)
-#x = y = np.arange(5)
-#
-#for ax, where in zip(ax_list, ['pre', 'post', 'mid']):
-#    ax.step(x, y, where=where, color='r', zorder=5, lw=5)
-#    fill_between_steps(ax, x, y, 0, step_where=where)
