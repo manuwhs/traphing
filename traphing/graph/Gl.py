@@ -16,8 +16,6 @@ from . import _data_preprocessing
 from . import _dates_formatting
 
 from .GUI import _GUI 
-from .specific import trading_graphs as trgr
-
 
 import matplotlib.pyplot as plt
 

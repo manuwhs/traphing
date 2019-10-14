@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 with open("README.md", "r") as readme_file:
     readme = readme_file.read()
-
-requirements = ["ipython>=6", "nbformat>=4", "nbconvert>=5", "requests>=2"]
+with open("requirements.txt", "r") as readme_file:
+    requirements = readme_file.read().split("\n")
 
 setup(
     name="traphing",

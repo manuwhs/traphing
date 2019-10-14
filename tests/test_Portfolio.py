@@ -1,5 +1,5 @@
 import sys
-sys.path.append("..") # Adds higher directory to python modules path.
+sys.path.insert(0,"..") # Adds higher directory to python modules path.
 from traphing.data_classes import Portfolio
 from traphing.utils import Timeframes
 import pytest
