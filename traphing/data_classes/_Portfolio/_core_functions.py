@@ -28,38 +28,9 @@ def set_time_interval(self,start_time, end_time, trim = False):
     for symbol_name in self.symbol_names_list:
         self[symbol_name].set_time_interval(start_time, end_time, trim)
 
+"""
 
-def get_timeSeries(self, symbolIDs = [], period = None, seriesNames = []):
-    # This funciton returns a list with the timeSeries for all of the
-    # symbols specified, for a given period.
+"""
 
-    symbolIDs, period = self.default_select(symbolIDs, period)
-    all_timeSeries = []
-
-    for symbol_n in symbolIDs:
-        timeSeries = self.symbols[symbol_n].timeDatas[period].get_timeSeries(seriesNames = seriesNames);
-        all_timeSeries.append(timeSeries)
-    return all_timeSeries
-
-def get_timeSeriesReturn(self, symbolIDs = [], period = None, seriesNames = []):
-    # This funciton returns a list with the timeSeries for all of the
-    # symbols specified, for a given period.
-
-    symbolIDs, period = self.default_select(symbolIDs, period)
-    all_timeSeries = []
-    for symbol_n in symbolIDs:
-        timeSeries = self.symbols[symbol_n].timeDatas[period].get_timeSeriesReturn(seriesNames = seriesNames);
-        all_timeSeries.append(timeSeries)
-    return all_timeSeries
-    
-def get_timeSeriesCumReturn(self, symbolIDs = [], period = None, seriesNames = []):
-    # This funciton returns a list with the timeSeries for all of the
-    # symbols specified, for a given period.
-
-    symbolIDs, period = self.default_select(symbolIDs, period)
-    all_timeSeries = []
-    for symbol_n in symbolIDs:
-        timeSeries = self.symbols[symbol_n].timeDatas[period].get_timeSeriesCumReturn(seriesNames = seriesNames);
-        all_timeSeries.append(timeSeries)
-    return all_timeSeries
-
+def velas_indicator(self, symbol_name, timeframe, indicator_name, args):
+    return self[symbol_name][timeframe].indicator(indicator_name,**args)

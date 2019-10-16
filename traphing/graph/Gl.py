@@ -1,23 +1,16 @@
 from . import _figure 
 from . import _axes 
-
-
 from . import _advanced
 from . import _3D 
 from . import _setting
-
 from . import _axis 
 from . import _subplots
 from . import _zoom 
-
 from . import _plots
 from . import _texts
 from . import _data_preprocessing
 from . import _dates_formatting
-
 from .GUI import _GUI 
-
-import matplotlib.pyplot as plt
 
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
@@ -95,27 +88,16 @@ class GraphicalLibraryFigure ():
     scatter = _plots.scatter
     stem = _plots.stem
     fill_between = _plots.fill_between
-    
+    bar = _plots.bar
     ####################### Widgets ######################################
     _init_WidgetData = _GUI._init_WidgetData
     
 
     ####################### Advanced  #######################
     barchart = _advanced.barchart
+    candlestick = _advanced.candlestick
         
     if(0):
-        scatter = grpl.scatter
-        stem = grpl.stem
-        
-        bar = grpl.bar
-        step = grpl.step
-        
-        plot_filled = grpl.plot_filled
-        fill_between = grpl.fill_between
-        
-        add_hlines = grpl.add_hlines
-        add_vlines = grpl.add_vlines
-    
         ####################### 3D functions #######################
         preproces_data_3D = gr3D.preproces_data_3D
         format_axis_3D = gr3D.format_axis_3D
@@ -123,16 +105,6 @@ class GraphicalLibraryFigure ():
         bar_3D = gr3D.bar_3D
         scatter_3D = gr3D.scatter_3D
     
-        
-        ####################### Advanced  #######################
-        barchart = grad.barchart
-        candlestick = grad.candlestick
-    
-        Velero_graph = grad.Velero_graph
-        Heiken_Ashi_graph = grad.Heiken_Ashi_graph
-        plot_timeSeriesRange = grad.plot_timeSeriesRange
-    
-        
         ####################### Specific Math graphs #######################
         plot_timeRegression = grad.plot_timeRegression
         histogram = grad.histogram
@@ -146,35 +118,6 @@ class GraphicalLibraryFigure ():
         store_WidgetData = grGUI.store_WidgetData
         init_WidgetData = grGUI.init_WidgetData
         
-        
-        tradingPlatform = trgr.tradingPlatform
-        tradingPV = trgr.tradingPV
-        tradingOcillator = trgr.tradingOcillator
-        plotMACD = trgr.plotMACD
-        plot_indicator = trgr.plot_indicator
-        add_indicator = trgr.add_indicator
 
 gl = GraphicalLibraryFigure()
 
-#import numpy as np
-#import matplotlib.pyplot as plt
-##from matplotlib.widgets import TextBox
-#fig, ax = plt.subplots()
-#plt.subplots_adjust(bottom=0.2)
-#t = np.arange(-2.0, 2.0, 0.001)
-#s = t ** 2
-#initial_text = "t ** 2"
-#l, = plt.plot(t, s, lw=2)
-#
-#
-#def submit(text):
-#    ydata = eval(text)
-#    l.set_ydata(ydata)
-#    ax.set_ylim(np.min(ydata), np.max(ydata))
-#    plt.draw()
-#
-#axbox = plt.axes([0.1, 0.05, 0.8, 0.075])
-#text_box = TextBox(axbox, 'Evaluate', initial=initial_text)
-#text_box.on_submit(submit)
-#
-#plt.show()

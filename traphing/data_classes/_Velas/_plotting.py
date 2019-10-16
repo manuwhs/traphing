@@ -33,17 +33,12 @@ def plot_indicator(self, axes = None, indicator_name = "SMA", *args, **kwargs):
 
 
 def plot_barchart(self,*args, **kwargs):         
-    timestamps = self.timestamps
-    data_HLOC = np.array(self.df[["High","Low","Open","Close"]])
-    print(data_HLOC)
-    ax = gl.barchart(timestamps, data_HLOC,*args, **kwargs)
-    return ax
+    drawings = gl.barchart(self.df,*args, **kwargs)
+    return drawings
 
 def plot_candlesticks(self, *args, **kwargs):         
-    data_OCHL = self.df[["Open","Close","High","Low"]]
-    timestamps = self.timestamps    
-    ax = gl.candlestick(timestamps, data_OCHL,*args, **kwargs)
-    return ax
+    drawings = gl.candlestick(self.df,*args, **kwargs)
+    return drawings
 
 def plot_OCHL(self, chart_type = "Line", ax = None, dataTransform = None):
     df = self.df

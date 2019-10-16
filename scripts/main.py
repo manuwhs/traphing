@@ -1,6 +1,6 @@
-import sys
 import datetime as dt
-sys.path.append("..") # Adds higher directory to python modules path.
+import sys
+sys.path.insert(0, "..")  # Adds higher directory to python modules path.
 
 from traphing.data_classes import Velas
 import pandas as pd

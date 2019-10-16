@@ -39,7 +39,9 @@ def _format_data_to_plotting_type(data):
     If the data is categorical:
         -
     If the data are datetimes (matplotlib, pandas, numpy, datetime, time)
-        - It transforms them to...
+        - It transforms them to [Nsam, 1] numpy.ndarray with elements being numpy.datetime64 or pd.datetime. not sure
+        The final transformation to matplotlib dates is done in the axis formatting part.
+        The self.X is never modified, it contains the original data to be able to operate with it.
     """
     data_ticks = None
     
@@ -59,60 +61,21 @@ def _format_data_to_plotting_type(data):
     else:
         raise Warning("Not handled data type: " + str(type(data)))
     return data, data_ticks, data_type
-    
-
-def _detect_AxisFormat(values):
-    # This function automatically detects the formating that should be given
-    # to the information when plotting.
-    # If we are given values to X, these could be of 3 types:
-    # - Numerical: Then we do nothing 
-    # - String: Then it is categorical and we set the ticklabels to it
-    # - Datetimes: We set the formatter ?
-    
-    if(isinstance(values, pd.Series)):
-        V_type = type(values[0]).__name__
-    else:
-        V_type = type(values[0,0]).__name__ 
-    
-#    print (V_type)
-    if ( V_type == "str" or V_type == "string_" or  V_type == 'numpy.string_' or  V_type =="str_"):
-        V_format = "categorical"
-        
-    elif(V_type == "datetime64" or V_type == "Timestamp" or  V_type == "datetime"):
-        V_format = "dates"
-        
-    else:
-        V_format = "numerical"
-
-    return V_format
 
 
-def _get_barwidth(self,X, width = None):
-    # The Xaxis could be dates and so on, so we want to calculate
-    # the with of this bastard independently of that
-
-    if (len(X.shape)):
+def _get_barwidth(self,X):
+    """
+    X should be int or float.
+    If X was originally dates, it should have been transformed to matplotlib mdates,
+    before hitting this function
+    """
+    if (len(X.shape)>1):
         X = X.flatten()
-    print (X.shape)
-    print("X axis type: ", type(X[0]).__name__ )
-    if (type(width) == type(None)):
-        width = 1
-#        print width
     if ((type(X[0]).__name__ == "Timestamp" ) or (type(X[0]).__name__ == "datetime64" )):
-        width_size = min(bMl.diff(X)[1:])
-        width_size = (width_size.total_seconds())/ (24.0*60*60) 
+        raise Warning("Convert the datetime object into matplotlib dates before calling get_barwidth")
     else:
-        
-        width_size = min(bMl.diff(X)[1:]) # (X[1] - X[0]) 
-#        print type(X[0,0])
-#        print X.shape
-#        width_size = min(bMa.diff(X, cval = 10000))
-#        width_size = (width_size.total_seconds())/ (24.0*60*60) 
-    width = width_size * width
-#    print type(X[0])
-    width = float(width)
-    print("width is: ", width)
-    return width
+        width = min(bMl.diff(X)[1:]) 
+    return float(width)
     
 
 def _format_data_axis(dataTransform):

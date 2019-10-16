@@ -1,13 +1,14 @@
-import sys
 import datetime as dt
 import pandas as pd
 import matplotlib.pyplot as plt 
-sys.path.append("..") # Adds higher directory to python modules path.
+
+import sys
+sys.path.insert(0, "..") # Adds higher directory to python modules path.
 
 from traphing.data_classes import Velas
 from traphing.utils import Timeframes
-
 from traphing.graph.Gl import gl
+
 plt.close("all")
 
 symbol_name = "AUDCHF"
@@ -20,9 +21,6 @@ start_time = dt.datetime(2019,8,14); end_time = dt.datetime(2019,8,18)
 velas.set_time_interval(start_time, end_time)
 timestamps = velas.timestamps
 
-#velas.plot_indicator(None, "RSI")
-
-gl.barchart(velas.df)
 """
     Moving averages
 """

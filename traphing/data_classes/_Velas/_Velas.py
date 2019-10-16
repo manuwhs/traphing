@@ -40,7 +40,6 @@ class Velas:
     Only the operation requiring indicators and combinations of OHLCV are 
     included in this library.
     """
-
     def __init__(self, symbol_name: str, timeframe: Timeframes):
         self.symbol_name = symbol_name    # Symbol of the Security (GLD, AAPL, IDX...)
         self.timeframe = timeframe        # It is the number of minutes of the period: 1 5 15....

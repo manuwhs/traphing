@@ -173,7 +173,7 @@ def get_meanRange(timeSeries, window = 6):
 #from scipy.ndimage import interpolation
 #interpolation.shift
     
-def diff(X, lag = 1, n = 1, cval = np.nan): # cval=np.NaN
+def diff(X, lag = 1, n = 1, cval = np.NaN): # cval=np.NaN
     # It computes the lagged difference of the signal X[Nsamples, Nsig]
     # The output vector has the same length as X, the noncomputable values
     # are set as cval

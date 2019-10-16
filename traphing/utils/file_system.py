@@ -3,7 +3,11 @@ import shutil
 from os import listdir
 from os.path import isfile, join
 from distutils.dir_util import copy_tree
+import sys
 
+def add_system_path(path, position = 0):
+    sys.path.insert(position, path) # Adds higher directory to python modules path.
+    
 def create_folder_if_needed (folder):
     if not os.path.exists(folder):
         os.makedirs(folder)

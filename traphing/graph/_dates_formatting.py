@@ -8,6 +8,7 @@ import numpy as np
 import datetime as dt
 import pandas as pd
 
+
 def transform_to_seconds_without_intraday_gaps(timestamps: pd.DatetimeIndex, market_hours: ul.MarketHours,  fake_daily_minutes_gap = 60):
     """
     This funciton transform the dates to a scale where the intraday 

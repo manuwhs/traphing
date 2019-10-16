@@ -7,7 +7,7 @@ with open("requirements.txt", "r") as readme_file:
 
 setup(
     name="traphing",
-    version="0.0.3",
+    version="0.1.0",
     author="Manuel Montoya",
     author_email="manuwhs@gmail.com",
     description="A package to make trading in python easier",

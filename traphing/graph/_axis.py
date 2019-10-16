@@ -14,7 +14,7 @@ def format_axis(self, axes, axis_style):
     
 def format_xaxis (self, axes, 
                   n_ticks = 10,    # Number of ticks we would like
-                  timestamp_formatting = '%Y-%m-%d:%H:%M',  # Specified formatting 
+                  timestamp_formatting = '(%Y-%m-%d)%H:%M',  # Specified formatting 
                   xaxis_mode = None): # Several automatic modes 
     """
     Handle all possible tailoring of the x_axis
@@ -33,6 +33,8 @@ def format_xaxis (self, axes,
         axes.xaxis.set_major_locator(mticker.MaxNLocator(nbins = n_ticks,  prune='upper'))
         axes.xaxis_date()
       #  ax.xaxis.set_major_formatter(FuncFormatter(self.ticklabels[val:val + wsize]))
+        self.figure.autofmt_xdate()
+#        print (type(self.X), type(self.X[0]))
       
     elif(self.formatXaxis == "intraday"):
         # If the data is intraday and we want to apply the Gap Remover !!! 

@@ -268,80 +268,52 @@ def plot_filled(self, X = [],Y = []):
             fill_i = self.fill_between(x = x,y1 = y1 ,y2 = y2, color = colorFinal,alpha = alpha, legend = [legend_i])
         
 
-def bar(self, X = [],Y = [],  # X-Y points in the graph.
-        labels = [], legend = [],       # Basic Labelling
-        color = None,  lw = 2, alpha = 1.0,  # Basic line properties
-        nf = 0, na = 0,          # New axis. To plot in a new axis         # TODO: shareX option
-        ax = None, position = [], projection = "2d", # Type of plot
-        sharex = None, sharey = None,
-        fontsize = 20,fontsizeL = 10, fontsizeA = 15,  # The font for the labels in the axis
-        xlim = None, ylim = None, xlimPad = None, ylimPad = None, # Limits of vision
-        ws = None, Ninit = 0,     
-        loc = "best",    
-        dataTransform = None,
-        xaxis_mode = None,yaxis_mode = None,AxesStyle = None,   # Automatically do some formatting :)
-        marker = [" ", None, None],
+def bar(self, X = [],Y = [], labels = [], legend = [],  color = None,  lw = 2, alpha = 1.0,  # Basic line properties
+        axes = None, position = [], projection = "2d", sharex = None, sharey = None,
+        font_sizes = None,axis_style = None, loc = "best",
+        xlim = None, ylim = None, xpadding = None, ypadding = None, # Limits of vision
+        ws = None,init_x = None,
         fill_mode =  "independent", # "between", "stacked","independent"
         # Particular pararm
+        align = "center",  # "edge"  
         orientation = "vertical",
         barwidth = None,      # Rectangle width
         bottom = None,    ## If the y-axis start somewhere else
         despx = 0,      # Displacement in the x axis, it is done for the dates
                         # so that we can move some other things (Velero graph)
-        align = "edge"  #  "center"   
        ):         
 
-    # Management of the figure and properties
-    ax = self.figure_management(nf, na, ax = ax, sharex = sharex, sharey = sharey,
-                      projection = projection, position = position)
-    ## Preprocess the data given so that it meets the right format
-    X, Y = self.preprocess_data(X,Y,dataTransform)
-    NpY, NcY = Y.shape
-    plots,plots_typ =  self.init_WidgetData(ws)
+    axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
+                position,  projection, X,Y, None, ws)
     
-#    print (X)
-    ## We asume that X and Y have the same dimensions
-#    print (self.formatXaxis)
-    if (self.formatXaxis == "dates" or self.formatXaxis == "intraday"):
-        X = ul.preprocess_dates(X)
-        print ("Formating bar X to dates")
-    if (type(barwidth) == type(None)):
-        barwidth = self.get_barwidth(X, barwidth) * 0.8
-
-#    print ("Barwidth: ", barwidth)
     if (Y.size != 0):  # This would be just to create the axes
-    ############### CALL PLOTTING FUNCTION ###########################
-        for i in range(NcY):  # We plot once for every line to plot
+        for i in range(Y.shape[1]):  # We plot once for every line to plot
             self.zorder = self.zorder + 1  # Setting the properties
             colorFinal = self.get_color(color)
             legend_i = None if i >= len(legend) else legend[i]
-            if(type(bottom) != type(None)):
+            
+            if bottom is not None:
                 bottom = bottom[self.start_indx:self.end_indx].flatten()
-            if (orientation == "vertical"):
-                plot_i  = self.axes.bar(X[self.start_indx:self.end_indx].flatten(), Y[self.start_indx:self.end_indx:,i].flatten(), 
+            X = X.flatten()
+            
+            if orientation == "vertical":
+                drawing  = axes.bar(X[self.start_indx:self.end_indx], Y[self.start_indx:self.end_indx:,i], 
                             width = barwidth, align=align,
                               facecolor= colorFinal,alpha=alpha,
                               label = legend_i, zorder = self.zorder,
                               bottom = bottom)
-            else:  # horixontal
-                plot_i  = self.axes.bar(width = Y[self.start_indx:self.end_indx:,i].flatten(), 
+            elif(orientation == "horizontal"):  
+                drawing  = axes.bar(width = Y[self.start_indx:self.end_indx:,i], 
                               height = barwidth, align=align,
                               facecolor= colorFinal,alpha=alpha,
                               label = legend_i, zorder = self.zorder,
                               left = bottom,
-                              bottom = X[self.start_indx:self.end_indx].flatten(),
+                              bottom = X[self.start_indx:self.end_indx],
                              orientation = "horizontal")
-            plots.append(plot_i)
-            plots_typ.append("plot")
-
-    ############### Last setting functions ###########################
-    self.store_WidgetData(plots_typ, plots)     # Store pointers to variables for interaction
+            drawings.append(drawing); drawings_type.append("bar")
+            
+    self._postdrawing_settings(axes, legend, loc, labels, font_sizes, 
+                         xlim, ylim,xpadding,ypadding,axis_style,X,Y)
     
-    self.update_legend(legend,NcY,ax = ax, loc = loc)    # Update the legend 
-    self.set_labels(labels)
-    self.set_zoom(ax = ax, xlim = xlim,ylim = ylim, xlimPad = xlimPad,ylimPad = ylimPad)
-    self.format_xaxis(ax = ax, xaxis_mode = xaxis_mode)
-    self.format_yaxis(ax = ax, yaxis_mode = yaxis_mode)
-    self.apply_style(nf,na,AxesStyle)
-    return ax
+    return drawings
     

@@ -40,6 +40,10 @@ def str_to_datetime(dateStr):
         dates_datetime.append(datetim)
     return dates_datetime
 
+"""
+##################### CONVERSIONS BETWEEN DATES ########################
+"""
+
 def convert_dates_str(X):
     # We want to convert the dates into an array of char so that we can plot 
     # this shit better, and continuous
@@ -51,9 +55,16 @@ def convert_dates_str(X):
     return Xdates_str
 
 
-"""
-##################### CONVERSIONS BETWEEN DATES ########################
-"""
+def to_mdates(timestamps):
+    """function to return the timestamps in matplotlib format"""
+    try: 
+        if(len(timestamps.shape) > 1):
+            timestamps = timestamps.flatten()
+    except:
+        print("fdbefgndfgsgnfdg")
+        print(type(timestamps))
+        pass
+    return mdates.date2num(pd.to_datetime(timestamps).to_pydatetime())
 
 def get_timeStamp(date):
     return time.mktime(date.timetuple())

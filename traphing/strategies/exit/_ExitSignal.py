@@ -1,16 +1,16 @@
-class EntryTrigger:
-    # This class is the one that characterizes the event of getting into the market
-    # Triggered by a certain class
+class ExitSignal:
+    """
+    This class is the one that characterizes the event of getting into the market
+    Triggered by a certain class
+    """
 
-    def __init__(self, EntrySignalID, StrategyID, 
-                 datetime, symbolID, BUYSELL):
+    def __init__(self, timestamp, exit_signal_id, strategy_id, BUYSELL):
         # Identify the event !
-        self.StrategyID = StrategyID  # ID of the strategy that generated the signal
-        self.EntrySignalID = EntrySignalID # ID of the the entry signal
-        self.datetime = datetime           # Time when the signal was triggered
+        self.strategy_id = strategy_id  # ID of the strategy that generated the signal
+        self.exit_signal_id = exit_signal_id # ID of the the entry signal
+        self.timestamp = timestamp           # Time when the signal was triggered
         
-        # Identify the action to take !
-        self.symbolID = symbolID
+
         self.BUYSELL = BUYSELL  # Binary "BUY" or "SELL"
         
         # Additional information

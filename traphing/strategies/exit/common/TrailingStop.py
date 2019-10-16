@@ -1,21 +1,18 @@
-
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import graph_lib as gr
-
-import utilities_lib as ul
 import datetime as dt
-import CEntrySignal as CES
-import CExitSignal as CExS
 
-class CTrailingStop:
-    # We get out if the price goes a certain amount against us.
+from .. import ExitStrategy, ExitSignal
+from .... import utils as ul
+
+class TrailingStop(ExitStrategy):
+    """ We get out if the price goes a certain amount against us.
     # We set the period as the period of checking and putting 
     # the new stop:
     #   - We will update the real platform stop each end of the period.
     #   - If duting the last period, the stop was in the range of the candle
     #     then we close the deal
+    """
 
     def __init__(self, StrategyID, period, pf = None):
         self.StrategyID = StrategyID    # ID of the strategy so that we can later ID it.
@@ -30,6 +27,7 @@ class CTrailingStop:
         self.init_datetime = None
         self.init_price = None
         self.init_index = None   # Index of the sample that contais the date
+        
     # Set the parameters of the trailing stop: Commodity, period and % 
     def set_trailingStop(self, SymbolName, BUYSELL, datetime = None, period = 1440, maxPullback = 3): 
         self.trailingParam = dict([["SymbolName", SymbolName], ["date",datetime],

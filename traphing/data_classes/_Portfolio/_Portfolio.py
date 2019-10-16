@@ -16,7 +16,6 @@ class Portfolio:
         # Loop over the symbol_names so loop over all the symbols in the Portfolio
         self._init_symbols(symbol_names_list, timeframes_list)  # Create the symbol objects from the periods and names
     
-    
     @property
     def symbol_names_list(self):
         return list(self._symbols_dict.keys())
@@ -36,17 +35,13 @@ class Portfolio:
     del_symbol = cf.del_symbol
     set_time_interval = cf.set_time_interval
 
-    get_timeSeries = cf.get_timeSeries
-    get_timeSeriesReturn = cf.get_timeSeriesReturn
-    get_timeSeriesCumReturn = cf.get_timeSeriesCumReturn
-    
-
     load_data_from_csv = dbf.load_data_from_csv
     add_data_from_csv = dbf.add_data_from_csv
     save_to_csv = dbf.save_to_csv
     update_csv = dbf.update_csv
 
-
+    velas_indicator = cf.velas_indicator
+    
     #######################################################################
     #### DDBB Operations ##################################################
     #######################################################################
