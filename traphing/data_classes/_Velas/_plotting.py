@@ -11,9 +11,9 @@ def plot_series(self, axes = None, series_name = "Close", *args, **kwargs):
     legend = [series_name]
     
     if (series_name == "Volume"):
-        drawings =  gl.stem(timestamps,time_series, *args, **kwargs)
+        drawings =  gl.stem(timestamps,time_series, legend = legend, *args, **kwargs)
     else:
-        drawings = gl.plot(timestamps,time_series, axes = axes, legend = legend, labels = labels, 
+        drawings = gl.plot(timestamps,time_series, axes = axes, legend = legend, 
                            *args, **kwargs)
     return drawings
 

@@ -14,23 +14,6 @@ import get_data_lib as gdl
 import datetime as dt
 from datetime import datetime
 
-"""
-Library with all the obtaining indicator functions of the market.
-
-"""
-
-""" $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-Create Functions to load the real Coliseum from the MetaTrader and actualize it
-We can calculate splippage and shit.
-
-"""
-# Start Date is the date from which we return the data.
-# The data returned should be returned after this date.
-
-# TimeSeries is the main data we have to care about. 
-# All the operations will be done over this one
-
 
 def load_csv(self, file_dir = "/"):
     # This function loads the Coliseum from a CSV
@@ -45,15 +28,14 @@ def load_csv(self, file_dir = "/"):
     
     return dataCSV
 
-
-def set_date(self, date):
-    self.imaginaryDate = date;
+def compute_entry_requests_dict(self):
+    all_entry_requests_dict = {}
+#    for entry_request in self.
     
 def get_positions_symbol(self,symbol):
     # Gets all the positions of a symbol
     Selected_pos = self.Warriors
     Selected_pos = Selected_pos[Selected_pos["Symbol"] == symbol]
-    
     return Selected_pos
     
 def get_position_indx(self,symbol,type_order, size):
