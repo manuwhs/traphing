@@ -88,6 +88,7 @@ class MarketHours():
             return True
         return False
         
+    
     def is_market_open(self,timestamp):
         """
         Returns true if the market is open for the given timestamp
@@ -128,6 +129,7 @@ class MarketHours():
         
         return seconds_open, seconds_closed
     
+    
     def get_origin_reference_seconds(self, date = None):
         """
         We need an origin reference for the intraday date transformation
@@ -149,6 +151,7 @@ class MarketHours():
             return True
         return False
             
+    
     def get_number_of_samples_of_trading_session(self, timeframe, date = None):
         """
         It computes the number of samples per normal trading session
@@ -160,6 +163,7 @@ class MarketHours():
             time_difference = 24*60 # 24h trading
             
         return int(time_difference/timeframe.value)         
+
 
     def get_number_of_samples_by_weekday_dict(self, timestamps):
         """
@@ -230,6 +234,7 @@ class MarketHours():
         self.trading_days_list = trading_days_list
         return trading_days_list
         
+    
     def estimate_special_trading_days_from_timestamps(self, timestamps, open_time = None, 
                                                       close_time = None,  timeframe = None, trading_days_list = None):
         """
@@ -304,6 +309,7 @@ class MarketHours():
                  + 60*fake_daily_minutes_gap* n_days_since_origin
     
         return seconds_since_origin_without_intraday_gaps
+    
     
     def from_seconds_since_origin_without_intraday_gaps_to_timestamps(self, transformed_seconds_since_origin = None, fake_daily_minutes_gap = 60):
         

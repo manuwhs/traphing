@@ -2,7 +2,7 @@
 import pandas as pd
 from typing import List
 from ... import utils
-from ...utils import Timeframes
+from ...utils import Timeframes, MarketHours
 
 ## Symbol methods written in other files
 from . import _core_functions as cf
@@ -10,12 +10,14 @@ from . import _database_functions as dbf
 from . import _indicators as ind
 
 class Symbol:
-    def __init__(self, symbol_name: str, timeframes_list: List[Timeframes]):
+    def __init__(self, symbol_name: str, timeframes_list: List[Timeframes], 
+                 symbol_properties_df: pd.DataFrame = None, market_hours: MarketHours = None):
         self.symbol_name = symbol_name
         self._velas_dict = dict()       #Internal dictionary with the available velas
         
-        self.properties = SymbolProperties(symbol_name)
-    
+        self.properties = SymbolProperties(symbol_name, symbol_properties_df)
+        self.market_hours = market_hours
+        
         self._init_velas(timeframes_list)
     
     @classmethod
@@ -75,16 +77,22 @@ class Symbol:
 
 class SymbolProperties:
     """ Class containing all the static information about a symbol"""
-    def __init__(self, symbol_name):
+    def __init__(self, symbol_name, df = None):
         self.symbol_name = symbol_name 
         
-        self.type = "Share"
-        self.country = "Spain"
-        self.currency = "EUR"
-        self.sector = "Energy" 
-        self.info = []
+        self.type = None
+        self.country = None
+        self.currency = None
+        self.sector = None 
+        
+        self.contract_size = None
+        self.point_size = None
+        self.min_tick_value = None
     
+        if df is not None:
+            self.load_information_from_df(df)
+            
     def load_information_from_df(self, df):
-        pass
+        self.contract_size = df["contract_size"]
         
     
