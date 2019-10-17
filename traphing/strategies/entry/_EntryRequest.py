@@ -1,17 +1,25 @@
-class EntrySignal:
+import datetime as dt
+
+class EntryRequest:
     """
     This class is the one that characterizes the event of getting into the market
     Triggered by a certain class
     """
 
-    def __init__(self, timestamp, entry_signal_id, strategy_id, BUYSELL):
+    def __init__(self, entry_request_id, candlestick_timestamp, strategy_id, 
+                 symbol_name, price, BUYSELL):
         # Identify the event !
-        self.strategy_id = strategy_id  # ID of the strategy that generated the signal
-        self.entry_signal_id = entry_signal_id # ID of the the entry signal
-        self.timestamp = timestamp           # Time when the signal was triggered
+        self.strategy_id = strategy_id          # ID of the strategy that generated the signal
+        self.entry_request_id = entry_request_id  # ID of the the entry signal
+        self.candlestick_timestamp = candlestick_timestamp           # Time when the signal was triggered
         
-
+        # Identify the wanted trade
+        self.symbol_name = symbol_name
         self.BUYSELL = BUYSELL  # Binary "BUY" or "SELL"
+        self.price = price
+        
+        # Variables related
+        self.signal_timestamp = dt.datetime.now() # When it was actually generated
         
         # Additional information
         self.priority = None          # Default priority

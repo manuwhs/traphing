@@ -14,7 +14,7 @@ class EntryStrategy:
         self.portfolio = portfolio
         
         self.signal_params_list = None
-        self.entry_signals_counter = 0  # Number of trading signals triggered
+        self.entry_requests_counter = 0  # Number of trading signals triggered
 
         
     def set_signals():

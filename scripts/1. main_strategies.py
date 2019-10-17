@@ -10,6 +10,8 @@ import sys
 from traphing.utils import Timeframes
 from traphing.utils import unwrap
 import traphing.utils  as ul
+from traphing.strategies import Trade
+from traphing.strategies.exit import StopLoss
 from traphing.strategies.entry import CrossingMovingAverages
 from traphing.graph.Gl import gl
 
@@ -37,29 +39,71 @@ timeframe = timeframes_list[0]
 entry_strategy = CrossingMovingAverages("Crossing averages 1", portfolio)
 
 # Set the paramters
-slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":40}}
+slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":50}}
 fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":20}}
 
 entry_strategy.set_slow_MA(slow_MA_params)
 entry_strategy.set_fast_MA(fast_MA_params)
 
 # Compute the signals
-signals = entry_strategy.compute_signals()
-slow_MA = signals["slow_MA"]
-fast_MA = signals["fast_MA"]
-# Compute the BUYSELL signals
-trade_signals = entry_strategy.compute_trade_signals()
+entry_strategy_series = entry_strategy.compute_strategy_series()
+slow_MA = entry_strategy_series["slow_MA"]
+fast_MA = entry_strategy_series["fast_MA"]
+entry_series = entry_strategy.compute_entry_series()
+
+# Compute the BUYSELL Requests
+entry_requests_dict = entry_strategy.compute_entry_requests_dict()
+entries_dates = sorted(list(entry_requests_dict.keys()))
+entry_request = entry_requests_dict[entries_dates[0]]
+
+# Compute Trade
+trade = Trade(trade_id = "my_trade12", entry_request = entry_request,
+                 trade_price = entry_request.price, trade_timestamp = dt.datetime.now())
+
+### Exit strategy
+exit_strategy =  StopLoss(strategy_id = "Exit coward", trade = trade, portfolio = portfolio)
+# Set the velas it will be listening to.
+exit_strategy.set_velas(symbol_name, timeframe)
+exit_strategy.set_stop_loss(pct = 0.1)
+#exit_strategy.set_stop_loss(price = 0.8)
+# Get shit
+exit_strategy_series = exit_strategy.compute_strategy_series()
+exit_series= exit_strategy.compute_exit_series()
+
+# Compute the BUYSELL Requests
+exit_requests_dict = exit_strategy.compute_exit_requests_dict()
+exits_dates = sorted(list(exit_requests_dict.keys()))
+exit_request = exit_requests_dict[exits_dates[0]]
+
+
+"""
+  ##############3 PLOTTING ###############
+"""
 
 ## Plot the EntryPoints of the strategy
 gl.init_figure()
-ax1 = gl.subplot2grid((2,1),(0,0))
-ax2 = gl.subplot2grid((2,1),(1,0), sharex = ax1)
+n_rows, n_cols = 4,1; size_inches = [12, 5]
+ax1 = gl.subplot2grid((n_rows, n_cols),(0,0))
+ax2 = gl.subplot2grid((n_rows, n_cols),(1,0), sharex = ax1)
+ax3 = gl.subplot2grid((n_rows, n_cols),(2,0), sharex = ax1)
+ax4 = gl.subplot2grid((n_rows, n_cols),(3,0), sharex = ax1)
 
-portfolio[symbol_name][timeframe].plot_barchart(axes = ax1)
-gl.plot(signals.index, signals, legend = list(signals.columns), axes =ax1)
+portfolio[symbol_name][timeframe].plot_barchart(axes = ax1, labels = ["Entry and Exit strategies", "", "Entry signals"])
+gl.plot(entry_strategy_series.index, entry_strategy_series, legend = list(entry_strategy_series.columns), axes =ax1)
 
-normalized_difference = (slow_MA - fast_MA)/np.max(np.abs((slow_MA - fast_MA)))
-gl.fill_between(signals.index, normalized_difference, legend = ["Normalized diff"], axes =ax2)
-gl.stem(signals.index,trade_signals, axes = ax2, legend = "Trades")
+difference = slow_MA - fast_MA
+normalized_difference = difference/np.max(np.abs((difference)))
+gl.fill_between(entry_strategy_series.index, normalized_difference, 
+                labels = ["", "", "Entry requests"], legend = "Normalized signal diff", axes =ax2)
+gl.stem(entry_strategy_series.index,entry_series, axes = ax2, legend = "Trades")
 
+## Plot exit
+gl.plot(exit_strategy_series.index, exit_strategy_series, axes = ax3, 
+        legend = list(exit_strategy_series.columns), labels = ["", "", "Exit signals"])
 
+difference = exit_strategy_series["Close"] - exit_strategy_series["Stop_loss"]
+normalized_difference = difference/np.max(np.abs((difference)))
+gl.fill_between(exit_strategy_series.index, normalized_difference, legend = ["Normalized signal diff"], axes =ax4)
+gl.stem(exit_series.index,exit_series, axes = ax4, legend = "Exits", labels = ["", "", "Exit requests"])
+
+gl.subplots_adjust(left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0, hide_xaxis = True)

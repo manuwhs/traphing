@@ -3,15 +3,15 @@ from scipy import spatial
 from . import sort_and_get_order
 import pandas as pd
 
-def check_crossing(slow_MA, fast_MA):
+def check_crossing(reference, crosser):
     """
     It checks if one signal crosses the other.
     """
-    detected = np.nan_to_num(np.diff(np.sign(slow_MA - fast_MA)),0)
+    detected = np.nan_to_num(np.diff(np.sign(reference - crosser)),0)
     idx_upwards = np.argwhere(detected < 0).flatten() +1 # +1 to be on the right-hand sample
     idx_downwards = np.argwhere(detected > 0).flatten() +1
     
-    series = pd.Series(np.zeros((slow_MA.shape[0])), index = slow_MA.index, name = "Crosses")
+    series = pd.Series(np.zeros((reference.shape[0])), index = reference.index, name = "Crosses")
     series[idx_upwards] = 1
     series[idx_downwards] = -1
     return series

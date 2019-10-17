@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 
-from .. import ExitStrategy, ExitSignal
+from .. import ExitStrategy, ExitRequest
 from .... import utils as ul
 
 class StopLoss(ExitStrategy):
@@ -10,10 +10,9 @@ class StopLoss(ExitStrategy):
     Exit the trade if it has lost X percent of its value.
     """
 
-    def __init__(self, strategy_id, entry_signal, portfolio = None, symbol_name = None, timeframe = None):
-        super().__init__(strategy_id, portfolio)
-        self.signal_names = ["slow_MA", "fast_MA"]
-        
+    def __init__(self, strategy_id, trade, portfolio = None, symbol_name = None, timeframe = None):
+        super().__init__(strategy_id, trade, portfolio)
+        self.series_names = ["Close","Stop_loss"]
         self.symbol_name = symbol_name
         self.timeframe = timeframe
         self.stop_loss = None
@@ -28,59 +27,53 @@ class StopLoss(ExitStrategy):
             self.stop_loss = price
         else:
             price = self.trade.trade_price
-            sign = 1
             if self.trade.BUYSELL == "SELL":
+                sign = 1
+            elif self.trade.BUYSELL == "BUY":
                 sign = -1
             self.stop_loss = price*(1 + sign*pct/100)
-            
+        
     def set_velas(self, symbol_name, timeframe):
         self.symbol_name = symbol_name
         self.timeframe = timeframe
     
-    def compute_signals(self):
-        close = self.porfolio[self.symbol_name][self.timeframe]["Close"]
-        return close
+    def compute_strategy_series(self):
+        close = self.portfolio[self.symbol_name][self.timeframe].series("Close")
+        stop_loss = pd.Series(np.ones(close.index.size) * self.stop_loss, index = close.index)
+        series = pd.concat([close,stop_loss],axis =1, keys = self.series_names)
+        
+        # Set to none the samples before the event
+        series[series.index < self.trade.entry_request.candlestick_timestamp] = np.NaN
+        return series
     
-    def check_exit(self):
-        signals = self.compute_signals()
-        
-        if self.trade.BUYSELL == "SELL":
-            idx_cross = np.where(signals > self.stop_loss)
-        else:
-            idx_cross = np.where(signals < self.stop_loss)
-            
-        series = pd.Series(np.zeros((signals.size)), index = signals.index, name = "Crosses")
-        series[idx_cross] = 1
-        
+    def compute_exit_series(self):
+        signals = self.compute_strategy_series()
+        series = ul.check_crossing(signals["Stop_loss"],signals["Close"])
+        series = series.abs()
         return series
 
         
-    def get_exit_signal(self):
+    def compute_exit_requests_dict(self):
         # Creates the EntryTradingSignals for Backtesting
-        crosses,dates = self.get_TradeSignals()
-        
-        list_events = []
-        # Buy signals
-        Event_indx = np.where(crosses != 0 ) # We do not care about the second dimension
-        for indx in Event_indx[0]:
-            # Create the Exit signal !
-            if crosses[Event_indx] == 1:
-                BUYSELL = "BUY"
-            else:
-                BUYSELL = "SELL"
-                
-            entrySignal =  CExS.CExitSignal(StrategyID = self.StrategyID, 
-                                            EntrySignalID = str(self.singalCounter), 
-                                            datetime = dates[indx], 
-                                            symbolID = self.slowMAparam["SymbolName"], 
-                                            BUYSELL = BUYSELL)
-            entrySignal.comments = "Basic Crossing MA man !"
+        crosses = self.compute_exit_series()
+        exit_requests_dict = {}
+        Event_indx = np.where(crosses != 0 )[0] # We do not care about the second dimension
+        for indx in Event_indx:
+            candlestick_timestamp = crosses.index[indx]
+            symbol_name = self.symbol_name; timeframe = self.timeframe
+            price = float(self.portfolio[symbol_name][timeframe].get_candlestick(candlestick_timestamp)["Close"])
             
-            entrySignal.priority = 0
-            entrySignal.recommendedPosition = 1 
-            entrySignal.tradingStyle = "dayTrading"
+            exit_request =  ExitRequest(exit_request_id = str(self.exit_requests_counter), 
+                                       strategy_id = self.strategy_id, 
+                                       candlestick_timestamp = candlestick_timestamp,
+                                       BUYSELL = self.trade.BUYSELL, price = price, symbol_name = symbol_name)
             
-            list_events.append(entrySignal)
-            self.singalCounter += 1
+            exit_request.comments = "Getting out of MA!"
+            exit_request.priority = 0
+            exit_request.recommendedPosition = 1 
+            exit_request.tradingStyle = "dayTrading"
+            
+            exit_requests_dict[crosses.index[indx]] = exit_request
+            self.exit_requests_counter += 1
         
-        return list_events
+        return exit_requests_dict

@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
 def _update_legend(self, axes, n_drawings, legend = [], loc = "best"):
-    # TODO: make something so that the legends do not overlap when we have shared axes.
-    
+    if type(legend) == type(str):
+        legend = [legend]
     if type(legend) == type([]):
         if(len(legend) > 0):
             self.legend.extend(legend)

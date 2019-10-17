@@ -3,6 +3,7 @@ import copy
 import pandas as pd
 from ...import indicators  as ind
 
+############  Time realted ##########################
 def _get_time_mask(start_time, end_time, dates):
     """
     Generates the time mask to subselect a time interval
@@ -39,8 +40,29 @@ def set_time_interval(self, start_time = None, end_time = None, trim = False):
         self._trim_df(self._time_mask)
     return True
 
-################# Dataframe functions ##########################
+################# Specific fetching functions #####################
+    
+def get_candlestick(self, datetime):
+    """ It returns the closest candlestick with timestamp before 
+    """
+    try:
+        row = self.df.loc[[datetime], : ]
+    except:
+        row = self.get_closest_past_candlestick(datetime)
+    return row
 
+
+def get_closest_past_candlestick(self, datetime):
+    """
+    Gets the last candlesick that comes before the provided datetime.
+    """
+    diff = self.timestamps - datetime
+    indexmax = np.argmax(diff[(diff < pd.to_timedelta(0))])
+    row = self.df.iloc[[indexmax]]
+    return row
+
+
+################# Dataframe functions ##########################
 def is_trimmed(self):
     return self._trimmed
 
@@ -65,7 +87,7 @@ def _trim_df(self, time_mask):
     
 def series(self, name):
     """
-    They do not need 
+    The basic series need to be able to be computed only using a single candlestick
     options = ["Open","Close","High","Low","Volume","Average", "RangeHL","RangeCO"]
     """
     if (name == "Average"):
@@ -78,11 +100,6 @@ def series(self, name):
     elif(name == "RangeCO"):  # Difference between Close and Open
         Range = self.df["Close"] - self.df["Open"]
         timeSeries = Range
-        
-#    elif(name == "Gaps"):  # Difference between Close and Open
-#        magicDelta = self.get_magicDelta()
-#        timeSeries = magicDelta
-        
     else:
         timeSeries = self.df[name]
     
@@ -91,7 +108,7 @@ def series(self, name):
 
 def indicator(self, name = "SMA", *args, **kwargs):
     """
-    This function allows us to apply the indicators by their name.
+    Incators can use any candlestick in the data.
     """
     try:
         #method_func = getattr(self, method_name)

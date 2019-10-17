@@ -103,9 +103,13 @@ class Velas:
     """
     _get_time_mask = cf._get_time_mask
     set_time_interval = cf.set_time_interval
+    
     is_trimmed = cf.is_trimmed
     add_df = cf.add_df
     _trim_df = cf._trim_df
+    get_candlestick = cf.get_candlestick
+    get_closest_past_candlestick = cf.get_closest_past_candlestick
+    
     series = cf.series
     indicator = cf.indicator
     """
