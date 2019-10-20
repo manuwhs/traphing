@@ -11,23 +11,24 @@ from . import _indicators as ind
 
 class Symbol:
     def __init__(self, symbol_name: str, timeframes_list: List[Timeframes], 
-                 symbol_properties_df: pd.DataFrame = None, market_hours: MarketHours = None):
+                 symbol_properties_df: pd.DataFrame = None):
         self.symbol_name = symbol_name
         self._velas_dict = dict()       #Internal dictionary with the available velas
         
         self.properties = SymbolProperties(symbol_name, symbol_properties_df)
-        self.market_hours = market_hours
+        self.market_hours = MarketHours()
         
         self._init_velas(timeframes_list)
     
     @classmethod
-    def load_symbols_info_from_csv(cls, file_dir: str):
-        # This functions loads the symbol info file, and gets the
-        # information about this symbol and puts it into the structure
-        whole_path = file_dir + "Symbol_info.csv"
+    def load_symbols_properties_csv(cls, file_dir: str):
+        """ This function load the csv file that contains the properties
+        of all symbols in the broker 
+        """
+        whole_path = file_dir + "symbols_properties.csv"
         try:
             infoCSV = pd.read_csv(whole_path,
-                                  sep = ',')
+                                  sep = ',', index_col = "symbol_name")
         except IOError:
             error_msg = "Empty file: " + whole_path 
             print (error_msg)
@@ -35,10 +36,8 @@ class Symbol:
         return infoCSV
     
     @classmethod
-    def save_symbols_info_to_csv(cls, file_dir: str, df: pd.DataFrame):
-        # This functions loads the symbol info file, and gets the
-        # information about this symbol and puts it into the structure
-        whole_path = file_dir + "Symbol_info.csv"
+    def save_symbols_properties_to_csv(cls, file_dir: str, df: pd.DataFrame):
+        whole_path = file_dir + "symbols_properties.csv"
         try:
             infoCSV = df.to_csv(whole_path)
         except IOError:
@@ -66,7 +65,8 @@ class Symbol:
     add_velas = cf.add_velas
     del_velas = cf.del_velas
     set_time_interval =  cf.set_time_interval
-    
+    load_symbol_properties_from_df = cf.load_symbol_properties_from_df
+    estimate_market_hours_information = cf.estimate_market_hours_information
     """
     Database methods
     """
@@ -90,9 +90,14 @@ class SymbolProperties:
         self.min_tick_value = None
     
         if df is not None:
-            self.load_information_from_df(df)
+            self.set_properties_from_df(df)
             
-    def load_information_from_df(self, df):
-        self.contract_size = df["contract_size"]
+    def load_properties_from_df(self, df):
+        df = df.loc[self.symbol_name]
+        self.contract_size = float(df["contract_size"])
+        self.point_size = float(df["point_size"])
+        self.min_tick_value = float(df["min_tick_value"])
         
-    
+        self.currency = df["currency"]
+        
+

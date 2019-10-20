@@ -17,7 +17,7 @@ import datetime as dt
 import matplotlib.pyplot as plt
 
 import sys
-sys.path.append("..") # Adds higher directory to python modules path.
+sys.path.insert(0,"..") # Adds higher directory to python modules path.
 from traphing.data_classes import Portfolio, Symbol, Velas
 import traphing.utils.sockets as sockets_lib
 from traphing.utils import Timeframes
@@ -34,7 +34,7 @@ plt.close("all") # Close all previous Windows
 dataSource =  "MQL5"  # Hanseatic  FxPro GCI Yahoo
 [storage_folder, updates_folder] = utils.get_foldersData(source = dataSource, rrf = "../../../" )
 #### Load the info about the available symbols #####
-Symbol_info = Symbol.load_symbols_info_from_csv(storage_folder)
+Symbol_info = Symbol.load_symbols_properties_csv(storage_folder)
 
 ## 
 mode = "Blocking"

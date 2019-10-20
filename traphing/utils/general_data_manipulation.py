@@ -10,12 +10,14 @@ def to_numpy_2d(data):
         raise Warning("shape wrong")
     return data
 
+
 def is_numerical_array(value):
     to_numpy_array_types = [(),[],range(0,1), np.array(1), pd.Series([1]), pd.DataFrame()]
     data_types = [type(x) for x in to_numpy_array_types]
     if (type(value) in data_types):
         return True
     return False
+
 
 def is_timestamp_object(value):
     """
@@ -28,6 +30,7 @@ def is_timestamp_object(value):
         return True
     return False
 
+
 def is_timestamp_array(value):
     to_numpy_array_types = [pd.DatetimeIndex([0,1])]
     data_types = [type(x) for x in to_numpy_array_types]
@@ -35,12 +38,14 @@ def is_timestamp_array(value):
         return True
     return False
 
+
 def is_categorical(value): 
     objects = ["a", np.array(["a"])[0]]
     data_types = [type(x) for x in objects]
     if (type(value) in data_types):
         return True
     return False
+
 
 def fnp(ds):
     # This function takes some numpy element or list and transforms it
@@ -127,6 +132,7 @@ def fnp(ds):
         
     return ds
     
+
 def convert_to_matrix (lista, max_size = -1):
     # Converts a list of lists with different lengths into a matrix 
     # filling with -1s the empty spaces 
@@ -172,6 +178,7 @@ def windowSample (sequence, L):
     # We cannot give the output of the first L - 1 sequences (incomplete input)
     return X, Y
 
+
 def sort_and_get_order (x, reverse = True ):
     # Sorts x in increasing order and also returns the ordered index
     x = np.array(x).flatten()  # Just in case we are given a matrix vector.
@@ -187,9 +194,15 @@ def sort_and_get_order (x, reverse = True ):
         
     return np.array(x_ordered), np.array(order)
 
+
 def remove_list_indxs(lista, indx_list):
     # Removes the set of indexes from a list
     removeset = set(indx_list)
     newlist = [v for i, v in enumerate(lista) if i not in removeset]
     
     return newlist
+
+
+def map_dataframe_columns_to_attributes():
+    pass
+

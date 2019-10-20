@@ -24,7 +24,7 @@ def is_basic(obj):
                     dt.datetime.now(),dt.datetime.now().date(), dt.datetime.now().time(), dt.timedelta(days= 1),
                     pd.to_datetime(dt.datetime.now()),
                     Timeframes.M1, 
-                    np.array(1),np.array([1,2]), np.array([[1,2]]),
+                    np.array(1),np.array([1,2]), np.array([[1,2]], np.float64(2)),
                     pd.DatetimeIndex([1,2])]
     
     objects_types = [type(x) for x in objects_list]
