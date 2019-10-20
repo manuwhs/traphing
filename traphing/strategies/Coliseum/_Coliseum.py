@@ -49,6 +49,20 @@ class Coliseum:
     def exit_strategies_ids_list(self, value:  List[str]):
         ValueError("This property cannot be set externally")
         
+    
+    def compute_first_exit_requests(self):
+        """
+        It returns a queue with only the first exit request of the exit strategies
+        """
+        for exit_strategy_id in self.exit_strategies_ids_list:
+            exit_strategy = self._exit_strategies_dict[exit_strategy_id]
+            queue = exit_strategy.compute_exit_requests_queue()
+            if(queue.empty() == False):
+                element = queue.get()
+                if (element not in self.queue.queue):
+                    self.queue.put(element)
+        return self.queue
+    
     def compute_requests_queue(self):
         """
         Computes all of the strategies requests and joins them into a dictionary

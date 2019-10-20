@@ -32,3 +32,10 @@ class ExitStrategy:
         pass
     def compute_exit_requests_queue(self):
         pass
+    
+    def compute_first_exit_request(self):
+        queue = self.compute_exit_requests_queue()
+        if queue.empty() == False:
+            return queue.get()
+        else:
+            return None

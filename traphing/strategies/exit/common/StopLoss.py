@@ -43,7 +43,7 @@ class StopLoss(ExitStrategy):
         series = pd.concat([close,stop_loss],axis =1, keys = self.series_names)
         
         # Set to none the samples before the event
-        series[series.index < self.trade.entry_request.candlestick_timestamp] = np.NaN
+        series[series.index < self.trade.request.candlestick_timestamp] = np.NaN
         return series
     
     def compute_exit_series(self):
@@ -56,7 +56,6 @@ class StopLoss(ExitStrategy):
     def compute_exit_requests_queue(self):
         # Creates the EntryTradingSignals for Backtesting
         crosses = self.compute_exit_series()
-        exit_requests_dict = {}
         Event_indx = np.where(crosses != 0 )[0] # We do not care about the second dimension
         for indx in Event_indx:
             candlestick_timestamp = crosses.index[indx]
