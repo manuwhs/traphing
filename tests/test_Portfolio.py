@@ -18,9 +18,7 @@ def get_loaded_Portfolio():
         
     my_portfolio.load_data_from_csv(storage_folder)
     return my_portfolio
-    
-    70703070
-    
+
 class TestPortfolio():
     
     def test_initialization_parameters(self):
