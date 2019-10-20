@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import datetime as dt
+from queue import PriorityQueue
 
 class EntryStrategy:
     """
@@ -16,17 +17,16 @@ class EntryStrategy:
         self.signal_params_list = None
         self.entry_requests_counter = 0  # Number of trading signals triggered
 
+        self.queue = PriorityQueue()
         
-    def set_signals():
-        """  It sets the hyperparameters 
-        """
+    def set_signals(self):
         pass
 
-    def compute_signals():
-        """ It computes them
-        """
+    def compute_signals(self):
+        pass
     
-    def compute_entry_signals():
-        """
-        
-        """
+    def compute_entry_signals(self):
+        pass
+    
+    def compute_entry_requests_queue(self):
+        pass

@@ -65,8 +65,8 @@ class Symbol:
     add_velas = cf.add_velas
     del_velas = cf.del_velas
     set_time_interval =  cf.set_time_interval
-    load_symbol_properties_from_df = cf.load_symbol_properties_from_df
-    estimate_market_hours_information = cf.estimate_market_hours_information
+    load_properties_from_df = cf.load_properties_from_df
+    estimate_market_hours = cf.estimate_market_hours
     """
     Database methods
     """

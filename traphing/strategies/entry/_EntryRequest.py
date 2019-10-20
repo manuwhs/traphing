@@ -37,4 +37,11 @@ class EntryRequest:
             self.recommendedPosition = recommendedPosition
         if(type(priority) != type(None)):
             self.tradingStyle = tradingStyle
-            
+
+
+    def __lt__(self, other):
+        """
+        Implemented because in the PriorityQueue, if it is the same, it will < the objects.
+        With this, the newest object is always the lowest.
+        """
+        return True

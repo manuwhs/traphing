@@ -28,6 +28,14 @@ def set_time_interval(self,start_time, end_time, trim = False):
     for symbol_name in self.symbol_names_list:
         self[symbol_name].set_time_interval(start_time, end_time, trim)
 
+def load_symbols_properties_from_df(self, df):
+    for symbol_name in self.symbol_names_list:
+        self[symbol_name].load_properties_from_df(df)
+
+def estimate_symbols_market_hours(self, timeframe = None):
+    for symbol_name in self.symbol_names_list:
+        self[symbol_name].estimate_market_hours(timeframe)
+        
 """
 
 """

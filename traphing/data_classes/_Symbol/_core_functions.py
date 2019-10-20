@@ -38,11 +38,11 @@ def get_latest_candlestick (self):
     currentPrice = self.timeDatas[minimumTimeScale].TD["Close"][-1]
     return currentPrice
 
-def load_symbol_properties_from_df(self,df):
+def load_properties_from_df(self,df):
     self.properties.load_properties_from_df(df)
     
     
-def estimate_market_hours_information(self, timeframe = None):
+def estimate_market_hours(self, timeframe = None):
     """
     This function estimates the properties of the market hours objects by calling the
     estimation of dict days.

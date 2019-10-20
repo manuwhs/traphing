@@ -34,7 +34,9 @@ class Portfolio:
     add_symbol = cf.add_symbol
     del_symbol = cf.del_symbol
     set_time_interval = cf.set_time_interval
-
+    load_symbols_properties_from_df = cf.load_symbols_properties_from_df
+    estimate_symbols_market_hours = cf.estimate_symbols_market_hours
+    
     load_data_from_csv = dbf.load_data_from_csv
     add_data_from_csv = dbf.add_data_from_csv
     save_to_csv = dbf.save_to_csv

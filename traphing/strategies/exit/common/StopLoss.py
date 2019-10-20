@@ -53,7 +53,7 @@ class StopLoss(ExitStrategy):
         return series
 
         
-    def compute_exit_requests_dict(self):
+    def compute_exit_requests_queue(self):
         # Creates the EntryTradingSignals for Backtesting
         crosses = self.compute_exit_series()
         exit_requests_dict = {}
@@ -73,7 +73,7 @@ class StopLoss(ExitStrategy):
             exit_request.recommendedPosition = 1 
             exit_request.tradingStyle = "dayTrading"
             
-            exit_requests_dict[crosses.index[indx]] = exit_request
+            self.queue.put((crosses.index[indx], exit_request))
             self.exit_requests_counter += 1
         
-        return exit_requests_dict
+        return self.queue

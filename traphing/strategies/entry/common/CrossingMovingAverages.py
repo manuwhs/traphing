@@ -42,11 +42,10 @@ class CrossingMovingAverages(EntryStrategy):
         crosses = ul.check_crossing(signals["slow_MA"], signals["fast_MA"])
         return crosses
         
-    def compute_entry_requests_dict(self):
+    def compute_entry_requests_queue(self):
         """
         Returns a dictionary with the Entry signals
         """
-        entry_requests_dict = {}
         crosses = self.compute_entry_series()
         Event_indx = np.where(crosses != 0)[0] # We do not care about the second dimension
         for indx in Event_indx:
@@ -69,6 +68,6 @@ class CrossingMovingAverages(EntryStrategy):
             entry_request.recommendedPosition = 1 
             entry_request.tradingStyle = "dayTrading"
             
-            entry_requests_dict[crosses.index[indx]] = entry_request
+            self.queue.put((crosses.index[indx], entry_request))
             self.entry_requests_counter += 1
-        return entry_requests_dict
+        return self.queue
