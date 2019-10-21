@@ -52,12 +52,14 @@ fast_MA = entry_strategy_series["fast_MA"]
 entry_series = entry_strategy.compute_entry_series()
 
 # Compute the BUYSELL Requests
-entry_requests_dict = entry_strategy.compute_entry_requests_dict()
+entry_requests_queue = entry_strategy.compute_entry_requests_queue()
+n_requests = entry_requests_queue.qsize()
+entry_requests_dict = dict([entry_requests_queue.get() for i in range(n_requests)])
 entries_dates = sorted(list(entry_requests_dict.keys()))
 entry_request = entry_requests_dict[entries_dates[0]]
 
 # Compute Trade
-trade = Trade(trade_id = "my_trade12", entry_request = entry_request,
+trade = Trade(trade_id = "my_trade12", request = entry_request,
                  trade_price = entry_request.price, trade_timestamp = dt.datetime.now())
 
 ### Exit strategy
@@ -71,7 +73,9 @@ exit_strategy_series = exit_strategy.compute_strategy_series()
 exit_series= exit_strategy.compute_exit_series()
 
 # Compute the BUYSELL Requests
-exit_requests_dict = exit_strategy.compute_exit_requests_dict()
+exit_requests_queue = exit_strategy.compute_exit_requests_queue()
+n_requests = exit_requests_queue.qsize()
+exit_requests_dict = dict([exit_requests_queue.get() for i in range(n_requests)])
 exits_dates = sorted(list(exit_requests_dict.keys()))
 exit_request = exit_requests_dict[exits_dates[0]]
 

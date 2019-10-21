@@ -57,8 +57,9 @@ class CrossingMovingAverages(EntryStrategy):
             candlestick_timestamp = crosses.index[indx]
             symbol_name = self.fast_MA["symbol_name"]; timeframe = self.fast_MA["timeframe"]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(candlestick_timestamp)["Close"])
-            # Create the trading sigal !
-            entry_request =  EntryRequest(entry_request_id = str(self.entry_requests_counter), 
+            
+            entry_request_id = self.strategy_id + "_" + str(self.entry_requests_counter)
+            entry_request =  EntryRequest(entry_request_id = entry_request_id, 
                                        strategy_id = self.strategy_id, 
                                        candlestick_timestamp = candlestick_timestamp,
                                        BUYSELL = BUYSELL, price = price, symbol_name = symbol_name)

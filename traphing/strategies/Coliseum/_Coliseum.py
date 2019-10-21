@@ -4,6 +4,8 @@ import pandas as pd
 from typing import List
 from queue import PriorityQueue
 
+from ...graph.Gl import gl
+
 class Coliseum:
     """
     Class with functionalities to control all entry and exit strategies!
@@ -84,3 +86,31 @@ class Coliseum:
     def process_queue(self):
         while not self.requests_queue.empty():
             pass
+
+    def plot_strategies(self, axes_list = []):
+        """
+        Plotting function that makes it convenient to visualize the strategy.
+        It computes everything so maybe dont use it for real time, just
+        for exploratory analysis.
+        
+        The axes list should be 2 times the number of strategies
+        """
+        
+        i = 0
+        for strategy_id in self.entry_strategies_ids_list:
+            ax1 = axes_list[i*2]; ax2 = axes_list[i*2+1]
+            entry_strategy = self.get_entry_strategy(strategy_id)
+            entry_strategy_series = entry_strategy.compute_strategy_series()
+            entry_series = entry_strategy.compute_entry_series()
+        
+            ##TODO
+            if(False):
+                portfolio[symbol_name][timeframe].plot_barchart(axes = ax1, labels = ["", "", strategy_id])
+            gl.plot(entry_strategy_series.index, entry_strategy_series, legend = list(entry_strategy_series.columns), axes =ax1)
+        
+            gl.stem(entry_strategy_series.index,entry_series, axes = ax2, legend = "Trades")
+        
+            i = i+1
+            
+            
+        

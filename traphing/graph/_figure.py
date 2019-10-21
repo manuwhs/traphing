@@ -2,13 +2,11 @@ import matplotlib.pyplot as plt
 from .. import utils as ul
 from .trapyngColors import cd
 
-def _init_variables(self, w = 20, h = 12, lw = 2):
+def _init_variables(self, figsize = [20,12]):
         """ Initialize all the internal variables to do all the cool stuff later.
         It handles the intuitive logic later
         """
-        self.w = w;    # X-width
-        self.h = h;    # Y-height
-        self.lw = lw   # line width
+        self.figsize = figsize
         
         self.prev_fig = []  # List that contains the previous plot.
         # When a new figure is done, we put the current one here and
@@ -62,9 +60,9 @@ def _figure_management(self, axes = None, sharex = None, sharey = None,
                              position = position, projection = projection)
     return axes
 
-def init_figure(self,w = 20, h = 12, lw = 2):
-        self._init_variables()
-        self.figure = plt.figure()  
+def init_figure(self, figsize = [6,4]):
+        self._init_variables(figsize)
+        self.figure = plt.figure(figsize = figsize)  
         return self.figure
     
 def close_figure(self,  *args, **kwargs):

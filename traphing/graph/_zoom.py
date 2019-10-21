@@ -20,12 +20,12 @@ def set_zoom(self, axes = None, xlim = None ,X = None, Y = None, ylim = None, xp
 
     if xlim is not None:
         self.set_xlim(axes = axes, xmin = xlim[0], xmax = xlim[1])
-    elif ypadding is not None:
+    elif xpadding is not None:
         self.set_xlim_padding(axes = axes, X = X, padding = xpadding)
         
 
 
-def set_ylim_padding(self, axes = None, X = None, padding = [0.1, 0,1]):
+def set_xlim_padding(self, axes = None, X = None, padding = [0.1, 0,1]):
         max_signal = np.max(X[~np.isnan(X)])
         min_signal = np.min(X[~np.isnan(X)])
         signal_range = max_signal - min_signal
@@ -39,7 +39,7 @@ def set_ylim_padding(self, axes = None, X = None, padding = [0.1, 0,1]):
                       ymax = max_signal + signal_range*padding[1])
     
 
-def set_xlim_padding(self, axes = None, Y = None, padding = [0.1, 0,1]):
+def set_ylim_padding(self, axes = None, Y = None, padding = [0.1, 0,1]):
         max_signal = np.max(Y[~np.isnan(Y)])
         min_signal = np.min(Y[~np.isnan(Y)])
         signal_range = max_signal - min_signal
@@ -53,10 +53,8 @@ def set_xlim_padding(self, axes = None, Y = None, padding = [0.1, 0,1]):
                       ymax = max_signal + signal_range*padding[1])
         
     
-def set_xlim(self, ax = None, X = None, xmin = None, xmax = None):
+def set_xlim(self, axes = None, X = None, xmin = None, xmax = None):
     # This function sets the limits for viewing the x coordinate
-    if (type(ax) == type(None)):
-        ax = self.axes
     if (type(X) == type(None)):
         X = self.X[self.start_indx:self.end_indx]
         
@@ -66,22 +64,18 @@ def set_xlim(self, ax = None, X = None, xmin = None, xmax = None):
         xmax = np.max(X[~np.isnan(X)])
         
         
-    ax.set_xlim([xmin,xmax])
+    axes.set_xlim([xmin,xmax])
 
-def set_ylim(self, ax = None, Y = None, ymin = None, ymax = None):
+def set_ylim(self, axes = None, Y = None, ymin = None, ymax = None):
     # This function sets the limits for viewing the x coordinate
     
     if (type(Y) == type(None)):
         Y = self.Y[self.start_indx:self.end_indx]
         
-    if (type(ax) == type(None)):
-        ax = self.axes
-    
     if (type(ymin) == type(None)):
         ymin = np.min(Y[~np.isnan(Y)])
     if (type(ymax) == type(None)):
         ymax = np.max(Y[~np.isnan(Y)])
-
-        
-    ax.set_ylim([ymin,ymax])
+ 
+    axes.set_ylim([ymin,ymax])
 

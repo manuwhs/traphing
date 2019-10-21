@@ -25,7 +25,7 @@ class EntryStrategy:
     def compute_signals(self):
         pass
     
-    def compute_entry_signals(self):
+    def compute_entry_series(self):
         pass
     
     def compute_entry_requests_queue(self):

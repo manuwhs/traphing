@@ -62,7 +62,10 @@ class StopLoss(ExitStrategy):
             symbol_name = self.symbol_name; timeframe = self.timeframe
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(candlestick_timestamp)["Close"])
             
-            exit_request =  ExitRequest(exit_request_id = str(self.exit_requests_counter), 
+            entry_request_id = self.trade.request.entry_request_id
+            exit_request_id = self.strategy_id + "_" + str(self.exit_requests_counter)
+            
+            exit_request =  ExitRequest(entry_request_id = entry_request_id, exit_request_id = exit_request_id, 
                                        strategy_id = self.strategy_id, 
                                        candlestick_timestamp = candlestick_timestamp,
                                        BUYSELL = self.trade.BUYSELL, price = price, symbol_name = symbol_name)

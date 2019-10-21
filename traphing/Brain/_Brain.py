@@ -16,6 +16,9 @@ class Brain:
 
         self.trade_counter = 0
         
+        self.open_trades_dict = dict()
+        self.closed_trades_pairs_dict = dict()
+        
     def make_trade(self, request):
         """
         Makes the trade
@@ -23,8 +26,20 @@ class Brain:
         trade = Trade(trade_id = "trade_" + str(self.trade_counter), request = request,
              trade_price = request.price, trade_timestamp = dt.datetime.now())
         
+        self._log_trade(trade)
         return trade
     
+    def _log_trade(self, trade):
+        """
+        It logs the performed trade.
+        """
+        if isinstance(trade.request, EntryRequest):
+            self.open_trades_dict[trade.request.entry_request_id] = trade
+            
+        elif isinstance(trade.request, ExitRequest):
+            self.closed_trades_pairs_dict[trade.request.entry_request_id] = [self.open_trades_dict[trade.request.entry_request_id], trade]
+            del self.open_trades_dict[trade.request.entry_request_id]
+            
     def is_request_accepted(self, request):
         return True 
     

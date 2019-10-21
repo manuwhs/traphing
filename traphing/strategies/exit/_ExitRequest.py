@@ -6,11 +6,13 @@ class ExitRequest:
     Triggered by a certain class
     """
 
-    def __init__(self, exit_request_id, candlestick_timestamp, strategy_id, 
+    def __init__(self, entry_request_id, exit_request_id, candlestick_timestamp, strategy_id, 
                  symbol_name, price, BUYSELL):
         # Identify the event !
         self.strategy_id = strategy_id          # ID of the strategy that generated the signal
         self.exit_request_id = exit_request_id  # ID of the the entry signal
+        self.entry_request_id = entry_request_id
+        
         self.candlestick_timestamp = candlestick_timestamp           # Time when the signal was triggered
         
         # Identify the wanted trade

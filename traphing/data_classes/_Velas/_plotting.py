@@ -36,31 +36,11 @@ def plot_barchart(self,*args, **kwargs):
     drawings = gl.barchart(self.df,*args, **kwargs)
     return drawings
 
+
 def plot_candlesticks(self, *args, **kwargs):         
     drawings = gl.candlestick(self.df,*args, **kwargs)
     return drawings
 
-def plot_OCHL(self, chart_type = "Line", ax = None, dataTransform = None):
-    df = self.df
-    symbol_name = self.symbol_name
-    timeframe_name = self.timeframe.name
-    
-    title = chart_type + " chart: " + str(symbol_name) + "(" + timeframe_name + ")"
-    if (chart_type == "Line"):
-        plot_series(df,  seriesName = "Close", ax = ax, 
-                    legend = ["Close price"],labels = [title,"",r"Price ($\$$)"], 
-                    AxesStyle = "Normal - No xaxis", dataTransform = dataTransform)
-                    
-    elif(chart_type == "Bar"):
-         gl.tradingBarChart(df, ax = ax,  legend = ["Close price"], color = "k",
-                            labels = [title,"",r"Price ($\$$)"], AxesStyle = "Normal - No xaxis", 
-                            dataTransform = dataTransform)
-    
-    elif(chart_type == "CandleStick"):
-         gl.tradingCandleStickChart(df, ax = ax,  legend = ["Close price"], color = "k",
-                            colorup = "r", colordown = "k", alpha = 0.5, lw = 3,
-                            labels = [title,"",r"Price ($\$$)"], AxesStyle = "Normal - No xaxis",
-                             dataTransform = dataTransform)
 """
 ######################## INTERNAL COMPLEX PLOTTING #############
 """

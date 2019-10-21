@@ -67,6 +67,8 @@ class Symbol:
     set_time_interval =  cf.set_time_interval
     load_properties_from_df = cf.load_properties_from_df
     estimate_market_hours = cf.estimate_market_hours
+    
+    get_closest_past_candlestick = cf.get_closest_past_candlestick
     """
     Database methods
     """

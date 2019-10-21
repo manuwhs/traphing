@@ -10,6 +10,7 @@ from . import _plots
 from . import _texts
 from . import _data_preprocessing
 from . import _dates_formatting
+from . import _animations
 from .GUI import _GUI 
 
 from pandas.plotting import register_matplotlib_converters
@@ -17,8 +18,8 @@ register_matplotlib_converters()
 
 class GraphicalLibraryFigure ():
     
-    def __init__(self,w = 20, h = 12, lw = 2):
-        self._init_variables(w = w, h = h, lw = lw)
+    def __init__(self, figsize = [12, 8]):
+        self._init_variables(figsize)
     
     ####################### Figure functions  #######################
     _figure_management = _figure._figure_management
@@ -97,6 +98,9 @@ class GraphicalLibraryFigure ():
     barchart = _advanced.barchart
     candlestick = _advanced.candlestick
         
+    make_gif = _animations.make_gif
+    make_video = _animations.make_video
+    
     if(0):
         ####################### 3D functions #######################
         preproces_data_3D = gr3D.preproces_data_3D

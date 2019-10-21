@@ -2,6 +2,7 @@
 #import matplotlib
 
 import numpy as np
+import pandas as pd
 
 from ...data_classes import Velas
 from ...utils import Timeframes
@@ -30,13 +31,17 @@ def set_time_interval(self,start_time = None, end_time = None, trim = True):
 
 
 ########### Other symbol functions ############# 
-def get_latest_candlestick (self):
+def get_closest_past_candlestick(self, datetime):
     """
-    This function gives you the latest information about the Close price
+    Gets the last candlesick that comes before the provided datetime.
     """
-    minimumTimeScale = np.min(self.get_periods())
-    currentPrice = self.timeDatas[minimumTimeScale].TD["Close"][-1]
-    return currentPrice
+    candlesticks = []
+    for timeframe in self.timeframes_list:
+        row = self[timeframe].get_closest_past_candlestick(datetime)
+        candlesticks.append(row)
+    df = pd.concat(candlesticks, axis = 1)
+    return df.iloc[0]
+
 
 def load_properties_from_df(self,df):
     self.properties.load_properties_from_df(df)
