@@ -1,3 +1,2 @@
-from ._EntryStrategy import EntryStrategy
-from ._EntryRequest import EntryRequest
+from ._core_classes import EntryStrategy, EntryTradeRequest
 from .common.CrossingMovingAverages import CrossingMovingAverages

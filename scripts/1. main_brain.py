@@ -19,6 +19,7 @@ import traphing.utils  as ul
 from traphing.graph.Gl import gl
 
 folder_images = "./images/python_generated/strategies/"
+plt.close("all")
 """
 ############################## Set up portfolio ##############################
 """
@@ -49,7 +50,7 @@ entry_strategy1.set_fast_MA(fast_MA_params)
 
 # Second entry strategy
 entry_strategy2 = CrossingMovingAverages("Crossing averages 2", portfolio)
-slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":50}}
+slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":40}}
 fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":10}}
 entry_strategy2.set_slow_MA(slow_MA_params)
 entry_strategy2.set_fast_MA(fast_MA_params)
@@ -68,3 +69,10 @@ brain = Brain(coliseum, portfolio)
 backtest_analysis = BacktestAnalysis(brain)
 backtest_analysis.backtest()
 backtest_analysis.print_gains()
+
+velas = portfolio[symbol_name][timeframe]
+gl.init_figure()
+velas.plot_barchart()
+
+backtest_analysis.plot_trades()
+backtest_analysis.print_summary()

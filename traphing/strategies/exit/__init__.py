@@ -1,4 +1,3 @@
-from ._ExitStrategy import ExitStrategy
-from ._ExitRequest import ExitRequest
+from ._core_classes import ExitStrategy, ExitTradeRequest
 from .common.TrailingStop import TrailingStop
 from .common.StopLoss import StopLoss

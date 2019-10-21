@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from .. import EntryStrategy, EntryRequest
+from .. import EntryStrategy, EntryTradeRequest
 from .... import utils as ul
 
 class CrossingMovingAverages(EntryStrategy):
@@ -22,53 +22,33 @@ class CrossingMovingAverages(EntryStrategy):
     def set_fast_MA(self, signal_params): 
         self.fast_MA = signal_params
     
-    def compute_strategy_series(self):
-        """
-        Function that computes the signals
-        """
+    """
+    ############ Overriding parent methods ###########################
+    """
+    def compute_input_series(self):
         slow_MA = self.portfolio.velas_indicator(**(self.slow_MA))
         fast_MA = self.portfolio.velas_indicator(**(self.fast_MA))
-        
-        series = pd.concat([slow_MA,fast_MA],axis =1, keys = self.series_names)
-        return series
+        series_df = pd.concat([slow_MA,fast_MA],axis =1, keys = self.series_names)
+        return series_df
     
-    #### BackTesting functions #######
-    def compute_entry_series(self):
-        """
-        Computes the BULL-SELL triggers of the strategy
-        # Mainly for visualization of the triggers
-        """
-        signals = self.compute_strategy_series()
-        crosses = ul.check_crossing(signals["slow_MA"], signals["fast_MA"])
-        return crosses
+
+    def compute_trigger_series(self):
+        series_df = self.compute_input_series()
+        trigger_series = ul.check_crossing(series_df["slow_MA"], series_df["fast_MA"])
+        return trigger_series
         
-    def compute_entry_requests_queue(self):
-        """
-        Returns a dictionary with the Entry signals
-        """
-        crosses = self.compute_entry_series()
-        Event_indx = np.where(crosses != 0)[0] # We do not care about the second dimension
+    
+    def compute_requests_queue(self):
+        trigger_series = self.compute_trigger_series()
+        Event_indx = np.where(trigger_series != 0)[0] # We do not care about the second dimension
+        
         for indx in Event_indx:
-            if (crosses[indx] == 1):
-                BUYSELL = "BUY"
-            else:
-                BUYSELL = "SELL"
+            action = self._get_action(trigger_series[indx])
+            timestamp = trigger_series.index[indx]
+            symbol_name = self.fast_MA["symbol_name"]
+            timeframe = self.fast_MA["timeframe"]
+            price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
-            candlestick_timestamp = crosses.index[indx]
-            symbol_name = self.fast_MA["symbol_name"]; timeframe = self.fast_MA["timeframe"]
-            price = float(self.portfolio[symbol_name][timeframe].get_candlestick(candlestick_timestamp)["Close"])
-            
-            entry_request_id = self.strategy_id + "_" + str(self.entry_requests_counter)
-            entry_request =  EntryRequest(entry_request_id = entry_request_id, 
-                                       strategy_id = self.strategy_id, 
-                                       candlestick_timestamp = candlestick_timestamp,
-                                       BUYSELL = BUYSELL, price = price, symbol_name = symbol_name)
-            
-            entry_request.comments = "Basic Crossing MA man !"
-            entry_request.priority = 0
-            entry_request.recommendedPosition = 1 
-            entry_request.tradingStyle = "dayTrading"
-            
-            self.queue.put((crosses.index[indx], entry_request))
-            self.entry_requests_counter += 1
+            self.create_request(timestamp, symbol_name, price, action)
+
         return self.queue

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 
-from .. import ExitStrategy, ExitRequest
+from .. import ExitStrategy, ExitTradeRequest
 from .... import utils as ul
 
 class TrailingStop(ExitStrategy):

@@ -49,6 +49,11 @@ class Timeframes(Enum):
     W4 = 43200
     Y1 = 43200*12
 
+class Actions(Enum):
+    BUY = 1
+    SELL = -1
+    HOLD = 0
+    
 def cmp_to_key(mycmp):
     'Convert a cmp= function into a key= function'
     class K(object):

@@ -18,22 +18,22 @@ class Coliseum:
         self.queue = PriorityQueue()
         
     def add_entry_strategy(self, strategy):
-        self._entry_strategies_dict[strategy.strategy_id] = strategy
+        self._entry_strategies_dict[strategy.name] = strategy
 
     def add_exit_strategy(self, strategy):
-        self._exit_strategies_dict[strategy.strategy_id] = strategy
+        self._exit_strategies_dict[strategy.name] = strategy
 
-    def del_entry_strategy(self, strategy_id):
-        del self._entry_strategies_dict[strategy_id]
+    def del_entry_strategy(self, name):
+        del self._entry_strategies_dict[name]
 
-    def del_exit_strategy(self, strategy_id):
-        del self._exit_strategies_dict[strategy_id]
+    def del_exit_strategy(self, name):
+        del self._exit_strategies_dict[name]
     
-    def get_entry_strategy(self, strategy_id):
-        return self._entry_strategies_dict[strategy_id]
+    def get_entry_strategy(self, name):
+        return self._entry_strategies_dict[name]
 
-    def get_exit_strategy(self, strategy_id):
-        return self._exit_strategies_dict[strategy_id]
+    def get_exit_strategy(self, name):
+        return self._exit_strategies_dict[name]
         
     @property
     def entry_strategies_ids_list(self):
@@ -72,13 +72,13 @@ class Coliseum:
         """
         for entry_strategy_id in self.entry_strategies_ids_list:
             entry_strategy = self._entry_strategies_dict[entry_strategy_id]
-            queue = entry_strategy.compute_entry_requests_queue()
+            queue = entry_strategy.compute_requests_queue()
             while (queue.empty() == False):
                 self.queue.put(queue.get())
                 
         for exit_strategy_id in self.exit_strategies_ids_list:
             exit_strategy = self._exit_strategies_dict[exit_strategy_id]
-            queue = exit_strategy.compute_exit_requests_queue()
+            queue = exit_strategy.compute_requests_queue()
             while (queue.empty() == False):
                 self.queue.put(queue.get())
         return self.queue

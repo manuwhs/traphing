@@ -4,8 +4,8 @@ import numpy as np
 import datetime as dt
 
 from ..strategies import Trade, Coliseum
-from ..strategies.entry import EntryRequest
-from ..strategies.exit import ExitRequest, StopLoss
+from ..strategies.entry import EntryTradeRequest
+from ..strategies.exit import ExitTradeRequest, StopLoss
 from ..utils import unwrap
 
 class Brain:
@@ -23,9 +23,9 @@ class Brain:
         """
         Makes the trade
         """
-        trade = Trade(trade_id = "trade_" + str(self.trade_counter), request = request,
-             trade_price = request.price, trade_timestamp = dt.datetime.now())
-        
+        trade = Trade(name = "trade_" + request.name, request = request,
+             price = request.price)
+
         self._log_trade(trade)
         return trade
     
@@ -33,12 +33,13 @@ class Brain:
         """
         It logs the performed trade.
         """
-        if isinstance(trade.request, EntryRequest):
-            self.open_trades_dict[trade.request.entry_request_id] = trade
+        if isinstance(trade.request, EntryTradeRequest):
+            self.open_trades_dict[trade.name] = trade
             
-        elif isinstance(trade.request, ExitRequest):
-            self.closed_trades_pairs_dict[trade.request.entry_request_id] = [self.open_trades_dict[trade.request.entry_request_id], trade]
-            del self.open_trades_dict[trade.request.entry_request_id]
+        elif isinstance(trade.request, ExitTradeRequest):
+            self.closed_trades_pairs_dict[trade.request.entry_trade.name] = [self.open_trades_dict[trade.request.entry_trade.name], trade]
+            del self.open_trades_dict[trade.request.entry_trade.name]
+            
             
     def is_request_accepted(self, request):
         return True 
@@ -51,12 +52,13 @@ class Brain:
         """
         if(self.is_request_accepted(entry_request)):
             trade = self.make_trade(entry_request)
-            exit_strategy = StopLoss(strategy_id = "Exit coward: Str" + str(entry_request.strategy_id) + ":" + str(entry_request.entry_request_id), trade = trade, portfolio = self.portfolio)
+            exit_strategy = StopLoss(name = "StopLoss for " + trade.name, trade = trade, portfolio = self.portfolio)
             exit_strategy.set_velas(trade.request.symbol_name, self.portfolio[trade.request.symbol_name].timeframes_list[0])
             exit_strategy.set_stop_loss(pct = 0.1)
+            
             self.coliseum.add_exit_strategy(exit_strategy)
             
-            first_exit_request = self.coliseum.get_exit_strategy(exit_strategy.strategy_id).compute_first_exit_request()
+            first_exit_request = self.coliseum.get_exit_strategy(exit_strategy.name).compute_first_exit_request()
             if first_exit_request is not None:
                 self.coliseum.queue.put(first_exit_request)
         else:
@@ -71,7 +73,7 @@ class Brain:
         """
         if(self.is_request_accepted(exit_request)):
             trade = self.make_trade(exit_request)
-            self.coliseum.del_exit_strategy(exit_request.strategy_id)
+            self.coliseum.del_exit_strategy(exit_request.strategy_name)
         else:
             trade = None
         
@@ -84,10 +86,10 @@ class Brain:
         while self.coliseum.queue.empty() == False:
             request = self.coliseum.queue.get()[1]
             
-            print(request)
-            if isinstance(request, EntryRequest):
+            print(request.name)
+            if isinstance(request, EntryTradeRequest):
                 self.manage_entry_request(request)
-            elif isinstance(request, ExitRequest):
+            elif isinstance(request, ExitTradeRequest):
                 self.manage_exit_request(request)
             
 #            self.coliseum.compute_first_exit_requests()

@@ -40,7 +40,8 @@ def get_closest_past_candlestick(self, datetime):
         row = self[timeframe].get_closest_past_candlestick(datetime)
         candlesticks.append(row)
     df = pd.concat(candlesticks, axis = 1)
-    return df.iloc[0]
+
+    return df.iloc[[0]]
 
 
 def load_properties_from_df(self,df):
