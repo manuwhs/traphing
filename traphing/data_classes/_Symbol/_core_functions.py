@@ -31,17 +31,16 @@ def set_time_interval(self,start_time = None, end_time = None, trim = True):
 
 
 ########### Other symbol functions ############# 
-def get_closest_past_candlestick(self, datetime):
+def get_candlestick(self, datetime):
     """
     Gets the last candlesick that comes before the provided datetime.
     """
     candlesticks = []
     for timeframe in self.timeframes_list:
-        row = self[timeframe].get_closest_past_candlestick(datetime)
+        row = self[timeframe].get_candlestick(datetime)
         candlesticks.append(row)
-    df = pd.concat(candlesticks, axis = 1)
-
-    return df.iloc[[0]]
+    df = pd.concat(candlesticks, axis = 0)
+    return df.loc[[max(df.index)]]
 
 
 def load_properties_from_df(self,df):

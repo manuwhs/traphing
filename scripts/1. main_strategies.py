@@ -64,7 +64,7 @@ trade = Trade(name = "my_trade12", request = entry_request,
                  price = entry_request.price)
 
 ### Exit strategy
-exit_strategy =  StopLoss(strategy_id = "Exit coward", trade = trade, portfolio = portfolio)
+exit_strategy =  StopLoss(name = "Exit coward", trade = trade, portfolio = portfolio)
 # Set the velas it will be listening to.
 exit_strategy.set_velas(symbol_name, timeframe)
 exit_strategy.set_stop_loss(pct = 0.1)

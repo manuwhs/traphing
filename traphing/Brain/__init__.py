@@ -1,2 +1,4 @@
-from . import _Brain
-from . import _BacktestAnalysis
+from ._Brain import Brain
+from ._ClosedTradeAnalysis import ClosedTradeAnalysis
+from ._BacktestAnalysis import BacktestAnalysis
+

@@ -1,34 +1,35 @@
 import numpy as np
 import pandas as pd
 
-from .. import EntryStrategy, EntryTradeRequest
+from .. import EntryStrategy
+from ...exit import StopLoss
+from ... import Trade
 from .... import utils as ul
+from ....data_classes import Portfolio
 
 class CrossingMovingAverages(EntryStrategy):
-    """This strategy is given 2 MAs and it will output a 1 if the lines are crossing
-      We initialize it with the signals or with the portfolio and the shit.
+    """Strategy: Given a fast and a slow Moving Average, fast_MA and slow_MA respectively:
+        - If the fast_MA cross the slow_MA upwards: BUY trigger
+        - If the fast_MA cross the slow_MA downwards: SELL trigger
+    The slow_MA represents the baseline price and fast_MA the trend.
+    
+    params Example:
+        slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":45}}
+        fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":20}}
     """
-    def __init__(self, strategy_id, portfolio = None, slow_MA = None, fast_MA = None):
-        super().__init__(strategy_id, portfolio)
-        self.series_names = ["slow_MA", "fast_MA"]
-        
-        self.slow_MA = slow_MA
-        self.fast_MA = fast_MA
-        
-    ### Specific elements of the strategy
-    def set_slow_MA(self, signal_params): 
-        self.slow_MA = signal_params
-        
-    def set_fast_MA(self, signal_params): 
-        self.fast_MA = signal_params
+    def __init__(self, name: str, portfolio: Portfolio = None, params: dict = {}):
+        super().__init__(name, portfolio, params)
+        self.input_series_names = ["slow_MA", "fast_MA"]
     
     """
     ############ Overriding parent methods ###########################
     """
     def compute_input_series(self):
-        slow_MA = self.portfolio.velas_indicator(**(self.slow_MA))
-        fast_MA = self.portfolio.velas_indicator(**(self.fast_MA))
-        series_df = pd.concat([slow_MA,fast_MA],axis =1, keys = self.series_names)
+        slow_MA_params = self.params["slow_MA"]
+        fast_MA_params = self.params["fast_MA"]
+        slow_MA = self.portfolio.velas_indicator(**slow_MA_params)
+        fast_MA = self.portfolio.velas_indicator(**fast_MA_params)
+        series_df = pd.concat([slow_MA,fast_MA],axis = 1, keys = self.input_series_names)
         return series_df
     
 
@@ -45,10 +46,22 @@ class CrossingMovingAverages(EntryStrategy):
         for indx in Event_indx:
             action = self._get_action(trigger_series[indx])
             timestamp = trigger_series.index[indx]
-            symbol_name = self.fast_MA["symbol_name"]
-            timeframe = self.fast_MA["timeframe"]
+            symbol_name = self.params["slow_MA"]["symbol_name"]
+            timeframe = self.params["slow_MA"]["timeframe"]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
             self.create_request(timestamp, symbol_name, price, action)
 
         return self.queue
+    
+    def create_exit_strategy(self, trade: Trade):
+        exit_strategy = StopLoss(name = "StopLoss_for_" + trade.name, trade = trade, portfolio = self.portfolio)
+        
+        symbol_name = trade.request.symbol_name
+        timeframe = self.portfolio[trade.request.symbol_name].timeframes_list[0]
+        exit_strategy.params["Close"] = {"symbol_name":symbol_name, "timeframe":timeframe}
+        exit_strategy.set_stop_loss(pct = 0.3)
+        return exit_strategy
+        
+        
+        

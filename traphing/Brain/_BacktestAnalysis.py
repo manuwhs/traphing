@@ -1,98 +1,31 @@
-
 import datetime as dt
+import pandas as pd
+from typing import List
+
+from . import ClosedTradeAnalysis, Brain
 from ..graph.Gl import gl
 from ..strategies import Trade
 from ..strategies.exit import ExitTradeRequest
 
-class ClosedTradeAnalysis:
-    """
-    Class that contains all the info of a closed trade and performs the operations
-    to analyze it.
-    """
-    def __init__(self, entry_trade, exit_trade):
-        
-        self.faked_exit_trade = False
-        
-        self.entry_trade = entry_trade
-        self.exit_trade = exit_trade
-        
-        self.entry_price = None
-        self.gain = None
-        self.duration = None
-        
-        self.buy_sell_factor = None
-        self.compute_basics()
-    
-    @classmethod
-    def from_open_trade(cls, entry_trade, portfolio):
-        """
-        This function fakes a closed trade.
-        """
-        
-        # Create fake Exit trade request with current data
-        name =  "End of backtest fake exit for " + entry_trade.name
-        trade = entry_trade
-        action = entry_trade.request.action
-        
-        symbol_name = entry_trade.request.symbol_name
-        last_candlestick = portfolio[symbol_name].get_closest_past_candlestick(dt.datetime.now())
-        timestamp = last_candlestick.index[0]
-
-        price = float(last_candlestick["Close"])
-        
-        fake_exit_request = ExitTradeRequest(name, trade, timestamp, symbol_name, price, action)
-        
-        # Create fake Exit trade
-        fake_exit_trade = Trade(name = "trade_" + fake_exit_request.name, request = fake_exit_request,
-             price = fake_exit_request.price)
-        
-        obj = cls(entry_trade, fake_exit_trade)
-        obj.faked_exit_trade = True
-        return obj
-    
-    def compute_basics(self):
-        self.entry_price = self.entry_trade.price
-        self.exit_price = self.exit_trade.price
-
-#        self.entry_timestamp = self.entry_trade.trade_timestamp
-#        self.exit_timestamp = self.exit_trade.trade_timestamp
-
-        self.entry_timestamp = self.entry_trade.request.timestamp
-        self.exit_timestamp = self.exit_trade.request.timestamp
-        
-        self.buy_sell_factor = self.entry_trade.request.action.value
-        
-        self.gain = (self.exit_price - self.entry_price)*self.buy_sell_factor
-        
-        self.duration = self.exit_timestamp - self.entry_timestamp
-    
-    def print_summary(self):
-        print("-> Trade: ",self.entry_trade.request.name," - ",self.exit_trade.request.name)
-        print("entry_timestamp", self.entry_timestamp , ". entry_price: ",self.entry_price)
-        print("gain: ",self.gain/self.entry_price*100, "%")
-        print("duration: ", self.duration)
-        
-    def plot_trade_line(self, axes = None):
-        """
-        It plots from origin to end a line
-        """
-        ls = "-"
-        if(self.faked_exit_trade):
-            ls = "--"
-        gl.plot([self.entry_timestamp, self.exit_timestamp],[self.entry_price, self.exit_price], axes = axes,
-                legend = ["Gain: %.2f "%(self.gain/self.entry_price*100)], ls = ls)
-
 class BacktestAnalysis:
+    """Class that performs the analysis of a given backtest using the
+     open_trades_dict and closed_trades_pairs_dict from a Brain object.
     """
-    Class that automatizes a given analysis
-    """
-    def __init__(self, brain):
+    def __init__(self, brain: Brain):
         self.brain = brain
     
-    def backtest(self):
+    def backtest(self) -> pd.DataFrame:
+        """Calls the brain's backtest function and computes the analysis
+        of the trades into a pd.DataFrame that it returns
+        """
         self.brain.backtest()
-
-    def get_trade_analysis(self):
+        self.trade_analysis_list = self.get_trade_analysis_list()
+        self.trade_analysis_df = self.get_trade_analysis_df()
+        return self.trade_analysis_df 
+    
+    def get_trade_analysis_list(self) -> List[ClosedTradeAnalysis]:
+        """Creates the ClosedTradeAnalysis object for every closed and open trade.
+        """
         trade_analysis_list = []
         for closed_trade_name in list(self.brain.closed_trades_pairs_dict.keys()):
             entry_trade, exit_trade = self.brain.closed_trades_pairs_dict[closed_trade_name]
@@ -105,22 +38,62 @@ class BacktestAnalysis:
             trade_analysis_list.append(trade_analysis)
         return trade_analysis_list
     
+    def get_trade_analysis_df(self) -> pd.DataFrame:
+        """Creates a pandas Dataframe with the information of all closed and open trades
+        from the trade_analysis_list
+        """
+        rows = ["entry_name","exit_name","symbol_name", "gain","duration","entry_price","exit_price",
+                "entry_timestamp","exit_timestamp","ret","faked_exit_trade"]
+        data_dict = {}
+        for row in rows:
+            data_dict[row] = [getattr(trade_analysis,row) for trade_analysis in self.trade_analysis_list]
+        
+        data_dict["list_index"] = range(len(data_dict[rows[0]]))
+        df = pd.DataFrame(data_dict)
+        df.set_index("entry_name")
+        df.sort_values(by=['entry_timestamp'])
+        return df
+    
     """
     ############ Methods over all the trades ################
     """
     def print_gains(self):
-        trade_analysis_list = self.get_trade_analysis()
-        for trade_analysis in trade_analysis_list:
+        """Simply prints the information about the trades"""
+        for trade_analysis in self.trade_analysis_list:
             trade_analysis.print_summary()
     
-    def plot_trades(self, axes = None):
-        trade_analysis_list = self.get_trade_analysis()
-        for trade_analysis in trade_analysis_list:
+    def plot_trades(self, axes = None, symbol_name:str = None):
+        """Plots the trade lines. It allows to filter by symbol_name.
+        """
+        df = self.trade_analysis_df
+        if (symbol_name is not None):
+            df = df[df["symbol_name"] == symbol_name]
+        
+#        df_positive_closed = df[df["gain"] >0 & df["fake_exit_trade"] == False]
+#
+#        gl.plot([self.entry_timestamp, self.exit_timestamp],[self.entry_price, self.exit_price], axes = axes,
+#                legend = [], ls = ls, lw = 1, alpha = 0.5, color = color)
+        
+        indexes = df["list_index"]
+        for i in indexes:
+            trade_analysis = self.trade_analysis_list[i]
             trade_analysis.plot_trade_line(axes)
-    
-    def print_summary(self):
-        trade_analysis_list = self.get_trade_analysis()
-        gains_list = [trade_analysis.gain for trade_analysis in trade_analysis_list]
-        duration_list = [trade_analysis.duration.total_seconds() for trade_analysis in trade_analysis_list]
-        gl.init_figure()
-        gl.scatter(duration_list, gains_list)
+
+    def plot_return_duration_scatter(self, axes  = None, symbol_name: str = None):
+        """Plots a scatter plot return-duration of the trades.
+        It allows to filter by symbol_name.
+        """
+        df = self.trade_analysis_df
+        if (symbol_name is not None):
+            df = df[df["symbol_name"] == symbol_name]
+        
+        df_aux = df[df["gain"] < 0]
+        color = "r"
+        gl.scatter(df_aux["duration"].map(pd.Timedelta.total_seconds)/(60*1440), df_aux["ret"], 
+                   labels = ["Return - duration","duration(days)","return(%)"], axes = axes, color = color, alpha = 0.5)
+        
+        df_aux = df[df["gain"] >= 0]
+        color = "b"
+        gl.scatter(df_aux["duration"].map(pd.Timedelta.total_seconds)/(60*1440), df_aux["ret"], 
+                   labels = ["Return - duration","duration(days)","return(%)"], axes = axes, color = color, alpha = 0.5)
+        

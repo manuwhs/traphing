@@ -53,6 +53,13 @@ class Actions(Enum):
     BUY = 1
     SELL = -1
     HOLD = 0
+
+class BrainModes(Enum):
+    BACKTEST_BATCH = 0
+    BACKTEST_MODE = 1
+
+    REALTIME_TRADE = 2
+    REALTIME_EMAIL = 3
     
 def cmp_to_key(mycmp):
     'Convert a cmp= function into a key= function'

@@ -14,8 +14,6 @@ def barchart(self, df, labels = [], legend = [],  color = None,  lw = 1, alpha =
         xlim = None, ylim = None, xpadding = None, ypadding = None, # Limits of vision
         ws = None,init_x = None,
         
-        ## Specific 
-        lw2 = 1
        ):         
            
     axes, X,Y, drawings,drawings_type = self._predrawing_settings(axes, sharex, sharey,
@@ -48,8 +46,8 @@ def barchart(self, df, labels = [], legend = [],  color = None,  lw = 1, alpha =
         label_legend = None
         
     lcHL = mc.LineCollection(linesHL, colors= colorFinal, linewidths=lw, antialiased=True, label = label_legend)
-    lcO = mc.LineCollection(linesO, colors= colorFinal, linewidths=lw2, antialiased=True)
-    lcC = mc.LineCollection(linesC, colors= colorFinal, linewidths=lw2, antialiased=True)
+    lcO = mc.LineCollection(linesO, colors= colorFinal, linewidths=lw, antialiased=True)
+    lcC = mc.LineCollection(linesC, colors= colorFinal, linewidths=lw, antialiased=True)
     axes.add_collection(lcHL)
     axes.add_collection(lcO)
     axes.add_collection(lcC)

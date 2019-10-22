@@ -1,14 +1,10 @@
-import copy
-import pandas as pd
-
-from typing import List
+from typing import List, Type
 from queue import PriorityQueue
-
+from .. import Strategy
 from ...graph.Gl import gl
 
 class Coliseum:
-    """
-    Class with functionalities to control all entry and exit strategies!
+    """Class with functionalities to control all entry and exit strategies!
     It provides an interface between the brain and all the strategies.
     """
     def __init__(self):
@@ -17,76 +13,93 @@ class Coliseum:
         
         self.queue = PriorityQueue()
         
-    def add_entry_strategy(self, strategy):
+    def add_entry_strategy(self, strategy: Type[Strategy]):
         self._entry_strategies_dict[strategy.name] = strategy
 
-    def add_exit_strategy(self, strategy):
+    def add_exit_strategy(self, strategy: Type[Strategy]):
         self._exit_strategies_dict[strategy.name] = strategy
 
-    def del_entry_strategy(self, name):
+    def del_entry_strategy(self, name: str):
         del self._entry_strategies_dict[name]
 
-    def del_exit_strategy(self, name):
+    def del_exit_strategy(self, name: str):
         del self._exit_strategies_dict[name]
     
-    def get_entry_strategy(self, name):
+    def get_entry_strategy(self, name: str) -> Type[Strategy]:
         return self._entry_strategies_dict[name]
 
-    def get_exit_strategy(self, name):
+    def get_exit_strategy(self, name: str) -> Type[Strategy]:
         return self._exit_strategies_dict[name]
         
     @property
-    def entry_strategies_ids_list(self):
+    def entry_strategies_names_list(self) -> List[str]:
         return list(self._entry_strategies_dict.keys())
 
-    @entry_strategies_ids_list.setter
-    def entry_strategies_ids_list(self, value:  List[str]):
+    @entry_strategies_names_list.setter
+    def entry_strategies_names_list(self, value:  List[str]):
         ValueError("This property cannot be set externally")
 
     @property
-    def exit_strategies_ids_list(self):
+    def exit_strategies_names_list(self) -> List[str]:
         return list(self._exit_strategies_dict.keys())
 
-    @exit_strategies_ids_list.setter
-    def exit_strategies_ids_list(self, value:  List[str]):
+    @exit_strategies_names_list.setter
+    def exit_strategies_names_list(self, value:  List[str]):
         ValueError("This property cannot be set externally")
         
+    """
+    ############### Methods to handle all the queues ####################
+    """
     
-    def compute_first_exit_requests(self):
+    def compute_entry_requests_queue(self):
+        """Computes the queue of all entry strategies and puts its elements
+        in the coliseum queue.
         """
-        It returns a queue with only the first exit request of the exit strategies
+        for entry_strategy_name in self.entry_strategies_names_list:
+            entry_strategy = self.get_entry_strategy(entry_strategy_name)
+            
+            entry_strategy_queue = entry_strategy.compute_requests_queue()
+            while entry_strategy_queue.empty() == False:
+                self.queue.put(entry_strategy_queue.get())
+        return self.queue
+    
+    def compute_exit_requests_queue(self):
+        """Computes the queue of all exit strategies and puts its elements
+        in the coliseum queue.
         """
-        for exit_strategy_id in self.exit_strategies_ids_list:
-            exit_strategy = self._exit_strategies_dict[exit_strategy_id]
-            queue = exit_strategy.compute_exit_requests_queue()
-            if(queue.empty() == False):
-                element = queue.get()
-                if (element not in self.queue.queue):
-                    self.queue.put(element)
+        for exit_strategy_name in self.exit_strategies_names_list:
+            exit_strategy = self._exit_strategies_dict[exit_strategy_name]
+            
+            exit_strategy_queue = exit_strategy.compute_requests_queue()
+            while (exit_strategy_queue.empty() == False):
+                self.queue.put(exit_strategy_queue.get())
         return self.queue
     
     def compute_requests_queue(self):
+        """Computes the queue of all strategies and puts its elements
+        in the coliseum queue.
         """
-        Computes all of the strategies requests and joins them into a dictionary
-        by date.
-        """
-        for entry_strategy_id in self.entry_strategies_ids_list:
-            entry_strategy = self._entry_strategies_dict[entry_strategy_id]
-            queue = entry_strategy.compute_requests_queue()
-            while (queue.empty() == False):
-                self.queue.put(queue.get())
-                
-        for exit_strategy_id in self.exit_strategies_ids_list:
-            exit_strategy = self._exit_strategies_dict[exit_strategy_id]
-            queue = exit_strategy.compute_requests_queue()
-            while (queue.empty() == False):
-                self.queue.put(queue.get())
+        self.compute_entry_requests_queue()
+        self.compute_exit_requests_queue()
         return self.queue
     
-    def process_queue(self):
-        while not self.requests_queue.empty():
-            pass
-
+    def compute_first_exit_requests(self):
+        """It computes the first exit request of all exit strategies and puts it
+        inside the coliseum queue. This function is used in backtesting for
+        optimization purposes and to avoid puting exit requests in the coliseum 
+        queue for trades that have already been closed.
+        """
+        for exit_strategy_id in self.exit_strategies_names_list:
+            exit_strategy = self.get_exit_strategy(exit_strategy_id)
+            queue = exit_strategy.compute_exit_requests_queue()
+            if queue.empty() == False:
+                element = queue.get()
+                self.queue.put(element)
+        return self.queue
+    
+    """
+    ############### Extra methods for visualization ####################
+    """
     def plot_strategies(self, axes_list = []):
         """
         Plotting function that makes it convenient to visualize the strategy.

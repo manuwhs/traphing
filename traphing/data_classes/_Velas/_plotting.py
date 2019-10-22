@@ -33,8 +33,9 @@ def plot_indicator(self, axes = None, indicator_name = "SMA", *args, **kwargs):
 
 
 def plot_barchart(self,*args, **kwargs):         
-    drawings = gl.barchart(self.df,*args, **kwargs)
-    return drawings
+    if (self.df.shape[0] >0):
+        drawings = gl.barchart(self.df,*args, **kwargs)
+        return drawings
 
 
 def plot_candlesticks(self, *args, **kwargs):         

@@ -3,43 +3,39 @@ import numpy as np
 import datetime as dt
 
 from .. import ExitStrategy, ExitTradeRequest
+from ... import Trade
 from .... import utils as ul
+from ....data_classes import Portfolio
 
 class StopLoss(ExitStrategy):
-    """ 
-    Exit the trade if it has lost X percent of its value.
+    """Exit the trade if it has lost X percent of its value.
     """
-
-    def __init__(self, name, trade, portfolio = None, symbol_name = None, timeframe = None):
-        super().__init__(name, trade, portfolio)
-        self.series_names = ["Close","Stop_loss"]
-        self.symbol_name = symbol_name
-        self.timeframe = timeframe
-        self.stop_loss = None
+    def __init__(self, name: str, trade: Trade, portfolio: Portfolio = None, params: dict = {}):
+        super().__init__(name, trade, portfolio, params)
+        self.input_series_names = ["Close","Stop_loss"]
         
-
     def set_stop_loss(self, price = None, pct = None):
         """
         It sets the value of the stop loss
         """
         if price is not None:
-            self.stop_loss = price
+            stop_loss = price
         else:
-            sign = float(self.trade.action.value)*-1
-            self.stop_loss = self.trade.price*(1 + sign*pct/100)
+            sign = float(self.trade.request.action.value)*-1
+            stop_loss = self.trade.price*(1 + sign*pct/100)
+        self.params["Stop_loss"] = stop_loss
         
-    def set_velas(self, symbol_name, timeframe):
-        self.symbol_name = symbol_name
-        self.timeframe = timeframe
-
     """
     ############ Overriding parent methods ###########################
     """
     
     def compute_input_series(self):
-        close = self.portfolio[self.symbol_name][self.timeframe].series("Close")
-        stop_loss = pd.Series(np.ones(close.index.size) * self.stop_loss, index = close.index)
-        series_df = pd.concat([close,stop_loss],axis =1, keys = self.series_names)
+        symbol_name = self.params["Close"]["symbol_name"]
+        timeframe = self.params["Close"]["timeframe"]
+        
+        close = self.portfolio[symbol_name][timeframe].series("Close")
+        stop_loss = pd.Series(np.ones(close.index.size) * self.params["Stop_loss"], index = close.index)
+        series_df = pd.concat([close,stop_loss],axis =1, keys = self.input_series_names)
         
         # Set to none the samples before the event
         series_df[series_df.index < self.trade.request.timestamp] = np.NaN
@@ -60,8 +56,8 @@ class StopLoss(ExitStrategy):
         
         for indx in Event_indx:
             timestamp = trigger_series.index[indx]
-            symbol_name = self.symbol_name
-            timeframe = self.timeframe
+            symbol_name = self.params["Close"]["symbol_name"]
+            timeframe = self.params["Close"]["timeframe"]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
             self.create_request(timestamp, symbol_name, price)

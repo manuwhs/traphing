@@ -6,7 +6,7 @@ from enum import Enum
 import datetime as dt
 import numpy as np
 
-from .data_structures import Timeframes
+from .data_structures import Timeframes, BrainModes
 
 def has__dict__(obj):
     return hasattr(obj, '__dict__')
@@ -23,7 +23,7 @@ def is_basic(obj):
     objects_list = [1,1.0,"a", True, None, 
                     dt.datetime.now(),dt.datetime.now().date(), dt.datetime.now().time(), dt.timedelta(days= 1),
                     pd.to_datetime(dt.datetime.now()),
-                    Timeframes.M1, 
+                    Timeframes.M1, BrainModes.BACKTEST_BATCH,
                     np.array(1),np.array([1,2]), np.array([[1,2]], np.float64(2)),
                     pd.DatetimeIndex([1,2])]
     
@@ -114,7 +114,7 @@ class Node():
 #        print (text)
         return text
              
-def unwrap(obj, name = "object"):
+def unwrap(obj, name = "object", ignore_classes = []):
     text = ""
     stack = []
     

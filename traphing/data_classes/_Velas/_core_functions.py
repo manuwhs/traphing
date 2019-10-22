@@ -41,7 +41,6 @@ def set_time_interval(self, start_time = None, end_time = None, trim = False):
     return True
 
 ################# Specific fetching functions #####################
-    
 def get_candlestick(self, datetime):
     """ It returns the closest candlestick with timestamp before 
     """

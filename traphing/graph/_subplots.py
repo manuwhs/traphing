@@ -3,16 +3,22 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 #####  BUILDING FUNCTIONS #####
 
-def subplots_adjust(self, left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0, hide_xaxis = True):
+def subplots_adjust(self, left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0, hide_xaxis = True , axes_by_columns = None):
     # Adjusting the properties of the subplots
     plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
+    
     if (hide_xaxis):
-        all_axes = self.get_axes()
-        for i in range(len(all_axes)-1):
-            axes = all_axes[i]
-            self.hide_xaxis(axes)
-            self.set_labels(axes, title = "", xlabel = "")
+        if (axes_by_columns is None):
+            axes_by_columns = [self.get_axes()]
+        for j in range(len(axes_by_columns)):
             
+            for i in range(len(axes_by_columns[j])-1):
+                axes = axes_by_columns[j][i]
+                self.hide_xaxis(axes)
+                self.set_labels(axes, xlabel = "")
+            for i in range(1,len(axes_by_columns[j])):
+                axes = axes_by_columns[j][i]
+                self.set_labels(axes, title = "")
 
 def subplot2grid(self, *args, **kwargs): #divisions, selection):
     
