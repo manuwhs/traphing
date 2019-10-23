@@ -1,135 +1,58 @@
 import pandas as pd
 import numpy as np
-import datetime as dt
 
-from .. import ExitStrategy, ExitTradeRequest
+from .. import ExitStrategy
+from ... import Trade
 from .... import utils as ul
+from .... utils import Actions
+from ....data_classes import Portfolio
 
 class TrailingStop(ExitStrategy):
-    """ We get out if the price goes a certain amount against us.
-    # We set the period as the period of checking and putting 
-    # the new stop:
-    #   - We will update the real platform stop each end of the period.
-    #   - If duting the last period, the stop was in the range of the candle
-    #     then we close the deal
+    """Exit the trade if it has lost X percent of its value.
     """
+    def __init__(self, name: str, trade: Trade, portfolio: Portfolio = None, params: dict = {}):
+        super().__init__(name, trade, portfolio, params)
+        self.input_series_names = ["velas","stop_loss"]
+        
+    def compute_input_series(self) -> pd.DataFrame:
+        symbol_name = self.params["velas"]["symbol_name"]
+        timeframe = self.params["velas"]["timeframe"]
+        pct = self.params["stop_loss"]["pct"]
+        
+        close = self.portfolio[symbol_name][timeframe].series("Close")
+        
+        # Compute the trailing stop
+        sign = float(self.trade.request.action.value)*-1
+        close_pct_threshold = close*(1 + sign*pct/100)
 
-    def __init__(self, StrategyID, period, pf = None):
-        self.StrategyID = StrategyID    # ID of the strategy so that we can later ID it.
-        self.period = period             # It is importan to know the period of the signal
-        self.pf = pf 
-        self.singalCounter = 0  # It will be the ID for the signals that we will generate
+        # Set to none the samples before the event
+        close_pct_threshold[close.index < self.trade.request.timestamp] = np.NaN
+        
+        if self.trade.request.action == Actions.BUY:
+            trailing_stop = close_pct_threshold.cummax()
+        elif self.trade.request.action == Actions.SELL: 
+            trailing_stop = close_pct_threshold.cummin()
+            
+        series_df = pd.concat([close,trailing_stop],axis =1, keys = self.input_series_names)
+        return series_df
     
-        # Parameters regarding the entry.
-        # If init_price and date are not provided, we just assume are the 
-        # init of t
+    def compute_trigger_series(self) -> pd.DataFrame:
+        series_df = self.compute_input_series()
+        trigger_series = ul.check_crossing(series_df["stop_loss"],series_df["velas"])
+        trigger_series = trigger_series.abs()
+        return trigger_series
 
-        self.init_datetime = None
-        self.init_price = None
-        self.init_index = None   # Index of the sample that contais the date
-        
-    # Set the parameters of the trailing stop: Commodity, period and % 
-    def set_trailingStop(self, SymbolName, BUYSELL, datetime = None, period = 1440, maxPullback = 3): 
-        self.trailingParam = dict([["SymbolName", SymbolName], ["date",datetime],
-                                ["period", period], ["maxPullback",maxPullback]])
-        self.maxPullback = maxPullback
-        self.timeDataObj = self.pf.symbols[SymbolName].get_timeData(period)
-        self.dates = self.timeDataObj.get_dates()
-        self.BUYSELL = BUYSELL
-        # TODO: Preprocess datetome so that it fits in a given interval
-        self.init_datetime = datetime
-        
-    # These are the parameters of the simulated entry.
-    # The time and price where we entered the market.
-    # It does not have to be same as when the EntrySignal
-    # was activated due to slipage
-        # TODO: Set interval for the original date ?
-        
-    def set_outsideMAs(self, MA_slow, MA_fast, dates):
-        self.MA_slow = MA_slow
-        self.MA_fast = MA_fast
-        self.dates = dates
-     
-    #### BackTesting functions #######
-     
-    def get_TradeSignals(self):
-        pLow = self.timeDataObj.get_timeSeries(["Low"])
-        pHigh = self.timeDataObj.get_timeSeries(["High"])
-
-        if (self.BUYSELL == "BUY"):
-            pUpdate = pHigh   # Price used to update the line
-            pCheckCross = pLow
-            self.maxPullback = -np.abs(self.maxPullback)
-        else:
-            pUpdate = pLow   # Price used to update the line
-            pCheckCross = pHigh
-            self.maxPullback = np.abs(self.maxPullback)
-            
-        if (type(self.init_datetime) == type(None)):
-            self.init_index = 0
-            self.init_date = self.dates[self.init_index]
-        
-        self.init_index = int(np.where(self.dates == self.init_datetime)[0])
-        
-        # Now we get the REAL price for what we bought it. It could be within
-        # the candle so we do not really know from the historic, what it is exactly
-        if (type(self.init_price) == type(None)):
-            # If we do not have the exect init_price, se use the midpoint HL
-            self.init_price = (pUpdate[self.init_index,0] + pCheckCross[self.init_index,0])/2
-        
-        init_stop = self.init_price *(1 + self.maxPullback/100.0)                        
-        
-        # We start the computing. Compute the trailing stop
-        Nsamples = self.dates.size
-        all_stops = np.zeros(pCheckCross.shape) * np.NaN
-        
-        all_stops[self.init_index] = init_stop
-        
-        print (self.init_index +1, Nsamples)
-        for i in range (self.init_index +1,Nsamples):
-            init_stop_i = pUpdate[i-1] *(1 + self.maxPullback/100.0)
-#                print init_stop_i[0], all_stops[i-1]
-            if (self.BUYSELL == "BUY"):
-                all_stops[i] = np.nanmax([all_stops[i-1],init_stop_i[0]])
-            else:
-                all_stops[i] = np.nanmin([all_stops[i-1],init_stop_i[0]])
-        # Get the crosses
-        crosses = ul.check_crossing(pCheckCross , all_stops)
-        
-        # Remove positive and regative crosses it they do not belong
-        if (self.BUYSELL == "BUY"):
-            crosses[np.where(crosses == 1)] = 0
-        else:
-            crosses[np.where(crosses == -1)] = 0
-            
-        return crosses, all_stops, pCheckCross, self.dates
-        
-    def get_TradeEvents(self):
+    def compute_requests_queue(self):
         # Creates the EntryTradingSignals for Backtesting
-        crosses,dates = self.get_TradeSignals()
+        trigger_series = self.compute_trigger_series()
+        Event_indx = np.where(trigger_series != 0 )[0] # We do not care about the second dimension
         
-        list_events = []
-        # Buy signals
-        Event_indx = np.where(crosses != 0 ) # We do not care about the second dimension
-        for indx in Event_indx[0]:
-            # Create the Exit signal !
-            if crosses[Event_indx] == 1:
-                BUYSELL = "BUY"
-            else:
-                BUYSELL = "SELL"
-                
-            entrySignal =  CExS.CExitSignal(StrategyID = self.StrategyID, 
-                                            EntrySignalID = str(self.singalCounter), 
-                                            datetime = dates[indx], 
-                                            symbolID = self.slowMAparam["SymbolName"], 
-                                            BUYSELL = BUYSELL)
-            entrySignal.comments = "Basic Crossing MA man !"
+        for indx in Event_indx:
+            timestamp = trigger_series.index[indx]
+            symbol_name = self.params["velas"]["symbol_name"]
+            timeframe = self.params["velas"]["timeframe"]
+            price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
-            entrySignal.priority = 0
-            entrySignal.recommendedPosition = 1 
-            entrySignal.tradingStyle = "dayTrading"
-            
-            list_events.append(entrySignal)
-            self.singalCounter += 1
+            self.create_request(timestamp, symbol_name, price)
         
-        return list_events
+        return self.queue

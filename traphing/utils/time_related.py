@@ -8,6 +8,17 @@ from . import fnp
 """
 ####################### DATETIME HANDLING ######################
 """
+def to_timedelta(time):
+    return dt.timedelta(hours = time.hour, minutes = time.minute, seconds = time.second)
+
+def add_times(time1, time2):
+    datetimex = dt.datetime.now().replace(minute= time.minute, hour = time.hour, second = time.second, microsecond = 0) + time2
+    return datetimex.time()
+
+def substract_times(time, timedelta):
+    datetimex = dt.datetime.now().replace(minute= time.minute, hour = time.hour, second = time.second, microsecond = 0) - timedelta
+    return datetimex.time()
+
 def get_dates(dates_list):
     # Gets only the date from a timestapm. For a list
     only_day = []

@@ -27,7 +27,10 @@ def del_symbol(self, symbol_name: str):
 def set_time_interval(self,start_time, end_time, trim = False):
     for symbol_name in self.symbol_names_list:
         self[symbol_name].set_time_interval(start_time, end_time, trim)
-
+        
+    self.start_time = start_time
+    self.end_time = end_time
+    
 def load_symbols_properties_from_df(self, df):
     for symbol_name in self.symbol_names_list:
         self[symbol_name].load_properties_from_df(df)

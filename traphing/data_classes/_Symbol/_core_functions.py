@@ -28,18 +28,23 @@ def del_velas(self, timeframe: Timeframes):
 def set_time_interval(self,start_time = None, end_time = None, trim = True):
     for timeframe in self.timeframes_list:
         self[timeframe].set_time_interval(start_time, end_time, trim = trim)
-
-
+    
+    self.start_time = start_time
+    self.end_time = end_time
+        
 ########### Other symbol functions ############# 
 def get_candlestick(self, datetime):
     """
     Gets the last candlesick that comes before the provided datetime.
     """
     candlesticks = []
+    # TODO: Change logic with this line?
+    # timeframe =self.timeframes_list[np.argmin(x.value for x in self.timeframes_list)]
     for timeframe in self.timeframes_list:
         row = self[timeframe].get_candlestick(datetime)
         candlesticks.append(row)
     df = pd.concat(candlesticks, axis = 0)
+    
     return df.loc[[max(df.index)]]
 
 
@@ -48,8 +53,7 @@ def load_properties_from_df(self,df):
     
     
 def estimate_market_hours(self, timeframe = None):
-    """
-    This function estimates the properties of the market hours objects by calling the
+    """This function estimates the properties of the market hours objects by calling the
     estimation of dict days.
     """
     if timeframe is None:
@@ -58,3 +62,4 @@ def estimate_market_hours(self, timeframe = None):
     
     self.market_hours.estimate_special_trading_days_from_timestamps(timestamps, open_time = None, 
                                                       close_time = None,  timeframe = timeframe, trading_days_list = None)
+    

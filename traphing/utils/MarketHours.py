@@ -37,8 +37,7 @@ class MarketHours():
     
     @staticmethod
     def get_index_by_days_dict(timestamps: pd.DatetimeIndex, dates = None):
-        """
-        Create dictionary with dates as index an intraday timestamps as values
+        """Create dictionary with dates as index an intraday timestamps as values
         """
         if(dates is None):
             dates = timestamps.map(pd.Timestamp.date)
@@ -48,8 +47,7 @@ class MarketHours():
     
     @staticmethod
     def add_timeframe_to_time(time, timeframe):
-        """
-        Fucking not implemented in the standard library for some reason
+        """Fucking not implemented in the standard library for some reason
         """
         datetime = dt.datetime.now().replace(minute= time.minute, hour = time.hour, second = time.second, microsecond = 0) + dt.timedelta(minutes = timeframe.value)
         return datetime.time()
@@ -176,7 +174,15 @@ class MarketHours():
         for key in weekdays_dict.keys():
             weekdays_dict[key] = weekdays_dict[key].size
         return weekdays_dict
-        
+
+    def get_timestamps_by_trading_session_dict(self, timestamps: pd.DatetimeIndex):
+        """Create dictionary with dates as index an intraday timestamps as values
+        """
+        ## TODO: Take iso into consideration here.
+        dates = timestamps.map(pd.Timestamp.date)
+        indexes_by_day_dict = timestamps.groupby(dates)
+        return indexes_by_day_dict
+    
     """
     Guessing from data functions
     """
@@ -290,6 +296,13 @@ class MarketHours():
         self.special_days_dict = special_days_dict
         return special_days_dict
     
+    def estimate(self, timestamps, open_time = None, 
+                 close_time = None,  timeframe = None, trading_days_list = None):
+        """Estimates all of the remaining MarketHours parameters.
+        It does so my calling estimate_special_trading_days_from_timestamps which estimates them anyway.
+        """
+        self.estimate_special_trading_days_from_timestamps(timestamps,open_time,close_time,timeframe,trading_days_list)
+        
     """
     ################### Intraday Transformation ######################
     """

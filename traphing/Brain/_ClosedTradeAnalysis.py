@@ -20,8 +20,8 @@ class ClosedTradeAnalysis:
     
     @classmethod
     def from_open_trade(cls, entry_trade: EntryTradeRequest, portfolio: Portfolio):
-        """Creates an object from the class faking a closed trade at the end 
-        of the time interval.
+        """Creates an object of this class for an open trade by faking its 
+        corresponding exit trade at the end of the time interval.
         """
         # Create fake Exit trade request with current data
         name =  "End of backtest fake exit for " + entry_trade.name

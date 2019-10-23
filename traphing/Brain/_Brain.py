@@ -2,11 +2,13 @@ import pandas as pd
 import numpy as np
 from typing import Type
 import datetime as dt
+import sys
+
 from ..data_classes import Portfolio
 from ..strategies import Trade, Coliseum, TradeRequest, Strategy
 from ..strategies.entry import EntryTradeRequest
 from ..strategies.exit import ExitTradeRequest, StopLoss, ExitStrategy
-from ..utils import BrainModes
+from ..utils import BrainModes, unwrap
 
 class Brain:
     """Main system class that handles everyhing
@@ -141,14 +143,24 @@ class Brain:
         self.coliseum.compute_requests_queue()
         
         print ("----- Performing Backtesting ---------")
+        print ("Period: " + str(self.portfolio.start_time.date()) + " - " + str(self.portfolio.end_time.date()))
         print ("Total number of entry trade requests: ",self.coliseum.queue.qsize())
-        
+ 
         n_request_handled = 0
+        
+        print("")
         while self.coliseum.queue.empty() == False:
             request = self.coliseum.queue.get()[1]
             n_request_handled += 1
-            print("\r Handling request: %i. Requests left: %i. Name: %s"%(n_request_handled, self.coliseum.queue.qsize(), request.name))
             
+            relative_time_done = (request.timestamp - self.portfolio.start_time).total_seconds()/(self.portfolio.end_time - self.portfolio.start_time).total_seconds()
+            text = "Req: %i: %s"%(n_request_handled, request.name) + \
+            ". Time: " + str(request.timestamp.date()) + " pct time: %.2f"%(relative_time_done)
+#            
+#            unwrap(request)
+            print("\r" + "    "*40, end = "")
+            print("\r" + text, end = "")
+#            print(text)
             if isinstance(request, EntryTradeRequest):
                 self.manage_entry_request(request)
             elif isinstance(request, ExitTradeRequest):

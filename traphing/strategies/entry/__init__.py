@@ -1,2 +1,4 @@
 from ._core_classes import EntryStrategy, EntryTradeRequest
 from .common.CrossingMovingAverages import CrossingMovingAverages
+from .common.WeeklyTriggerTimes import WeeklyTriggerTimes
+from .common.EarlySessionTrendFollower import EarlySessionTrendFollower

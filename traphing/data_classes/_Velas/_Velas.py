@@ -45,7 +45,7 @@ class Velas:
         self.timeframe = timeframe        # It is the number of minutes of the period: 1 5 15....
         
         ## Time constraining variables
-        self.start_time = None  # Start and end of period to operate from the TD
+        self.start_time = None
         self.end_time = None
         self._time_mask = None
         

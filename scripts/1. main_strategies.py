@@ -41,10 +41,8 @@ entry_strategy = CrossingMovingAverages("Crossing averages 1", portfolio)
 # Set the paramters
 slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":50}}
 fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":30}}
-
-entry_strategy.set_slow_MA(slow_MA_params)
-entry_strategy.set_fast_MA(fast_MA_params)
-
+params = {"fast_MA": fast_MA_params, "slow_MA": slow_MA_params}
+entry_strategy.set_params(params)
 # Compute the signals
 entry_strategy_series = entry_strategy.compute_input_series()
 slow_MA = entry_strategy_series["slow_MA"]
@@ -65,8 +63,7 @@ trade = Trade(name = "my_trade12", request = entry_request,
 
 ### Exit strategy
 exit_strategy =  StopLoss(name = "Exit coward", trade = trade, portfolio = portfolio)
-# Set the velas it will be listening to.
-exit_strategy.set_velas(symbol_name, timeframe)
+exit_strategy.params["velas"] = {"symbol_name":symbol_name, "timeframe":timeframe}
 exit_strategy.set_stop_loss(pct = 0.1)
 #exit_strategy.set_stop_loss(price = 0.8)
 # Get shit
@@ -83,7 +80,7 @@ if len(exits_dates):
 
 
 """
-  ##############3 PLOTTING ###############
+  ############## PLOTTING ###############
 """
 
 ## Plot the EntryPoints of the strategy
@@ -107,7 +104,7 @@ gl.stem(entry_strategy_series.index,entry_trigger_series, axes = ax2, legend = "
 gl.plot(exit_strategy_series.index, exit_strategy_series, axes = ax3, 
         legend = list(exit_strategy_series.columns), labels = ["", "", "Exit signals"])
 
-difference = exit_strategy_series["Close"] - exit_strategy_series["Stop_loss"]
+difference = exit_strategy_series["velas"] - exit_strategy_series["stop_loss"]
 normalized_difference = difference/np.max(np.abs((difference)))
 gl.fill_between(exit_strategy_series.index, normalized_difference, legend = ["Normalized signal diff"], axes =ax4)
 gl.stem(exit_series.index,exit_series, axes = ax4, legend = "Exits", labels = ["", "", "Exit requests"])

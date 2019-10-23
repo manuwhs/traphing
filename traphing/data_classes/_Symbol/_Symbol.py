@@ -19,7 +19,11 @@ class Symbol:
         self.market_hours = MarketHours()
         
         self._init_velas(timeframes_list)
-    
+
+        ## Time constraining variables
+        self.start_time = None  
+        self.end_time = None
+        
     @classmethod
     def load_symbols_properties_csv(cls, file_dir: str):
         """ This function load the csv file that contains the properties

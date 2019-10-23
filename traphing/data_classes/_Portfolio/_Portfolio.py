@@ -15,7 +15,11 @@ class Portfolio:
         self._symbols_dict = dict()
         # Loop over the symbol_names so loop over all the symbols in the Portfolio
         self._init_symbols(symbol_names_list, timeframes_list)  # Create the symbol objects from the periods and names
-    
+
+        ## Time constraining variables
+        self.start_time = None  
+        self.end_time = None
+        
     @property
     def symbol_names_list(self):
         return list(self._symbols_dict.keys())
