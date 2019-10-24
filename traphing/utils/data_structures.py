@@ -108,7 +108,25 @@ def get_foldersData(source = "FxPro", rrf = "../" ):
     return storage_folder, updates_folder
 
 
+def get_empty_portfolio_params():
+    portfolio = {"symbol_names_list": [], 
+                 "timeframes_list": []}
+    return portfolio
+
+def get_empty_exit_strategy_params():
+    indicators = None
+    params = {"portfolio": get_empty_portfolio_params(),
+              "indicators": indicators}
+    return params
+
+def get_empty_entry_strategy_params():
+    indicators = None
+    exit_strategy = {"class_name": "",
+                     "params": get_empty_exit_strategy_params()}
     
-    
+    params = {"portfolio": get_empty_portfolio_params(),
+              "indicators": indicators,
+              "exit_strategy": exit_strategy}
+    return params
 
         

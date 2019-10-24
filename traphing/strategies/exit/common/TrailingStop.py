@@ -9,15 +9,17 @@ from ....data_classes import Portfolio
 
 class TrailingStop(ExitStrategy):
     """Exit the trade if it has lost X percent of its value.
+    
+    Example of indicator params:
+        indicators = {"stop_loss_pct": 0.1}
     """
     def __init__(self, name: str, trade: Trade, portfolio: Portfolio = None, params: dict = {}):
         super().__init__(name, trade, portfolio, params)
-        self.input_series_names = ["velas","stop_loss"]
-        
+
     def compute_input_series(self) -> pd.DataFrame:
-        symbol_name = self.params["velas"]["symbol_name"]
-        timeframe = self.params["velas"]["timeframe"]
-        pct = self.params["stop_loss"]["pct"]
+        symbol_name = self.symbol_names_list[0]
+        timeframe = self.timeframes_list[0]
+        pct = self.params["indicators"]["stop_loss_pct"]
         
         close = self.portfolio[symbol_name][timeframe].series("Close")
         
@@ -33,12 +35,12 @@ class TrailingStop(ExitStrategy):
         elif self.trade.request.action == Actions.SELL: 
             trailing_stop = close_pct_threshold.cummin()
             
-        series_df = pd.concat([close,trailing_stop],axis =1, keys = self.input_series_names)
+        series_df = pd.concat([close,trailing_stop],axis =1, keys = ["close_values","trailing_stop"])
         return series_df
     
     def compute_trigger_series(self) -> pd.DataFrame:
         series_df = self.compute_input_series()
-        trigger_series = ul.check_crossing(series_df["stop_loss"],series_df["velas"])
+        trigger_series = ul.check_crossing(series_df["trailing_stop"],series_df["close_values"])
         trigger_series = trigger_series.abs()
         return trigger_series
 
@@ -49,10 +51,10 @@ class TrailingStop(ExitStrategy):
         
         for indx in Event_indx:
             timestamp = trigger_series.index[indx]
-            symbol_name = self.params["velas"]["symbol_name"]
-            timeframe = self.params["velas"]["timeframe"]
+            symbol_name = self.symbol_names_list[0]
+            timeframe = self.timeframes_list[0]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
-            self.create_request(timestamp, symbol_name, price)
+            self.create_request(timestamp, symbol_name, timeframe, price)
         
         return self.queue

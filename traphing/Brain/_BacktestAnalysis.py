@@ -50,7 +50,7 @@ class BacktestAnalysis:
         
         data_dict["list_index"] = range(len(data_dict[rows[0]]))
         df = pd.DataFrame(data_dict)
-        df.set_index("entry_name")
+        df.set_index("entry_name", inplace = True)
         df.sort_values(by=['entry_timestamp'])
         return df
     

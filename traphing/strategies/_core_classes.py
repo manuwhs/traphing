@@ -1,6 +1,7 @@
 from queue import PriorityQueue
-from ..utils import Actions
+from ..utils import Actions, Timeframes
 from ..data_classes import Portfolio
+import copy
 
 import pandas as pd
 import datetime as dt
@@ -12,7 +13,7 @@ class Strategy:
     """
     def __init__(self, name: str, portfolio: Portfolio = None, params: dict = {}):
         self.name = name
-        self.params = params
+        self.set_params(params)
 
         self.portfolio = portfolio
         
@@ -27,12 +28,33 @@ class Strategy:
         return name
 	
     def set_params(self, params: dict):
-        self.params = params
-        self.input_series_names = list(params.keys())
+        self.params = copy.deepcopy(params) # Deeocopy to avoid sharing problems
+        self._set_listening_velas()
         
+    def _set_listening_velas(self):
+        """This function logs the velas that are needed in order to compute the
+        strategy. This will be useful in REALTIME modes to trigger the strategy
+        when all of its depending velas objects have been given the data.
+        """
+        try:
+            symbol_names_list = self.params["portfolio"]["symbol_names_list"]
+            timeframes_list = self.params["portfolio"]["timeframes_list"]
+        except:
+#            Warning("No portfolio")
+            symbol_names_list = []
+            timeframes_list = []
+            
+        self.timeframes_list = timeframes_list
+        self.symbol_names_list = symbol_names_list
+        
+        for symbol_name in symbol_names_list:
+            for timeframe in timeframes_list:
+                ##TODO
+                pass
     """
     Methods to be overriden.
     """
+    
     def compute_input_series(self) -> pd.DataFrame:
         """Computes the time series needed from the candlesticks in the portfolio.
         When calling this function, we assume that the porfolio has all the needed 
@@ -46,12 +68,14 @@ class Strategy:
         It should call the compute_input_series() method and use its time series.
         to compute the final triggers. 
         """
-    def compute_requests_queue(self) -> pd.DataFrame:
+    def compute_requests_queue(self) -> PriorityQueue:
         """Computes the trade requests objects and puts them into the queue.
         It should call the compute_trigger_series() method to get the time series
         of triggers and then handle each of them to create the requests.
         """
-
+    """
+    Nice to have methods
+    """
     def plot_strategy(self, axes_input, axes_triggers):
         """This function plots the strategies series and its triggers.
         It might not be useful for all cases but it is a nice initial approximation
@@ -63,7 +87,7 @@ class TradeRequest:
     the requested trade by a strategy.
     """
     def __init__(self, name: str, timestamp: pd.Timestamp, 
-		symbol_name: str, price: float, action: Actions):
+		symbol_name: str, timeframe: Timeframes, action: Actions, price: float):
 					 
         self.name = name          
         self.strategy_name = self._get_strategy_name() 
@@ -71,6 +95,7 @@ class TradeRequest:
         
         # Identify the wanted trade
         self.symbol_name = symbol_name
+        self.timeframe = timeframe
         self.action = action  
         self.price = price
         
@@ -91,7 +116,6 @@ class TradeRequest:
         """
         return True
   
-
 class Trade:
     """Information class about a performed trade. It contains the information regarding
     a performed trade. It keeps the accepted request as an attribute.

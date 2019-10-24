@@ -153,9 +153,10 @@ class Brain:
             request = self.coliseum.queue.get()[1]
             n_request_handled += 1
             
-            relative_time_done = (request.timestamp - self.portfolio.start_time).total_seconds()/(self.portfolio.end_time - self.portfolio.start_time).total_seconds()
+            relative_time_done = (request.timestamp - self.portfolio.start_time).total_seconds()*100
+            relative_time_done /= (self.portfolio.end_time - self.portfolio.start_time).total_seconds() +60*60*24
             text = "Req: %i: %s"%(n_request_handled, request.name) + \
-            ". Time: " + str(request.timestamp.date()) + " pct time: %.2f"%(relative_time_done)
+            ". Time: " + str(request.timestamp.date()) + " pct time: %.2f%s"%(relative_time_done,"%")
 #            
 #            unwrap(request)
             print("\r" + "    "*40, end = "")

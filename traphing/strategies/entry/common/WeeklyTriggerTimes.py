@@ -2,28 +2,26 @@ import numpy as np
 import pandas as pd
 
 from .. import EntryStrategy
-from ...exit import StopLoss
-from ... import Trade
 from ....data_classes import Portfolio
 
 class WeeklyTriggerTimes(EntryStrategy):
-    """Strategy: It makes a BUY trade every at the given times in the given weekdays.
+    """Strategy: It makes a BUY trade every day at the given times in the given weekdays
+    for the first symbol in the portfolio.
+    Warning: Give only one timeframe!!
+    
     Example of params:
-        params = {"velas":{"symbol_name":"AUDCHF","timeframe": Timeframes.M15}, 
-                  "weekly_trigger_times": 
-                      {"weekdays_list":[0,2,4], 
-                       "times_list":[dt.time(4,0,0),dt.time(12,0,0)]}}
+        indicators = {"weekdays_list":[0,2,4], 
+                      "times_list":[dt.time(4,0,0),dt.time(12,0,0)]}
 
     """
     def __init__(self, name: str, portfolio: Portfolio = None, params: dict = {}):
         super().__init__(name, portfolio, params)
-        self.input_series_names = ["velas","weekly_trigger_times"]
     
     def compute_input_series(self):
-        symbol_name = self.params["velas"]["symbol_name"]
-        timeframe = self.params["velas"]["timeframe"]
-        weekdays_list = self.params["weekly_trigger_times"]["weekdays_list"]
+        symbol_name = self.symbol_names_list[0]
+        timeframe = self.timeframes_list[0]
         
+        weekdays_list = self.params["indicators"]["weekdays_list"]
         velas = self.portfolio[symbol_name][timeframe]
         
         weekday_triggers_list = []
@@ -42,8 +40,8 @@ class WeeklyTriggerTimes(EntryStrategy):
     
     def compute_trigger_series(self):
         series_df = self.compute_input_series()
-        weekdays_list = self.params["weekly_trigger_times"]["weekdays_list"]
-        time_list = self.params["weekly_trigger_times"]["times_list"]
+        weekdays_list = self.params["indicators"]["weekdays_list"]
+        time_list = self.params["indicators"]["times_list"]
         
         equal_day_indexes = [False]*series_df["velas"].index.size
         for weekday_number in weekdays_list:
@@ -60,7 +58,7 @@ class WeeklyTriggerTimes(EntryStrategy):
                                    index = series_df.index, name = "trigger_entry")
         
         trigger_series[indexes] = 1
-        
+        pd.DataFrame(trigger_series, columns = [self.symbol_names_list[0]])
         return trigger_series
         
     def compute_requests_queue(self):
@@ -70,21 +68,11 @@ class WeeklyTriggerTimes(EntryStrategy):
         for indx in Event_indx:
             action = self._get_action(trigger_series[indx])
             timestamp = trigger_series.index[indx]
-            symbol_name = self.params["velas"]["symbol_name"]
-            timeframe = self.params["velas"]["timeframe"]
+            symbol_name = self.symbol_names_list[0]
+            timeframe = self.timeframes_list[0]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
-            self.create_request(timestamp, symbol_name, price, action)
+            self.create_request(timestamp, symbol_name, timeframe, action, price)
 
         return self.queue
     
-    def create_exit_strategy(self, trade: Trade):
-        exit_strategy = StopLoss(name = "StopLoss_for_" + trade.name, trade = trade, portfolio = self.portfolio)
-        
-        symbol_name = trade.request.symbol_name
-        timeframe = self.portfolio[trade.request.symbol_name].timeframes_list[0]
-        exit_strategy.params["velas"] = {"symbol_name":symbol_name, "timeframe":timeframe}
-        exit_strategy.set_stop_loss(pct = 0.3)
-        return exit_strategy
-        
-        

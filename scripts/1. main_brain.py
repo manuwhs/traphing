@@ -39,48 +39,29 @@ portfolio.set_time_interval(start_time,end_time)
 """
 ############################## Set up strategies ##############################
 """
-
-# First entry strategy
-timeframe = timeframes_list[0]
+#### First strategy
 symbol_name = symbol_names_list[0]
-entry_strategy1 = CrossingMovingAverages("CMA_%s_%s"%(symbol_name,timeframe.name), portfolio)
-slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":45}}
-fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":20}}
-entry_strategy1.set_params({"fast_MA": fast_MA_params, "slow_MA": slow_MA_params})
-
-def create_exit_strategy(self, trade: Trade):
-        exit_strategy = TrailingStop(name = "TrailingStop_for_" + trade.name, trade = trade, portfolio = self.portfolio)
-        
-        symbol_name = trade.request.symbol_name
-        timeframe = self.portfolio[trade.request.symbol_name].timeframes_list[0]
-        params = {"velas": {"symbol_name":symbol_name, "timeframe":timeframe},
-                 "stop_loss":{"pct":0.3}}
-        exit_strategy.set_params(params)
-        return exit_strategy
-    
-## Bind the method to the object
-entry_strategy1.create_exit_strategy = types.MethodType(create_exit_strategy,entry_strategy1)
-
-# Second entry strategy
 timeframe = timeframes_list[0]
+portfolio_params = {"symbol_names_list":[symbol_name], "timeframes_list":[timeframe]}
+slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":50}}
+fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":30}}
+indicators_params = {"fast_MA": fast_MA_params, "slow_MA": slow_MA_params}
+exit_strategy_params = {"class_name":"TrailingStop",
+                        "params":{"indicators":{"stop_loss_pct":0.1}}}
+params = {"portfolio": portfolio_params, "indicators": indicators_params, "exit_strategy":exit_strategy_params}
+entry_strategy1 = CrossingMovingAverages("Crossing averages", portfolio)
+entry_strategy1.set_params(params)
+
+#### Second strategy
 symbol_name = symbol_names_list[1]
-
-if(0):
-    entry_strategy2 = CrossingMovingAverages("CMA_%s_%s"%(symbol_name,timeframe.name), portfolio)
-    slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":45}}
-    fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":20}}
-    entry_strategy2.set_params({"fast_MA": fast_MA_params, "slow_MA": slow_MA_params})
-else:
-    entry_strategy2 = WeeklyTriggerTimes("WTT%s_%s"%(symbol_name,timeframe.name), portfolio)
-    velas_params = {"symbol_name":symbol_name,"timeframe": timeframe}
-    entry_strategy2.set_params({"velas": velas_params, 
-                               "weekly_trigger_times": {"weekdays_list":[0,2,4], "times_list":[dt.time(4,0,0),dt.time(12,0,0)]}})
-    
-    entry_strategy2 = EarlySessionTrendFollower("ESTF%s_%s"%(symbol_name,timeframe.name), portfolio)
-    velas_params = {"symbol_name":symbol_name,"timeframe": timeframe}
-    entry_strategy2.set_params({"velas": velas_params, 
-                                "time": dt.time(1)})
-
+timeframe = timeframes_list[0]
+portfolio_params = {"symbol_names_list":[symbol_name], "timeframes_list":[timeframe]}
+indicators_params = {"time":dt.time(2)}
+exit_strategy_params = {"class_name":"ExitTime",
+                        "params":{"indicators":{"time":dt.time(15)}}}
+params = {"portfolio": portfolio_params, "indicators": indicators_params, "exit_strategy":exit_strategy_params}
+entry_strategy2 = EarlySessionTrendFollower("ESTF", portfolio)
+entry_strategy2.set_params(params)
 
 coliseum = Coliseum()
 coliseum.add_entry_strategy(entry_strategy1)
@@ -127,10 +108,6 @@ gl.stem(entry_strategy_triggers.index,entry_strategy_triggers, axes = ax2, legen
 ## Plot exit #############################
 gl.plot(exit_strategy_input.index, exit_strategy_input, axes = ax3, 
         legend = list(exit_strategy_input.columns), labels = ["", "", "Exit signals"])
-
-difference = exit_strategy_input["velas"] - exit_strategy_input["stop_loss"]
-normalized_difference = difference/np.max(np.abs((difference)))
-gl.fill_between(exit_strategy_input.index, normalized_difference, legend = ["Normalized signal diff"], axes =ax4)
 gl.stem(exit_strategy_triggers.index,exit_strategy_triggers, axes = ax4, legend = "Exits", labels = ["", "", "Exit requests"])
 
 gl.subplots_adjust(left=.09, bottom=.10, right=.90, top=.95, wspace=.20, hspace=0, hide_xaxis = True)
