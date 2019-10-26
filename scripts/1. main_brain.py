@@ -21,6 +21,16 @@ from traphing.graph.Gl import gl
 
 folder_images = "./images/python_generated/strategies/"
 plt.close("all")
+
+x = 100
+f = 0.1
+for i in range(10):
+    R_high = x*(1+f)
+    x_next = R_high/(1-f)
+    x = x_next
+    
+    print(x)
+    
 """
 ############################## Set up portfolio ##############################
 """

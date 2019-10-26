@@ -72,6 +72,9 @@ class Symbol:
     load_properties_from_df = cf.load_properties_from_df
     estimate_market_hours = cf.estimate_market_hours
     
+    get_subsymbol = cf.get_subsymbol
+    del_all_velas = cf.del_all_velas
+    
     get_candlestick = cf.get_candlestick
     """
     Database methods

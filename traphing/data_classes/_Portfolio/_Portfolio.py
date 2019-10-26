@@ -46,8 +46,18 @@ class Portfolio:
     save_to_csv = dbf.save_to_csv
     update_csv = dbf.update_csv
 
-    velas_indicator = cf.velas_indicator
+    del_all_symbols = cf.del_all_symbols
+    get_subportfolio = cf.get_subportfolio
     
+    velas_indicator = cf.velas_indicator
+    velas_series = cf.velas_series
+    map_timeframe = cf.map_timeframe
+    indicator = cf.indicator
+    
+    ## subselecting currencies
+    get_related_forex_currencies = cf.get_related_forex_currencies
+    get_currencies_with_market_hours = cf.get_currencies_with_market_hours
+    get_non_empty = cf.get_non_empty
     #######################################################################
     #### DDBB Operations ##################################################
     #######################################################################
