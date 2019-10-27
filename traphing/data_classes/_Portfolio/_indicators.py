@@ -25,7 +25,6 @@ def forex_cycle(portfolio, timeframe, currencies: List[str]):
             exchange = df[symbol_name]
         else:
             exchange = 1/df[ul.reverse_forex_name(symbol_name)]
-            print(ul.reverse_forex_name(symbol_name))
         forex_cycle = exchange * forex_cycle
     
     forex_cycle.name = "_".join(currencies)

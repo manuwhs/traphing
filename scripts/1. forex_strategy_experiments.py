@@ -35,15 +35,6 @@ if (load_data):
     all_portfolio.set_time_interval(start_time,end_time)
 
 
-print ("------------ Timeframes shit check ----------------")
-timeframe_M15 = [Timeframes.M5, Timeframes.D1][0]
-symbol = all_portfolio[symbol_names_list[0]]
-timeframe_M15_from_key = symbol.timeframes_list[0]
-print(timeframe_M15, timeframe_M15_from_key)
-print(timeframe_M15, timeframe_M15_from_key)
-print(timeframe_M15 == timeframe_M15_from_key)
-print(timeframe_M15 == timeframes_list[0])
-
 symbol_names_list = list(symbols_info_csv.index)
 
 currency = "GBP"

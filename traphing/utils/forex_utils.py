@@ -13,7 +13,7 @@ import numpy as np
 def reverse_forex_name(symbol_name):
     return symbol_name[3:] + symbol_name[:3]
 
-def get_exchange_cycle(currencies, symbol_names_list):
+def get_exchange_cycle(currencies, symbol_names_list = None):
     """ It returns a list with the forex conversions cycle
     """
     exchanges = []
@@ -23,14 +23,36 @@ def get_exchange_cycle(currencies, symbol_names_list):
         
         exchange = currency_from + currency_to
         reverse_exchange = reverse_forex_name(exchange)
-        
-        if (exchange in symbol_names_list) | (reverse_exchange in symbol_names_list):
+        if symbol_names_list is not None:
+            if (exchange in symbol_names_list) | (reverse_exchange in symbol_names_list):
+                exchanges.append(exchange)
+            else:
+                print("No direct exchange ",currency_from, currency_to)
+                return None
+        else: 
             exchanges.append(exchange)
+    return exchanges
+
+def get_exchange_symbol_names(currencies, symbol_names_list):
+    """ It returns a list with the forex conversions cycle
+    """
+    exchanges = []
+    for i in range(len(currencies)):
+        currency_from = currencies[i]
+        currency_to = currencies[(i+1)%len(currencies)]
+        
+        exchange = currency_from + currency_to
+        reverse_exchange = reverse_forex_name(exchange)
+
+        if (exchange in symbol_names_list):
+            exchanges.append(exchange)
+        elif (reverse_exchange in symbol_names_list):
+            exchanges.append(reverse_exchange)
         else:
             print("No direct exchange ",currency_from, currency_to)
             return None
+  
     return exchanges
-
 
 """
 ADVANCED LEGACY

@@ -57,6 +57,14 @@ my_caca = caca()
 unwrap(my_vela, "my_caca")
 
 
+print ("------------ Timeframes shit check ----------------")
+timeframe_M15 = [Timeframes.M5, Timeframes.D1][0]
+symbol = all_portfolio[symbol_names_list[0]]
+timeframe_M15_from_key = symbol.timeframes_list[0]
+print(timeframe_M15, timeframe_M15_from_key)
+print(timeframe_M15, timeframe_M15_from_key)
+print(timeframe_M15 == timeframe_M15_from_key)
+print(timeframe_M15 == timeframes_list[0])
 
 
 
