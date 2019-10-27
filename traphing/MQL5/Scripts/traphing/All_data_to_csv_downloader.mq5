@@ -48,10 +48,11 @@ void OnStart(){
       Symbols_names[i] =  SymbolName(i, selected);
    }
    
-   
+
    for (p = 0; p < ArraySize(periods); p++) {
       for (i = 0; i < Nsym; i++) {
         // For each symbol and period download 
+        Sleep(100);
          timeSeries_to_csv(Symbols_names[i],periods[p],day,month,year); // day, month, year 
        }
    }

@@ -109,7 +109,7 @@ Beware that:
       
       if(FileHandle!=INVALID_HANDLE) {
          FileWrite(FileHandle,// write data to file
-             "Date,Open,High,Low,Close,Volume"); // Time
+             "Timestamp,Open,High,Low,Close,Volume"); 
 
          for(int i = num_downloaded - 1; i >= 0; i--){
             TimeToStruct(rates[i].time,tm);
@@ -154,7 +154,7 @@ bool symbols_info_to_csv(){
    
    int i;
    string Symbols_names[];  //We cannot declare just a pointer so we will reserve minimum memory and then use  ArrayResize()
-   string symbols_file_name = "Symbol_info.csv";
+   string symbols_file_name = "symbols_properties.csv";
    // Bool to only get the symbols in the watch list or all of them actually.
    bool selected = false;
    
@@ -185,9 +185,9 @@ bool symbols_info_to_csv(){
    int FileHandle=FileOpen(symbols_file_name,FILE_WRITE|FILE_ANSI);   
    if(FileHandle!=INVALID_HANDLE) {
       FileWrite(FileHandle,// write data to file
-          "Symbol,PointSize,MinTickValue,ContractSize,Currency"); // Time
+          "symbol_name,point_size,min_tick_value,contract_size,currency"); // Time
       // For each symbol we get its information
-      for (i = 1; i < Nsym; i++) {
+      for (i = 0; i < Nsym; i++) {
             SymbolInfoTick(Symbols_names[i], tickdata);
             FileWrite(FileHandle,// write data to file
                 Symbols_names[i] +
@@ -219,9 +219,6 @@ bool symbols_info_to_csv(){
 
 
 bool positions_info_to_csv(){
-   /*
-   
-   */
    CPositionInfo  m_position;                   // trade position object
    CTrade         m_trade;                      // trading object
    
@@ -251,14 +248,9 @@ bool positions_info_to_csv(){
             ); // Time
         }
     }
- 
     // Close file (free handle), to make it available for other programs
    FileClose(FileHandle);
    
    printf("File written");
    return true;
  }
- 
- 
-//+------------------------------------------------------------------+
-
