@@ -83,6 +83,10 @@ def get_forex_graph(currencies, forex_dataframe: pd.DataFrame, timestamp):
     G.add_edges_from(edges)
     return G
 
+def draw_graph(G, *args, **kwargs):
+    nx.draw(G, with_labels = True, *args, **kwargs)
+    edge_labels=nx.draw_networkx_edge_labels(G,pos=nx.spring_layout(G))
+    
 def get_forex_cycles(G):
     cycles = nx.simple_cycles(G)
     weights = nx.get_edge_attributes(G, 'w')
