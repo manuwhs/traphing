@@ -34,7 +34,6 @@ plt.close("all") # Close all previous Windows
 dataSource =  "MQL5"  # Hanseatic  FxPro GCI Yahoo
 [storage_folder, updates_folder] = utils.get_foldersData(source = dataSource, rrf = "../../../" )
 #### Load the info about the available symbols #####
-Symbol_info = Symbol.load_symbols_properties_csv(storage_folder)
 
 ## 
 mode = "Blocking"
@@ -44,17 +43,18 @@ print("TCP Server listening on port ", port, ", mode = ", mode)
 serv.listen();
 
 # Ask for the list of symbols! 
-try:
+#try:
+if(1):
     success = serv.request_csv_symbol_info();
     
     if (success):
-        symbol_info = Symbol.load_symbols_info_from_csv(updates_folder)
-        Symbol.save_symbols_info_to_csv(storage_folder, Symbol_info)
-        print(symbol_info)
+        symbol_info_csv = Symbol.load_symbols_properties_csv(updates_folder)
+        Symbol.save_symbols_properties_to_csv(storage_folder, symbol_info_csv)
+        print(symbol_info_csv)
         
         ## Now we download data from the first 10 symbols and mix it with previous one.
         timeframes_list = [Timeframes.M15,Timeframes.M1,Timeframes.M5, Timeframes.D1] # [1, 5, 15, 1440]
-        symbol_names_list = Symbol_info["Symbol"].tolist()
+        symbol_names_list = symbol_info_csv.index.tolist()
         N_symbols = len(symbol_names_list)
         
         ## Download the last week ofsome symbols
@@ -75,9 +75,9 @@ try:
                     print ("Updated database")
                       
     serv.sock.close()
-except:
-    print ("Forced closing due to interruption")
-    serv.sock.close()
+#except:
+#    print ("Forced closing due to interruption")
+#    serv.sock.close()
 #if(0):
 #    # Listening to the data
 #    while True:  
