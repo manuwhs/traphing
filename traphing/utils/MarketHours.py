@@ -209,9 +209,12 @@ class MarketHours():
             first_candlestick_time_in_natural_day_list.append(indexes_by_day_dict[date][0].time())
             last_candlestick_time_in_natural_day_list.append(indexes_by_day_dict[date][-1].time())  
 #        print(first_candlestick_time_in_natural_day_list)
-        open_time = min(first_candlestick_time_in_natural_day_list)
-        close_time = max(last_candlestick_time_in_natural_day_list) 
-        close_time = MarketHours.add_timeframe_to_time(close_time, timeframe)
+        if (len(first_candlestick_time_in_natural_day_list) == 0):
+            open_time, close_time = None, None
+        else:
+            open_time = min(first_candlestick_time_in_natural_day_list)
+            close_time = max(last_candlestick_time_in_natural_day_list) 
+            close_time = MarketHours.add_timeframe_to_time(close_time, timeframe)
         
         self.open_time = open_time; self.close_time = close_time
         return open_time, close_time

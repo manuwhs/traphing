@@ -58,7 +58,12 @@ class Symbol:
     def timeframes_list(self, value:  List[Timeframes]):
         ValueError("This property cannot be set externally")
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Timeframes):
+        """For some fucking reason there is some operation where the TimeFrames 
+        Enum is not equal to an instance of itself so I gotta create a new one
+        """
+#        key = Timeframes(key.value)
+#        print(self.symbol_name, key, list(self._velas_dict.keys()))
         val = self._velas_dict[key]
         return val
     

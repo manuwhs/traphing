@@ -6,7 +6,6 @@ Created on Fri Oct 25 11:25:25 2019
 @author: montoya
 """
 import networkx as nx
-
 import pandas as pd
 import numpy as np
 

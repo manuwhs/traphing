@@ -115,7 +115,7 @@ class Velas:
     """
     Data loading functions
     """
-    get_csv_file_path = dbf.get_csv_file_path    # Set and add timeData from csv's
+    get_relative_csv_file_path = dbf.get_relative_csv_file_path    # Set and add timeData from csv's
     save_to_csv = dbf.save_to_csv
     load_data_from_csv = dbf.load_data_from_csv # Save timeData to csv
     add_data_from_csv = dbf.add_data_from_csv

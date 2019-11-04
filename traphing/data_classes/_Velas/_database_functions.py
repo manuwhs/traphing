@@ -9,9 +9,9 @@ from ... import utils
 
 ################# CSV FUNCTIONS #########################
 
-def get_csv_file_path(self):
+def get_relative_csv_file_path(self):
     """ Generates the filename convention of the csv"""
-    file_path = utils.get_csv_file_path(self.symbol_name, self.timeframe)
+    file_path = utils.get_relative_csv_file_path(self.symbol_name, self.timeframe)
     return file_path
 
 def save_to_csv(self, storage_folder = "./storage/", force = False):
@@ -20,7 +20,7 @@ def save_to_csv(self, storage_folder = "./storage/", force = False):
     if (self.is_trimmed() and force == False):
         print ("You cannot save the file since you trimmed it, Use force = True")
     else:
-        file_path = storage_folder + self.get_csv_file_path()
+        file_path = storage_folder + self.get_relative_csv_file_path()
         utils.create_folder_if_needed(utils.get_file_dir(file_path))
         self._df.to_csv(file_path, sep=',')
 
