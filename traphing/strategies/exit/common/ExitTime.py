@@ -18,8 +18,8 @@ class ExitTime(ExitStrategy):
         super().__init__(name, trade, portfolio, params)
 
     def compute_input_series(self) -> pd.DataFrame:
-        symbol_name = self.symbol_names_list[0]
-        timeframe = self.timeframes_list[0]
+        symbol_name = self.symbol_names[0]
+        timeframe = self.timeframes[0]
         velas = self.portfolio[symbol_name][timeframe]
 
         # substract timeframe because the timestamp in a candlestick is the beggining of the timeframe
@@ -47,8 +47,8 @@ class ExitTime(ExitStrategy):
         Event_indx = np.where(trigger_series != 0 )[0] # We do not care about the second dimension
         for indx in Event_indx:
             timestamp = trigger_series.index[indx]
-            symbol_name = self.symbol_names_list[0]
-            timeframe = self.timeframes_list[0]
+            symbol_name = self.symbol_names[0]
+            timeframe = self.timeframes[0]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
             self.create_request(timestamp, symbol_name, timeframe, price)

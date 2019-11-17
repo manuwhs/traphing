@@ -19,11 +19,11 @@ import matplotlib.pyplot as plt
 plt.close("all")
 
 portfolio_name = "Manu's shit"
-symbol_names_list = ["AUDCHF","AUDCAD"]
-timeframes_list = [Timeframes.M15, Timeframes.D1]
+symbol_names = ["AUDCHF","AUDCAD"]
+timeframes = [Timeframes.M15, Timeframes.D1]
 storage_folder = "../tests/data/storage/"
 
-portfolio = Portfolio(portfolio_name, symbol_names_list, timeframes_list)
+portfolio = Portfolio(portfolio_name, symbol_names, timeframes)
 portfolio.load_data_from_csv(storage_folder)
 
 start_time = dt.datetime(2019,7,10); end_time = dt.datetime(2019,7,25)
@@ -36,10 +36,10 @@ portfolio.set_time_interval(start_time,end_time)
 if(1):
     # Initialize
     entry_strategy = CrossingMovingAverages("Crossing averages", portfolio)
-    symbol_name = symbol_names_list[0]
-    timeframe = timeframes_list[0]
+    symbol_name = symbol_names[0]
+    timeframe = timeframes[0]
     
-    portfolio_params = {"symbol_names_list":[symbol_name], "timeframes_list":[timeframe]}
+    portfolio_params = {"symbol_names":[symbol_name], "timeframes":[timeframe]}
     slow_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args": {"n":50}}
     fast_MA_params = {"symbol_name":symbol_name,"timeframe": timeframe,"indicator_name":"SMA", "args":{"n":30}}
     indicators_params = {"fast_MA": fast_MA_params, "slow_MA": slow_MA_params}
@@ -49,10 +49,10 @@ if(0):
     # Initialize
     entry_strategy = EarlySessionTrendFollower("ESTF", portfolio)
     # Set the paramters
-    symbol_name = symbol_names_list[0]
-    timeframe = timeframes_list[0]
+    symbol_name = symbol_names[0]
+    timeframe = timeframes[0]
     
-    portfolio_params = {"symbol_names_list":[symbol_name], "timeframes_list":[timeframe]}
+    portfolio_params = {"symbol_names":[symbol_name], "timeframes":[timeframe]}
     indicators_params = {"time":dt.time(2)}
     exit_strategy_params = {"class_name":"ExitTime",
                             "params":{"indicators":{"time":dt.time(15)}}}
@@ -61,10 +61,10 @@ if(0):
     # Initialize
     entry_strategy = WeeklyTriggerTimes("WTT", portfolio)
     # Set the paramters
-    symbol_name = symbol_names_list[0]
-    timeframe = timeframes_list[0]
+    symbol_name = symbol_names[0]
+    timeframe = timeframes[0]
     
-    portfolio_params = {"symbol_names_list":[symbol_name], "timeframes_list":[timeframe]}
+    portfolio_params = {"symbol_names":[symbol_name], "timeframes":[timeframe]}
     indicators_params = {"weekdays_list":[0,2,4], 
                       "times_list":[dt.time(4,0,0),dt.time(12,0,0)]}
     exit_strategy_params = {"class_name":"ExitTime",

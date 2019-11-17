@@ -18,8 +18,8 @@ class WeeklyTriggerTimes(EntryStrategy):
         super().__init__(name, portfolio, params)
     
     def compute_input_series(self):
-        symbol_name = self.symbol_names_list[0]
-        timeframe = self.timeframes_list[0]
+        symbol_name = self.symbol_names[0]
+        timeframe = self.timeframes[0]
         
         weekdays_list = self.params["indicators"]["weekdays_list"]
         velas = self.portfolio[symbol_name][timeframe]
@@ -58,7 +58,7 @@ class WeeklyTriggerTimes(EntryStrategy):
                                    index = series_df.index, name = "trigger_entry")
         
         trigger_series[indexes] = 1
-        pd.DataFrame(trigger_series, columns = [self.symbol_names_list[0]])
+        pd.DataFrame(trigger_series, columns = [self.symbol_names[0]])
         return trigger_series
         
     def compute_requests_queue(self):
@@ -68,8 +68,8 @@ class WeeklyTriggerTimes(EntryStrategy):
         for indx in Event_indx:
             action = self._get_action(trigger_series[indx])
             timestamp = trigger_series.index[indx]
-            symbol_name = self.symbol_names_list[0]
-            timeframe = self.timeframes_list[0]
+            symbol_name = self.symbol_names[0]
+            timeframe = self.timeframes[0]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
             self.create_request(timestamp, symbol_name, timeframe, action, price)

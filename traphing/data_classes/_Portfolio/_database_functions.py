@@ -19,15 +19,15 @@ import gc
 
 ## Operations from a list of symbols 
 def load_data_from_csv(self,file_dir = "./storage/"):
-    for symbol_name in self.symbol_names_list:
+    for symbol_name in self.symbol_names:
         self[symbol_name].load_data_from_csv(file_dir)
     
 def add_data_from_csv(self,file_dir = "./storage/"):
-    for symbol_name in self.symbol_names_list:
+    for symbol_name in self.symbol_names:
         self[symbol_name].add_data_from_csv(file_dir)
 
 def save_to_csv(self,file_dir = "./storage/"):
-    for symbol_name in self.symbol_names_list:
+    for symbol_name in self.symbol_names:
         self[save_to_csv].save_to_csv(file_dir)
 
 def update_csv (self, storage_folder, updates_folder):

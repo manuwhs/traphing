@@ -27,11 +27,11 @@ storage_folder = test_storage_folder
 """
 ############################## Set up portfolio ##############################
 """
-symbol_names_list = ["AUDCHF", "AUDCAD"]
-timeframes_list = [Timeframes.M15, Timeframes.D1]
+symbol_names = ["AUDCHF", "AUDCAD"]
+timeframes = [Timeframes.M15, Timeframes.D1]
 portfolio_name = "my_portfolio"
 
-portfolio = Portfolio(portfolio_name, symbol_names_list, timeframes_list)
+portfolio = Portfolio(portfolio_name, symbol_names, timeframes)
 portfolio.load_data_from_csv(storage_folder)
 
 start_time = dt.datetime(2019, 6, 20)
@@ -42,10 +42,10 @@ portfolio.set_time_interval(start_time, end_time)
 ############################## Set up strategies ##############################
 """
 # First strategy
-symbol_name = symbol_names_list[0]
-timeframe = timeframes_list[0]
-portfolio_params = {"symbol_names_list": [
-    symbol_name], "timeframes_list": [timeframe]}
+symbol_name = symbol_names[0]
+timeframe = timeframes[0]
+portfolio_params = {"symbol_names": [
+    symbol_name], "timeframes": [timeframe]}
 slow_MA_params = {"symbol_name": symbol_name,
                   "timeframe": timeframe, "indicator_name": "SMA", "args": {"n": 50}}
 fast_MA_params = {"symbol_name": symbol_name,
@@ -59,10 +59,10 @@ entry_strategy1 = CrossingMovingAverages("Crossing averages", portfolio)
 entry_strategy1.set_params(params)
 
 # Second strategy
-symbol_name = symbol_names_list[1]
-timeframe = timeframes_list[0]
-portfolio_params = {"symbol_names_list": [
-    symbol_name], "timeframes_list": [timeframe]}
+symbol_name = symbol_names[1]
+timeframe = timeframes[0]
+portfolio_params = {"symbol_names": [
+    symbol_name], "timeframes": [timeframe]}
 indicators_params = {"time": dt.time(2)}
 exit_strategy_params = {"class_name": "ExitTime",
                         "params": {"indicators": {"time": dt.time(15)}}}
@@ -113,7 +113,7 @@ ax3 = gl.subplot2grid((n_rows, n_cols), (2, 0), sharex=ax1)
 ax4 = gl.subplot2grid((n_rows, n_cols), (3, 0), sharex=ax1)
 
 ## Plot entry #####################
-portfolio[symbol_names_list[0]][timeframes_list[0]].plot_barchart(
+portfolio[symbol_names[0]][timeframes[0]].plot_barchart(
     axes=ax1, labels=["Entry and Exit strategies", "", "Entry signals"])
 
 gl.plot(entry_strategy_input.index, entry_strategy_input,
@@ -146,12 +146,12 @@ trade_analysis_df = backtest_analysis.backtest()
 """
 PLOT strategy
 """
-symbol_names_list_plot = symbol_names_list
+symbol_names_plot = symbol_names
 
 
 size_inches = [12, 5]
 gl.init_figure()
-n_rows, n_cols = len(symbol_names_list_plot), 4
+n_rows, n_cols = len(symbol_names_plot), 4
 
 axes_list = [[], []]
 ax1, ax2 = None, None
@@ -163,7 +163,7 @@ for i in range(n_rows):
                           sharex=ax2, sharey=ax2)
     ax2.yaxis.tick_right()
 
-    symbol_name = symbol_names_list_plot[i]
+    symbol_name = symbol_names_plot[i]
     velas = portfolio[symbol_name][Timeframes.D1]
 
     velas.plot_barchart(axes=ax1, labels=["Trades performed", "", symbol_name])

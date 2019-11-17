@@ -10,22 +10,22 @@ from . import _database_functions as dbf
 from . import _indicators as ind
 
 class Portfolio:
-    def __init__(self, portfolio_id: str, symbol_names_list: List[str], timeframes_list: List[Timeframes]):
+    def __init__(self, portfolio_id: str, symbol_names: List[str], timeframes: List[Timeframes]):
         portfolio_id = portfolio_id
         self._symbols_dict = dict()
         # Loop over the symbol_names so loop over all the symbols in the Portfolio
-        self._init_symbols(symbol_names_list, timeframes_list)  # Create the symbol objects from the periods and names
+        self._init_symbols(symbol_names, timeframes)  # Create the symbol objects from the periods and names
 
         ## Time constraining variables
         self.start_time = None  
         self.end_time = None
         
     @property
-    def symbol_names_list(self):
+    def symbol_names(self):
         return list(self._symbols_dict.keys())
 
-    @symbol_names_list.setter
-    def symbol_names_list(self, value:  List[str]):
+    @symbol_names.setter
+    def symbol_names(self, value:  List[str]):
         ValueError("This property cannot be set externally")
 
     def __getitem__(self, key):

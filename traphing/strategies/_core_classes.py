@@ -37,18 +37,18 @@ class Strategy:
         when all of its depending velas objects have been given the data.
         """
         try:
-            symbol_names_list = self.params["portfolio"]["symbol_names_list"]
-            timeframes_list = self.params["portfolio"]["timeframes_list"]
+            symbol_names = self.params["portfolio"]["symbol_names"]
+            timeframes = self.params["portfolio"]["timeframes"]
         except:
 #            Warning("No portfolio")
-            symbol_names_list = []
-            timeframes_list = []
+            symbol_names = []
+            timeframes = []
             
-        self.timeframes_list = timeframes_list
-        self.symbol_names_list = symbol_names_list
+        self.timeframes = timeframes
+        self.symbol_names = symbol_names
         
-        for symbol_name in symbol_names_list:
-            for timeframe in timeframes_list:
+        for symbol_name in symbol_names:
+            for timeframe in timeframes:
                 ##TODO
                 pass
     """

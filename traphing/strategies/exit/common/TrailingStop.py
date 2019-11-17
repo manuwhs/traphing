@@ -17,8 +17,8 @@ class TrailingStop(ExitStrategy):
         super().__init__(name, trade, portfolio, params)
 
     def compute_input_series(self) -> pd.DataFrame:
-        symbol_name = self.symbol_names_list[0]
-        timeframe = self.timeframes_list[0]
+        symbol_name = self.symbol_names[0]
+        timeframe = self.timeframes[0]
         pct = self.params["indicators"]["stop_loss_pct"]
         
         close = self.portfolio[symbol_name][timeframe].series("Close")
@@ -51,8 +51,8 @@ class TrailingStop(ExitStrategy):
         
         for indx in Event_indx:
             timestamp = trigger_series.index[indx]
-            symbol_name = self.symbol_names_list[0]
-            timeframe = self.timeframes_list[0]
+            symbol_name = self.symbol_names[0]
+            timeframe = self.timeframes[0]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
             self.create_request(timestamp, symbol_name, timeframe, price)

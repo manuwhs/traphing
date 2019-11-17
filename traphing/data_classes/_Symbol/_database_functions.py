@@ -7,17 +7,17 @@ import pandas as pd
 
 
 def load_data_from_csv(self, file_dir="./storage/"):
-    for timeframe in self.timeframes_list:
+    for timeframe in self.timeframes:
         self[timeframe].load_data_from_csv(file_dir)
 
 
 def add_data_from_csv(self, file_dir="./storage/"):
-    for timeframe in self.timeframes_list:
+    for timeframe in self.timeframes:
         self[timeframe].add_csv(file_dir)
 
 
 def save_to_csv(self, file_dir="./storage/"):
-    for timeframe in self.timeframes_list:
+    for timeframe in self.timeframes:
         self[timeframe].save_to_csv(file_dir)
 
 

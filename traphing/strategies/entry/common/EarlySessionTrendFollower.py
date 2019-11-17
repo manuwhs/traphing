@@ -18,8 +18,8 @@ class EarlySessionTrendFollower(EntryStrategy):
         super().__init__(name, portfolio, params)
     
     def compute_input_series(self) -> pd.DataFrame:
-        symbol_name = self.symbol_names_list[0]
-        timeframe = self.timeframes_list[0]
+        symbol_name = self.symbol_names[0]
+        timeframe = self.timeframes[0]
     
         symbol = self.portfolio[symbol_name]
         velas = self.portfolio[symbol_name][timeframe]
@@ -52,7 +52,7 @@ class EarlySessionTrendFollower(EntryStrategy):
         trigger_series = series_df["gain"]
         trigger_series[trigger_series > 0] = 1
         trigger_series[trigger_series < 0] = -1
-        pd.DataFrame(trigger_series, columns = [self.symbol_names_list[0]])
+        pd.DataFrame(trigger_series, columns = [self.symbol_names[0]])
         return trigger_series
         
     def compute_requests_queue(self) -> pd.DataFrame:
@@ -62,8 +62,8 @@ class EarlySessionTrendFollower(EntryStrategy):
         for indx in Event_indx:
             action = self._get_action(trigger_series[indx])
             timestamp = trigger_series.index[indx]
-            symbol_name = self.symbol_names_list[0]
-            timeframe = self.timeframes_list[0]
+            symbol_name = self.symbol_names[0]
+            timeframe = self.timeframes[0]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
             self.create_request(timestamp, symbol_name, timeframe, action, price)

@@ -12,15 +12,17 @@ When the correspoding MQL5 file is connected to it then:
         - Python then reads them and combines them with the previously downloaded.
 """
 
-# Classical Libraries
-import traphing.utils as utils
-from traphing.utils import Timeframes
-import traphing.utils.sockets as sockets_lib
-from traphing.data_classes import Portfolio, Symbol, Velas
 import datetime as dt
+import sys
+
 import matplotlib.pyplot as plt
 
-import sys
+# Classical Libraries
+import traphing.utils as utils
+import traphing.utils.sockets as sockets_lib
+from traphing.data_classes import Portfolio, Symbol, Velas
+from traphing.utils import Timeframes
+
 sys.path.insert(0, "..")  # Adds higher directory to python modules path.
 
 plt.close("all")  # Close all previous Windows
@@ -54,10 +56,10 @@ if(1):
         print(symbol_info_csv)
 
         # Now we download data from the first 10 symbols and mix it with previous one.
-        timeframes_list = [Timeframes.M15, Timeframes.M1,
-                           Timeframes.M5, Timeframes.D1]  # [1, 5, 15, 1440]
-        symbol_names_list = symbol_info_csv.index.tolist()
-        N_symbols = len(symbol_names_list)
+        timeframes = [Timeframes.M15, Timeframes.M1,
+                      Timeframes.M5, Timeframes.D1]  # [1, 5, 15, 1440]
+        symbol_names = symbol_info_csv.index.tolist()
+        N_symbols = len(symbol_names)
 
         # Download the last week ofsome symbols
         start_date = dt.date.today() - dt.timedelta(days=7000)
@@ -66,9 +68,9 @@ if(1):
         for i in range(N_symbols):
             print("------ Downloading symbol %i/%i ----------" %
                   (i+1, N_symbols))
-            for p in range(len(timeframes_list)):
-                symbol_name = symbol_names_list[i]
-                timeframe = timeframes_list[p]
+            for p in range(len(timeframes)):
+                symbol_name = symbol_names[i]
+                timeframe = timeframes[p]
                 success = serv.request_csv_data_signal(
                     symbol_name, timeframe, start_date)
 

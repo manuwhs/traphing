@@ -29,8 +29,8 @@ class StopLoss(ExitStrategy):
         self.stop_loss = stop_loss
         
     def compute_input_series(self) -> pd.DataFrame:
-        symbol_name = self.symbol_names_list[0]
-        timeframe = self.timeframes_list[0]
+        symbol_name = self.symbol_names[0]
+        timeframe = self.timeframes[0]
         
         close = self.portfolio[symbol_name][timeframe].series("Close")
         stop_loss = pd.Series(np.ones(close.index.size) * self.stop_loss, index = close.index)
@@ -53,8 +53,8 @@ class StopLoss(ExitStrategy):
         
         for indx in Event_indx:
             timestamp = trigger_series.index[indx]
-            symbol_name = self.symbol_names_list[0]
-            timeframe = self.timeframes_list[0]
+            symbol_name = self.symbol_names[0]
+            timeframe = self.timeframes[0]
             price = float(self.portfolio[symbol_name][timeframe].get_candlestick(timestamp)["Close"])
             
             self.create_request(timestamp, symbol_name, timeframe, price)

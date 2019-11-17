@@ -109,8 +109,8 @@ def get_foldersData(source = "FxPro", rrf = "../" ):
 
 
 def get_empty_portfolio_params():
-    portfolio = {"symbol_names_list": [], 
-                 "timeframes_list": []}
+    portfolio = {"symbol_names": [], 
+                 "timeframes": []}
     return portfolio
 
 def get_empty_exit_strategy_params():

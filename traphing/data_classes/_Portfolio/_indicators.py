@@ -17,11 +17,11 @@ def forex_cycle(portfolio, timeframe, currencies: List[str]):
     
     df = portfolio.map_timeframe(timeframe, "series", name = "Open")
     
-    symbol_names_list = list(df.columns)
-    exchanges = ul.get_exchange_cycle(currencies, symbol_names_list)
+    symbol_names = list(df.columns)
+    exchanges = ul.get_exchange_cycle(currencies, symbol_names)
     forex_cycle = 1
     for symbol_name in exchanges:
-        if (symbol_name in symbol_names_list):
+        if (symbol_name in symbol_names):
             exchange = df[symbol_name]
         else:
             exchange = 1/df[ul.reverse_forex_name(symbol_name)]

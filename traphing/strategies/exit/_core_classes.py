@@ -25,8 +25,8 @@ class ExitStrategy(Strategy):
         except:
             params["portfolio"] = get_empty_portfolio_params()
             
-        params["portfolio"]["symbol_names_list"].insert(0, trade.request.symbol_name)
-        params["portfolio"]["timeframes_list"].insert(0, trade.request.timeframe)
+        params["portfolio"]["symbol_names"].insert(0, trade.request.symbol_name)
+        params["portfolio"]["timeframes"].insert(0, trade.request.timeframe)
         return params
     
     def __init__(self, name: str, trade: TradeRequest, portfolio: Portfolio = None,  params: dict = {}):
