@@ -4,6 +4,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def demo():
     i = 0
     processes = []
@@ -11,9 +12,9 @@ def demo():
         i += 1
         s = time.time()
         while time.time() - s < 5:
-            print ('HA'),
+            print('HA'),
             sys.stdout.flush()
-            
+
         def do_something():
             figno = i
             f = plt.figure()
@@ -24,8 +25,9 @@ def demo():
             plt.imshow(arr)
             plt.show()
         p = Process(None, do_something)
-        processes.append(p) # May want to do other things with objects
+        processes.append(p)  # May want to do other things with objects
         p.start()
+
 
 if __name__ == "__main__":
     demo()
