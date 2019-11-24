@@ -55,7 +55,7 @@ if(1):
         Symbol.save_symbols_properties_to_csv(storage_folder, symbol_info_csv)
         print(symbol_info_csv)
 
-        # Now we download data from the first 10 symbols and mix it with previous one.
+        # Now we download data from the first 10 symbols and mix it with previous one  vssfr
         timeframes = [Timeframes.M15, Timeframes.M1,
                       Timeframes.M5, Timeframes.D1]  # [1, 5, 15, 1440]
         symbol_names = symbol_info_csv.index.tolist()

@@ -1,3 +1,5 @@
+%matplotlib qt
+
 import datetime as dt
 import os
 
@@ -71,6 +73,7 @@ params = {"portfolio": portfolio_params,
 entry_strategy2 = EarlySessionTrendFollower("ESTF", portfolio)
 entry_strategy2.set_params(params)
 
+## Instantiate coliseum object.
 coliseum = Coliseum()
 coliseum.add_entry_strategy(entry_strategy1)
 coliseum.add_entry_strategy(entry_strategy2)
